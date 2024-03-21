@@ -17,6 +17,10 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.Toast;
 
+import com.example.hamacav1.bottomMenu.HomeFragment;
+import com.example.hamacav1.bottomMenu.CalcsFragment;
+import com.example.hamacav1.bottomMenu.SunbedFragment;
+import com.example.hamacav1.bottomMenu.ReportsFragment;
 import com.example.hamacav1.databinding.ActivityMainBinding;
 
 public class MainActivity extends AppCompatActivity {
@@ -37,12 +41,12 @@ public class MainActivity extends AppCompatActivity {
 
             if (itemId == R.id.home) {
                 replaceFragment(new HomeFragment());
-            } else if (itemId == R.id.shorts) {
-                replaceFragment(new ShortsFragment());
-            } else if (itemId == R.id.subscriptions) {
-                replaceFragment(new SubscriptionFragment());
-            } else if (itemId == R.id.library) {
-                replaceFragment(new LibraryFragment());
+            } else if (itemId == R.id.sunbed) {
+                replaceFragment(new SunbedFragment());
+            } else if (itemId == R.id.reports) {
+                replaceFragment(new ReportsFragment());
+            } else if (itemId == R.id.calcs) {
+                replaceFragment(new CalcsFragment());
             }
 
             return true;

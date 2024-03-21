@@ -1,4 +1,4 @@
-package com.example.hamacav1;
+package com.example.hamacav1.bottomMenu;
 
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -7,13 +7,14 @@ import android.view.ViewGroup;
 
 import androidx.fragment.app.Fragment;
 
+import com.example.hamacav1.R;
 
-public class LibraryFragment extends Fragment {
+public class ReportsFragment extends Fragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_library, container, false);
+        return inflater.inflate(R.layout.fragment_reports, container, false);
     }
 }

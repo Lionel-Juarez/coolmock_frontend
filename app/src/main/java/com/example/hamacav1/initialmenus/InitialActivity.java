@@ -1,4 +1,4 @@
-package com.example.hamacav1;
+package com.example.hamacav1.initialmenus;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -6,9 +6,11 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 
+import com.example.hamacav1.R;
+
 public class InitialActivity extends AppCompatActivity {
 
-    public static int SPLASH_TIMER = 3000;
+    public static int SPLASH_TIMER = 2000;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

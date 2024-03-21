@@ -2,8 +2,8 @@
     <!-- Base application theme. -->
     <style name="Theme.HamacaV1" parent="Theme.MaterialComponents.DayNight.NoActionBar">
         <!-- Primary brand color. -->
-        <item name="colorPrimary">@color/lavender</item>
-        <item name="colorPrimaryVariant">@color/lavender</item>
+        <item name="colorPrimary">@color/principalColor</item>
+        <item name="colorPrimaryVariant">@color/principalColor</item>
         <item name="colorOnPrimary">@color/white</item>
         <!-- Secondary brand color. -->
         <item name="colorSecondary">@color/teal_200</item>

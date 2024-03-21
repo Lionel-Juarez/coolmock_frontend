@@ -4,25 +4,25 @@
 
     <item
         android:id="@+id/home"
-        android:title="Home"
+        android:title="string/home"
         android:icon="@drawable/ic_home"/>
 
     <item
-        android:id="@+id/shorts"
-        android:title="Shorts"
-        android:icon="@drawable/ic_baseline_whatshot_24"
+        android:id="@+id/sunbed"
+        android:title="@string/sunbed"
+        android:icon="@drawable/baseline_beach_access_24"
         />
 
     <item
         android:title=""/>
 
     <item
-        android:id="@+id/subscriptions"
-        android:title="Subscriptions"
-        android:icon="@drawable/ic_baseline_subscriptions_24" />
+        android:id="@+id/reports"
+        android:title="@string/reports"
+        android:icon="@drawable/baseline_report_24" />
     <item
-        android:id="@+id/library"
-        android:title="Library"
-        android:icon="@drawable/ic_baseline_video_library_24" />
+        android:id="@+id/calcs"
+        android:title="@string/calcs"
+        android:icon="@drawable/baseline_calculate_24" />
 
 </menu>

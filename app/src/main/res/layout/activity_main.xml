@@ -5,7 +5,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/lavender"
+    android:background="@color/principalColor"
     tools:context=".MainActivity">
 
 
@@ -38,10 +38,10 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:backgroundTint="@color/white"
-        android:src="@drawable/ic_baseline_add_24"
+        android:src="@drawable/baseline_person_24"
         app:layout_anchor="@id/bottomAppBar"
         app:maxImageSize="40dp"
         android:id="@+id/fab"
-        app:tint="@color/lavender" />
+        app:tint="@color/principalColor" />
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

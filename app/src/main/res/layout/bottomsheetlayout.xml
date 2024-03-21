@@ -22,9 +22,9 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textAlignment="viewStart"
-        android:text="Create"
+        android:text="@string/user"
         android:padding="8dp"
-        android:textColor="@color/lavender"
+        android:textColor="@color/principalColor"
         android:layout_marginStart="12dp"
         android:layout_marginTop="5dp"
         android:textSize="25dp" />
@@ -57,7 +57,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Upload a video"
-            android:textColor="@color/lavender"
+            android:textColor="@color/principalColor"
             android:layout_marginLeft="30dp"
             android:textSize="16sp"/>
 
@@ -80,7 +80,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Create a short"
-            android:textColor="@color/lavender"
+            android:textColor="@color/principalColor"
             android:layout_marginLeft="30dp"
             android:textSize="16sp"/>
 
@@ -106,7 +106,34 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Go live"
-            android:textColor="@color/lavender"
+            android:textColor="@color/principalColor"
+            android:layout_marginLeft="30dp"
+            android:textSize="16sp"/>
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/layoutLogout"
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingLeft="10dp"
+        android:paddingRight="10dp"
+        android:paddingTop="10dp"
+        android:paddingBottom="30dp"
+        android:layout_marginTop="50dp">
+
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/baseline_logout_24"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/logout"
+            android:textColor="@color/principalColor"
             android:layout_marginLeft="30dp"
             android:textSize="16sp"/>
 

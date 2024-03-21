@@ -2,4 +2,9 @@
     <string name="app_name">HamacaV1</string>
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="singup">Sing up!!</string>
+    <string name="sunbed">Sunbed</string>
+    <string name="reports">Reports</string>
+    <string name="calcs">Daily calculations</string>
+    <string name="user">User</string>
+    <string name="logout">Log out</string>
 </resources>

@@ -1,4 +1,4 @@
-package com.example.hamacav1;
+package com.example.hamacav1.initialmenus;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -12,6 +12,8 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.example.hamacav1.MainActivity;
+import com.example.hamacav1.R;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
