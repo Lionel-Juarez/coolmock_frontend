@@ -1,37 +1,94 @@
-<androidx.constraintlayout.widget.ConstraintLayout
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
+    android:layout_height="wrap_content"
     android:orientation="vertical"
-    tools:context=".MainActivity">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:padding="16dp">
 
-    <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/search"
+    <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_margin="16dp"
-        android:background="@color/principalColor"
-        android:focusable="false"
-        app:closeIcon="@drawable/ic_baseline_clear_24"
-        app:iconifiedByDefault="false"
-        app:queryHint="Search..."
-        app:searchHintIcon="@null"
-        app:searchIcon="@drawable/baseline_add_to_photos_24"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"/>
+        android:id="@+id/reportTitle"
+        android:layout_marginTop="14dp"
+        android:text="@string/reportsTitle"
+        android:textSize="32sp"
+        android:layout_gravity="center"
+        android:textColor="@color/principalColor"
+        android:layout_marginBottom="12dp"
+        android:textStyle="bold" />
 
-    <androidx.recyclerview.widget.RecyclerView
+
+
+
+    <androidx.cardview.widget.CardView
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:id="@+id/recyclerView"
-        android:layout_marginTop="8dp"
-        android:scrollbars="vertical"
-        app:layout_constraintTop_toBottomOf="@id/search"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"/>
+        android:layout_height="230dp"
+        android:id="@+id/recCard"
+        app:cardElevation="8dp"
+        app:cardCornerRadius="16dp"
+        app:cardUseCompatPadding="true">
+
+        <ImageView
+            android:id="@+id/reporteImg"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:background="@drawable/comentario24px"
+            android:focusable="false"
+            android:focusableInTouchMode="false"
+            android:scaleType="fitCenter"
+            android:adjustViewBounds="true"
+            android:layout_marginTop="20dp"
+            android:layout_marginRight="10dp"
+            android:layout_marginLeft="280dp" />
 
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+        <TextView
+            android:id="@+id/tv_report_title"
+            android:layout_width="274dp"
+            android:layout_height="wrap_content"
+            android:padding="20dp"
+            android:text="Titulo del reporte"
+            android:textSize="22dp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/tv_report_date"
+            android:layout_width="275dp"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/tv_report_title"
+            android:layout_marginTop="40dp"
+            android:padding="20dp"
+            android:text="12 de marzo de 2024"
+            android:textColor="@android:color/darker_gray"
+            android:textSize="18sp" />
+
+        <TextView
+            android:id="@+id/tv_report_content_preview"
+            android:layout_width="274dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="100dp"
+            android:ellipsize="end"
+            android:maxLines="2"
+            android:padding="20dp"
+            android:text="Se reporta el siguiente dato, se ha encontrado..."
+            android:textSize="16sp" />
+
+        <ImageButton
+            android:id="@+id/bt_li_delete"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_marginLeft="300dp"
+            android:layout_marginRight="10dp"
+            android:adjustViewBounds="true"
+            android:background="@drawable/baseline_delete_24"
+            android:focusable="false"
+            android:focusableInTouchMode="false"
+            android:layout_marginTop="130dp"
+            android:scaleType="fitCenter" />
+
+
+    </androidx.cardview.widget.CardView>
+
+</LinearLayout>
