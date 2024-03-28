@@ -8,4 +8,12 @@
     <string name="user">User</string>
     <string name="logout">Log out</string>
     <string name="reportsTitle">REPORTS</string>
+    <string name="fab_add_report">Añade un reporte</string>
+    <string name="nuevo_libro">New Report</string>
+    <string name="insert_name">Insert title</string>
+    <string name="write_here">Write here</string>
+    <string name="accept">Accept</string>
+    <string name="full_comment_hint">Full comment hint</string>
+    <string name="description">Esta es la descripcion del reporte, como maximo, tendra 2 lineas...</string>
+    <string name="delete_comment">Delete report</string>
 </resources>
