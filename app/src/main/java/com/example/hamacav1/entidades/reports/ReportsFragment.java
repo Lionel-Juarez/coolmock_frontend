@@ -1,4 +1,4 @@
-package com.example.hamacav1.bottomMenu;
+package com.example.hamacav1.entidades.reports;
 
 import android.content.Intent;
 import android.os.Bundle;

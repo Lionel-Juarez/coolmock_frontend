@@ -20,7 +20,7 @@ import android.widget.Toast;
 import com.example.hamacav1.bottomMenu.HomeFragment;
 import com.example.hamacav1.bottomMenu.CalcsFragment;
 import com.example.hamacav1.bottomMenu.SunbedFragment;
-import com.example.hamacav1.bottomMenu.ReportsFragment;
+import com.example.hamacav1.entidades.reports.ReportsFragment;
 import com.example.hamacav1.databinding.ActivityMainBinding;
 
 public class MainActivity extends AppCompatActivity {
