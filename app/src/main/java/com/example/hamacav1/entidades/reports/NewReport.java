@@ -31,7 +31,7 @@ public class NewReport extends AppCompatActivity {
     private String createdBy;
     private String creationDate;
     private EditText titleEditText;
-    private EditText descriptionEditText;
+    //private EditText descriptionEditText;
     private EditText fullCommentEditText;
     private Spinner stateSpinner;
 
