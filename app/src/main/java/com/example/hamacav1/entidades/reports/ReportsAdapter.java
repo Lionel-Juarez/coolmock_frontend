@@ -41,7 +41,7 @@ public class ReportsAdapter extends RecyclerView.Adapter<ReportsAdapter.ReportVi
         holder.fullComment.setText(report.getFullComment());
         holder.state.setText(report.getState());
         holder.creationDate.setText(report.getCreationDate()); // Asegúrate de que este método retorne un String
-        // holder.createdBy.setText(report.getCreatedBy().getNombreUsuario()); // Asume que tienes un método getNombreUsuario()
+        holder.createdBy.setText("Creado por: " + report.getCreatedBy());
 
         holder.itemView.setOnClickListener(v -> toggleExpandableView(holder.expandableView)); // Expande/colapsa
 
