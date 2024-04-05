@@ -5,6 +5,7 @@ import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageButton;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -18,10 +19,12 @@ public class ReportsAdapter extends RecyclerView.Adapter<ReportsAdapter.ReportVi
 
     private List<Report> reportsList;
     private Context context;
-    View expandableView;
-    public ReportsAdapter(List<Report> reportsList, Context context) {
+    private ReportsAdapterCallback callback; // Asegúrate de tener esta interfaz definida y de establecer el callback
+
+    public ReportsAdapter(List<Report> reportsList, Context context, ReportsAdapterCallback callback) {
         this.reportsList = reportsList;
         this.context = context;
+        this.callback = callback;
     }
 
     @NonNull
@@ -35,17 +38,15 @@ public class ReportsAdapter extends RecyclerView.Adapter<ReportsAdapter.ReportVi
     public void onBindViewHolder(@NonNull ReportViewHolder holder, int position) {
         Report report = reportsList.get(position);
         holder.title.setText(report.getTitle());
-        holder.description.setText(report.getDescription());
+        holder.fullComment.setText(report.getFullComment());
         holder.state.setText(report.getState());
-        // Aquí puedes configurar los otros campos, asegurándote de que estén ocultos inicialmente si están dentro del contenedor expandible.
+        holder.creationDate.setText(report.getCreationDate()); // Asegúrate de que este método retorne un String
+        // holder.createdBy.setText(report.getCreatedBy().getNombreUsuario()); // Asume que tienes un método getNombreUsuario()
 
-        // Configura el click listener para expandir/colapsar la tarjeta
-        holder.itemView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                toggleExpandableView(holder.expandableView);
-            }
-        });
+        holder.itemView.setOnClickListener(v -> toggleExpandableView(holder.expandableView)); // Expande/colapsa
+
+        //holder.edit.setOnClickListener(v -> callback.editPressed(position)); // Edita
+        //holder.delete.setOnClickListener(v -> callback.deletePressed(position)); // Elimina
     }
 
     @Override
@@ -53,18 +54,24 @@ public class ReportsAdapter extends RecyclerView.Adapter<ReportsAdapter.ReportVi
         return reportsList.size();
     }
 
-    static class ReportViewHolder extends RecyclerView.ViewHolder {
-        TextView title, description, state;
-        View expandableView; // Agrega una referencia al contenedor expandible
+    public static class ReportViewHolder extends RecyclerView.ViewHolder {
+        TextView title, fullComment, state, creationDate, createdBy;
+        ImageButton edit, delete;
+        View expandableView; // Este es el contenedor que quieres expandir/colapsar
 
         public ReportViewHolder(@NonNull View itemView) {
             super(itemView);
             title = itemView.findViewById(R.id.reportTitle);
-            description = itemView.findViewById(R.id.reportDescription);
+            fullComment = itemView.findViewById(R.id.reportDescription);
             state = itemView.findViewById(R.id.reportState);
-            expandableView = itemView.findViewById(R.id.expandable_view); // Asegúrate de tener este ID en tu layout
+            creationDate = itemView.findViewById(R.id.creationDate);
+            createdBy = itemView.findViewById(R.id.createdBy);
+            //edit = itemView.findViewById(R.id.bt_li_update);
+            delete = itemView.findViewById(R.id.bt_li_delete);
+            expandableView = itemView.findViewById(R.id.expandable_view); // Asume que tienes una sección llamada así
 
-            // Inicializa otros campos que serán parte de expandableView
+            // Puedes inicializar aquí la vista expandible como GONE si quieres que esté colapsada por defecto
+            expandableView.setVisibility(View.GONE);
         }
     }
 
@@ -102,6 +109,11 @@ public class ReportsAdapter extends RecyclerView.Adapter<ReportsAdapter.ReportVi
             animator.setDuration(300);
             animator.start();
         }
+    }
+
+    public interface ReportsAdapterCallback {
+        void deletePressed(int position);
+        void editPressed(int position);
     }
 
 }

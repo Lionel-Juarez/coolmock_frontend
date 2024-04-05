@@ -1,8 +1,15 @@
 package com.example.hamacav1.entidades.reports;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+
 public class Report {
+
+    private long idReporte;
     private String title;
-    private String description;
     private String state;
     private String fullComment;
     private String creationDate;
@@ -12,13 +19,21 @@ public class Report {
     public Report() {
     }
 
-    public Report(String title, String description, String state, String fullComment, String creationDate, String createdBy) {
+    public Report(Long idReporte, String title, String state, String fullComment, String creationDate, String createdBy) {
+        this.idReporte = idReporte;
         this.title = title;
-        this.description = description;
         this.state = state;
         this.fullComment = fullComment;
         this.creationDate = creationDate;
         this.createdBy = createdBy;
+    }
+
+    public Long getIdReporte() {
+        return idReporte;
+    }
+
+    public void setIdReporte(Long idReporte) {
+        this.idReporte = idReporte;
     }
 
     public String getTitle() {
@@ -27,14 +42,6 @@ public class Report {
 
     public void setTitle(String title) {
         this.title = title;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
     }
 
     public String getState() {
@@ -68,4 +75,25 @@ public class Report {
     public void setCreatedBy(String createdBy) {
         this.createdBy = createdBy;
     }
+
+
+    public void fromJSON(JSONObject fcjson) throws JSONException {
+        this.idReporte = fcjson.optLong("idReporte", -1);
+        this.title = fcjson.optString("titulo", "");
+        this.state = fcjson.optString("estado", "");
+        this.fullComment = fcjson.optString("comentarioCompleto", "");
+        this.creationDate = fcjson.optString("fechaCreacion", "");
+
+        // Actualización para manejar el objeto anidado 'creadoPor'
+        JSONObject creador = fcjson.optJSONObject("creadoPor");
+        if (creador != null) {
+            // Aquí asignamos el nombre de usuario del objeto 'creadoPor' al campo 'createdBy'.
+            // Esto asume que 'createdBy' es una cadena. Si 'createdBy' debe ser un objeto más complejo,
+            // necesitarás ajustar esta parte.
+            this.createdBy = creador.optString("nombreUsuario", "");
+        } else {
+            this.createdBy = ""; // Proporciona un valor predeterminado si 'creadoPor' es null o no está presente.
+        }
+    }
+
 }

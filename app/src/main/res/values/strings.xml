@@ -11,9 +11,17 @@
     <string name="fab_add_report">Añade un reporte</string>
     <string name="nuevo_libro">New Report</string>
     <string name="insert_name">Insert title</string>
-    <string name="write_here">Write here</string>
+    <string name="write_here">Write here</string>º
     <string name="accept">Accept</string>
     <string name="full_comment_hint">Full comment hint</string>
     <string name="description">Esta es la descripcion del reporte, como maximo, tendra 2 lineas...</string>
     <string name="delete_comment">Delete report</string>
+    <string name="url">http://10.0.2.2:8080/hamacaapi/</string>
+    <string name="eliminar_reporte">Delete report</string>
+    <string name="are_you_sure">Are you sure?</string>
+    <string name="yes">Yes</string>
+    <string name="no">No</string>
+    <string name="error_connection">Conecction error</string>
+    <string name="error_undelivered">Undelivered error</string>
+    <string name="error_unknown">Unknown error</string>
 </resources>
