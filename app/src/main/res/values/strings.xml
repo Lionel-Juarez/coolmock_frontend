@@ -45,6 +45,8 @@
     <string name="error_password_largo">La contraseña no puede superar los 20 caracteres.</string>
     <string name="desc_imagen_usuario">User img</string>
     <string name="rol_card">Rol:</string>
+    <string name="user_name_hint">Full name</string>
+    <string name="password_hint">Password</string>
 
     //Spinners
     <string-array name="rol">

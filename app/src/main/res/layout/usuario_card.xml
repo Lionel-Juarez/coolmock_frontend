@@ -32,10 +32,10 @@
             android:layout_toEndOf="@id/imagenPerfilUsuario"
             android:layout_alignTop="@id/imagenPerfilUsuario"
             android:layout_marginStart="16dp"
-            android:layout_marginTop="20dp"
+            android:layout_marginTop="10dp"
             android:layout_marginEnd="20dp"
             android:text="Nombre del Usuario"
-            android:textSize="18sp"
+            android:textSize="20sp"
             android:textStyle="bold" />
 
 
@@ -45,7 +45,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:textColor="@color/black"
-            android:textSize="14sp"
+            android:textSize="18sp"
             android:layout_below="@id/nombreCompleto"
             android:layout_toEndOf="@id/imagenPerfilUsuario"
             android:layout_marginStart="16dp"

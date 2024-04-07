@@ -42,7 +42,7 @@
             <EditText
                 android:id="@+id/et_new_nombre_usuario"
                 android:textSize="20dp"
-                android:hint="@string/write_here"
+                android:hint="@string/user_name_hint"
                 android:layout_width="match_parent"
                 android:layout_height="60dp"
                 android:background="@drawable/card_border"
@@ -54,7 +54,7 @@
             <EditText
                 android:id="@+id/et_new_password_usuario"
                 android:textSize="20dp"
-                android:hint="@string/write_here"
+                android:hint="@string/password_hint"
                 android:layout_width="match_parent"
                 android:layout_height="60dp"
                 android:background="@drawable/card_border"
