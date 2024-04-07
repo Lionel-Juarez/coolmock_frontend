@@ -1,6 +1,5 @@
 package com.example.hamacav1.entidades.reports;
 
-import android.animation.ValueAnimator;
 import android.content.Context;
 import android.transition.AutoTransition;
 import android.transition.TransitionManager;
@@ -8,6 +7,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -39,14 +39,14 @@ public class ReportsAdapter extends RecyclerView.Adapter<ReportsAdapter.ReportVi
     @Override
     public void onBindViewHolder(@NonNull ReportViewHolder holder, int position) {
         Report report = reportsList.get(position);
-        holder.title.setText(report.getTitle());
-        holder.fullComment.setText(report.getFullComment());
+        holder.title.setText(report.getTitulo());
+        holder.fullComment.setText(report.getComentarioCompleto());
 
         // Inicialmente mostrar solo 2 líneas del comentario.
         holder.fullComment.setMaxLines(2);
-        holder.state.setText(report.getState());
-        holder.creationDate.setText(report.getCreationDate());
-        holder.createdBy.setText("Creado por: " + report.getCreatedBy());
+        holder.state.setText(report.getEstado());
+        holder.creationDate.setText(report.getFechaCreacion());
+        holder.createdBy.setText("Creado por: " + report.getCreadoPor());
         // Evento de clic para expandir/colapsar el comentario y mostrar los detalles.
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -73,7 +73,7 @@ public class ReportsAdapter extends RecyclerView.Adapter<ReportsAdapter.ReportVi
             }
         });
         //holder.edit.setOnClickListener(v -> callback.editPressed(position)); // Edita
-        //holder.delete.setOnClickListener(v -> callback.deletePressed(position)); // Elimina
+        holder.delete.setOnClickListener(v -> callback.deletePressed(position)); // Elimina
     }
 
     @Override
@@ -83,7 +83,8 @@ public class ReportsAdapter extends RecyclerView.Adapter<ReportsAdapter.ReportVi
 
     public static class ReportViewHolder extends RecyclerView.ViewHolder {
         TextView title, fullComment, state, creationDate, createdBy;
-        ImageButton edit, delete;
+        ImageButton edit;
+        ImageView delete; // Cambiado a ImageView para reflejar tu XML
         View expandableView; // Este es el contenedor que quieres expandir/colapsar
 
         public ReportViewHolder(@NonNull View itemView) {
@@ -93,11 +94,9 @@ public class ReportsAdapter extends RecyclerView.Adapter<ReportsAdapter.ReportVi
             state = itemView.findViewById(R.id.reportState);
             creationDate = itemView.findViewById(R.id.creationDate);
             createdBy = itemView.findViewById(R.id.createdBy);
-            //edit = itemView.findViewById(R.id.bt_li_update);
-            delete = itemView.findViewById(R.id.bt_li_delete);
+            delete = itemView.findViewById(R.id.deleteIcon); // Asegúrate de que esto coincida con tu XML
             expandableView = itemView.findViewById(R.id.expandable_view); // Asume que tienes una sección llamada así
 
-            // Puedes inicializar aquí la vista expandible como GONE si quieres que esté colapsada por defecto
             expandableView.setVisibility(View.GONE);
         }
     }

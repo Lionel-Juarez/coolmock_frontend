@@ -3,29 +3,26 @@ package com.example.hamacav1.entidades.reports;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-
 public class Report {
 
     private long idReporte;
-    private String title;
-    private String state;
-    private String fullComment;
-    private String creationDate;
-    private String createdBy; //idUsuario deberia ir aqui
+    private String titulo;
+    private String estado;
+    private String comentarioCompleto;
+    private String fechaCreacion;
+    private String creadoPor; //idUsuario deberia ir aqui
 
 
     public Report() {
     }
 
-    public Report(Long idReporte, String title, String state, String fullComment, String creationDate, String createdBy) {
+    public Report(Long idReporte, String title, String estado, String comentarioCompleto, String fechaCreacion, String creadoPor) {
         this.idReporte = idReporte;
-        this.title = title;
-        this.state = state;
-        this.fullComment = fullComment;
-        this.creationDate = creationDate;
-        this.createdBy = createdBy;
+        this.titulo = title;
+        this.estado = estado;
+        this.comentarioCompleto = comentarioCompleto;
+        this.fechaCreacion = fechaCreacion;
+        this.creadoPor = creadoPor;
     }
 
     public Long getIdReporte() {
@@ -36,53 +33,53 @@ public class Report {
         this.idReporte = idReporte;
     }
 
-    public String getTitle() {
-        return title;
+    public String getTitulo() {
+        return titulo;
     }
 
-    public void setTitle(String title) {
-        this.title = title;
+    public void setTitulo(String titulo) {
+        this.titulo = titulo;
     }
 
-    public String getState() {
-        return state;
+    public String getEstado() {
+        return estado;
     }
 
-    public void setState(String state) {
-        this.state = state;
+    public void setEstado(String estado) {
+        this.estado = estado;
     }
 
-    public String getFullComment() {
-        return fullComment;
+    public String getComentarioCompleto() {
+        return comentarioCompleto;
     }
 
-    public void setFullComment(String fullComment) {
-        this.fullComment = fullComment;
+    public void setComentarioCompleto(String comentarioCompleto) {
+        this.comentarioCompleto = comentarioCompleto;
     }
 
-    public String getCreationDate() {
-        return creationDate;
+    public String getFechaCreacion() {
+        return fechaCreacion;
     }
 
-    public void setCreationDate(String creationDate) {
-        this.creationDate = creationDate;
+    public void setFechaCreacion(String fechaCreacion) {
+        this.fechaCreacion = fechaCreacion;
     }
 
-    public String getCreatedBy() {
-        return createdBy;
+    public String getCreadoPor() {
+        return creadoPor;
     }
 
-    public void setCreatedBy(String createdBy) {
-        this.createdBy = createdBy;
+    public void setCreadoPor(String creadoPor) {
+        this.creadoPor = creadoPor;
     }
 
 
     public void fromJSON(JSONObject fcjson) throws JSONException {
         this.idReporte = fcjson.optLong("idReporte", -1);
-        this.title = fcjson.optString("titulo", "");
-        this.state = fcjson.optString("estado", "");
-        this.fullComment = fcjson.optString("comentarioCompleto", "");
-        this.creationDate = fcjson.optString("fechaCreacion", "");
+        this.titulo = fcjson.optString("titulo", "");
+        this.estado = fcjson.optString("estado", "");
+        this.comentarioCompleto = fcjson.optString("comentarioCompleto", "");
+        this.fechaCreacion = fcjson.optString("fechaCreacion", "");
 
         // Actualización para manejar el objeto anidado 'creadoPor'
         JSONObject creador = fcjson.optJSONObject("creadoPor");
@@ -90,9 +87,9 @@ public class Report {
             // Aquí asignamos el nombre de usuario del objeto 'creadoPor' al campo 'createdBy'.
             // Esto asume que 'createdBy' es una cadena. Si 'createdBy' debe ser un objeto más complejo,
             // necesitarás ajustar esta parte.
-            this.createdBy = creador.optString("nombreUsuario", "");
+            this.creadoPor = creador.optString("nombreUsuario", "");
         } else {
-            this.createdBy = ""; // Proporciona un valor predeterminado si 'creadoPor' es null o no está presente.
+            this.creadoPor = ""; // Proporciona un valor predeterminado si 'creadoPor' es null o no está presente.
         }
     }
 

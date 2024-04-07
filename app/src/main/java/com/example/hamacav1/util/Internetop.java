@@ -1,4 +1,4 @@
-package com.example.hamacav1;
+package com.example.hamacav1.util;
 
 import org.json.JSONException;
 import org.json.JSONObject;

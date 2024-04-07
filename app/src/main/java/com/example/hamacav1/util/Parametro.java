@@ -1,11 +1,13 @@
-package com.example.hamacav1;
+package com.example.hamacav1.util;
+
+import org.json.JSONObject;
 
 public class Parametro {
 
     String llave;
     String valor;
 
-    public Parametro() {
+    public Parametro(String creadoPor, JSONObject id) {
 
     }
 

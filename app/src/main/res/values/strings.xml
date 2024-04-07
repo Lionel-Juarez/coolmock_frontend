@@ -16,7 +16,12 @@
     <string name="full_comment_hint">Full comment hint</string>
     <string name="description">Esta es la descripcion del reporte, como maximo, tendra 2 lineas...</string>
     <string name="delete_comment">Delete report</string>
-    <string name="url">http://10.0.2.2:8080/hamacaapi/</string>
+    <string name="url_reportes">http://10.0.2.2:8080/api/reportes/</string>
+    <string name="url_hamacas">http://10.0.2.2:8080/api/hamacas/</string>
+    <string name="url_clientes">http://10.0.2.2:8080/api/clientes/</string>
+    <string name="url_reservas">http://10.0.2.2:8080/api/reservas/</string>
+    <string name="url_usuarios">http://10.0.2.2:8080/api/usuarios/</string>
+    <string name="url_calculos">http://10.0.2.2:8080/api/calculos</string>
     <string name="eliminar_reporte">Delete report</string>
     <string name="are_you_sure">Are you sure?</string>
     <string name="yes">Yes</string>
@@ -24,4 +29,13 @@
     <string name="error_connection">Conecction error</string>
     <string name="error_undelivered">Undelivered error</string>
     <string name="error_unknown">Unknown error</string>
+    <string name="campo_obligatorio">Compulsory field</string>
+
+    //Spinners
+    <string-array name="state">
+        <item>Error</item>
+        <item>Canceled</item>
+        <item>Warning</item>
+        <item>Information</item>
+    </string-array>
 </resources>

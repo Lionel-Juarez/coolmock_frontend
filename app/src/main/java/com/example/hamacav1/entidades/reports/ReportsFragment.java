@@ -29,7 +29,6 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -43,7 +42,7 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.example.hamacav1.Internetop;
+import com.example.hamacav1.util.Internetop;
 import com.example.hamacav1.R;
 
 import org.jetbrains.annotations.NotNull;
@@ -61,7 +60,6 @@ public class ReportsFragment extends Fragment implements ReportsAdapter.ReportsA
     private RecyclerView reportsRecyclerView;
     private ReportsAdapter reportsAdapter;
     private List<Report> reportsList;
-
     ActivityResultLauncher<Intent> nuevoResultLauncher = registerForActivityResult(
             new ActivityResultContracts.StartActivityForResult(),
             new ActivityResultCallback<ActivityResult>() {
@@ -79,7 +77,7 @@ public class ReportsFragment extends Fragment implements ReportsAdapter.ReportsA
             if (reportsList.size() > position) {
                 Report report = reportsList.get(position);
                 Intent myIntent = new Intent(getActivity(), NewReport.class);
-                myIntent.putExtra("idReporte", report.getCreatedBy());
+                myIntent.putExtra("idReporte", report.getCreadoPor());
                 nuevoResultLauncher.launch(myIntent);
             }
         }
@@ -107,12 +105,12 @@ public class ReportsFragment extends Fragment implements ReportsAdapter.ReportsA
     }
 
     private void newReport() {
-        Intent intent = new Intent(getActivity(), NewReport.class);
-        startActivity(intent);
+        Intent intent = new Intent(getContext(), NewReport.class);
+        nuevoResultLauncher.launch(intent);
     }
 
     private void loadReportsFromBackend() {
-        String url = "http://10.0.2.2:8080/api/reportes/reports";
+        String url = getResources().getString(R.string.url_reportes) ;
         OkHttpClient client = new OkHttpClient();
         Request request = new Request.Builder().url(url).build();
 
@@ -164,8 +162,7 @@ public class ReportsFragment extends Fragment implements ReportsAdapter.ReportsA
         AlertDialog diaBox = AskOption(position);
         diaBox.show();//Mostramos un diálogo de confirmación
     }
-    private AlertDialog AskOption(final int position)
-    {
+    private AlertDialog AskOption(final int position) {
         AlertDialog myQuittingDialogBox = new AlertDialog.Builder(getActivity())
 
                 .setTitle(R.string.eliminar_reporte)
@@ -191,7 +188,7 @@ public class ReportsFragment extends Fragment implements ReportsAdapter.ReportsA
             Log.d("ReportsFragment", "Eliminando reporte: " + report.getIdReporte());
 
             if (isNetworkAvailable()) {
-                String url = getResources().getString(R.string.url) + "deleteReport/" + report.getIdReporte();
+                String url = getResources().getString(R.string.url_reportes) + "deleteReport/" + report.getIdReporte();
                 eliminarTask(url);
             } else {
                 Log.e("ReportsFragment", "Conexión de red no disponible para eliminar reporte.");
@@ -269,7 +266,7 @@ public class ReportsFragment extends Fragment implements ReportsAdapter.ReportsA
             // pbMain.setVisibility(View.VISIBLE);
 
             Resources res = getResources();
-            String url = res.getString(R.string.url) + "reports";
+            String url = res.getString(R.string.url_reportes);
             Log.d("ReportsFragment", "URL de carga de reportes: " + url);
 
             getListaTask(url);

@@ -18,8 +18,8 @@ import android.widget.LinearLayout;
 import android.widget.Toast;
 
 import com.example.hamacav1.bottomMenu.HomeFragment;
-import com.example.hamacav1.bottomMenu.CalcsFragment;
-import com.example.hamacav1.bottomMenu.SunbedFragment;
+import com.example.hamacav1.entidades.calculos.CalcsFragment;
+import com.example.hamacav1.entidades.hamacas.SunbedFragment;
 import com.example.hamacav1.entidades.reports.ReportsFragment;
 import com.example.hamacav1.databinding.ActivityMainBinding;
 

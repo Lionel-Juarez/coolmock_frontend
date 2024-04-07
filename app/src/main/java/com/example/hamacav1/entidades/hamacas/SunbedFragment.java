@@ -1,4 +1,4 @@
-package com.example.hamacav1.bottomMenu;
+package com.example.hamacav1.entidades.hamacas;
 
 import android.os.Bundle;
 import android.view.LayoutInflater;
