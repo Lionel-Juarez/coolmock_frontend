@@ -8,16 +8,16 @@ public class Usuario {
     private long id;
     private String nombreUsuario;
     private String password;
-    private boolean esAdministrador;
+    private String rol;
 
     public Usuario() {
     }
 
-    public Usuario(long id, String nombreUsuario, String password, boolean esAdministrador) {
+    public Usuario(long id, String nombreUsuario, String password, String rol) {
         this.id = id;
         this.nombreUsuario = nombreUsuario;
         this.password = password;
-        this.esAdministrador = esAdministrador;
+        this.rol = rol;
     }
 
     public long getId() {
@@ -44,18 +44,18 @@ public class Usuario {
         this.password = password;
     }
 
-    public boolean isEsAdministrador() {
-        return esAdministrador;
+    public String getRol() {
+        return rol;
     }
 
-    public void setEsAdministrador(boolean esAdministrador) {
-        this.esAdministrador = esAdministrador;
+    public void setRol(String rol) {
+        this.rol = rol;
     }
 
     public void fromJSON(JSONObject jsonObject) throws JSONException {
         this.id = jsonObject.optLong("id", -1);
         this.nombreUsuario = jsonObject.optString("nombreUsuario", "");
         this.password = jsonObject.optString("password", "");
-        this.esAdministrador = jsonObject.optBoolean("esAdministrador", false);
+        this.rol = jsonObject.optString("rol", "");
     }
 }

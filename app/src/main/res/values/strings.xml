@@ -30,8 +30,27 @@
     <string name="error_undelivered">Undelivered error</string>
     <string name="error_unknown">Unknown error</string>
     <string name="campo_obligatorio">Compulsory field</string>
+    <string name="usuarios">Usuarios</string>
+    <string name="fab_add_usuario">add user</string>
+    <string name="eliminar_Usuario">Delete user</string>
+    <string name="esAdministrador">Rol del trabajador:</string>
+    <string name="settings">Settings</string>
+    <string name="ajuste_clientes">Client settings</string>
+    <string name="ajustes_usuarios">User settings</string>
+    <string name="nuevo_usuario">New User</string>
+    <string name="rol">Select rol</string>
+    <string name="error_nombre_largo">El nombre no puede superar los 50 caracteres.</string>
+    <string name="error_apellidos_largo">Los apellidos no pueden superar los 50 caracteres.</string>
+    <string name="error_password_corto">La contraseña debe tener al menos 8 caracteres.</string>
+    <string name="error_password_largo">La contraseña no puede superar los 20 caracteres.</string>
+    <string name="desc_imagen_usuario">User img</string>
+    <string name="rol_card">Rol:</string>
 
     //Spinners
+    <string-array name="rol">
+        <item>Admin</item>
+        <item>Worker</item>
+    </string-array>
     <string-array name="state">
         <item>Error</item>
         <item>Canceled</item>

@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context=".entidades.usuarios.NuevoUsuario">
+
+    <androidx.cardview.widget.CardView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="50dp"
+        android:layout_marginEnd="20dp"
+        android:layout_marginStart="20dp"
+        app:cardCornerRadius="30dp"
+        app:cardElevation="20dp">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_gravity="center_horizontal"
+            android:padding="20dp"
+            android:background="@drawable/card_border">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textAlignment="center"
+                android:textColor="@color/black"
+                android:id="@+id/tv_new_usuario_title"
+                android:text="@string/nuevo_usuario"
+                android:layout_marginTop="40dp"
+                android:layout_marginBottom="20dp"
+                android:layout_centerHorizontal="true"
+                android:textStyle="bold"
+                android:textSize="38dp" />
+
+
+            <EditText
+                android:id="@+id/et_new_nombre_usuario"
+                android:textSize="20dp"
+                android:hint="@string/write_here"
+                android:layout_width="match_parent"
+                android:layout_height="60dp"
+                android:background="@drawable/card_border"
+                android:layout_marginTop="20dp"
+                android:padding="16dp"
+                android:gravity="start|center_vertical"
+                android:textColor="@color/principalColor"/>
+
+            <EditText
+                android:id="@+id/et_new_password_usuario"
+                android:textSize="20dp"
+                android:hint="@string/write_here"
+                android:layout_width="match_parent"
+                android:layout_height="60dp"
+                android:background="@drawable/card_border"
+                android:layout_marginTop="20dp"
+                android:padding="16dp"
+                android:gravity="start|center_vertical"
+                android:textColor="@color/principalColor"/>
+
+            <Spinner
+                android:id="@+id/spinner_usuario_rol"
+                android:layout_below="@id/et_new_nombre_usuario"
+                android:layout_width="match_parent"
+                android:layout_height="60dp"
+                android:background="@drawable/card_border"
+                android:layout_marginTop="20dp"
+                android:padding="16dp"
+                android:entries="@array/rol"
+                android:hint="@string/rol"
+                android:gravity="start|center_vertical"
+                android:textColor="@color/principalColor"/>
+
+
+            <Button
+                android:id="@+id/bt_usuario_accept"
+                android:layout_below="@id/spinner_usuario_rol"
+                android:layout_marginBottom="40dp"
+                android:text="@string/accept"
+                android:onClick="addUsuario"
+                android:layout_centerHorizontal="true"
+                android:layout_width="match_parent"
+                android:layout_height="60dp"
+                android:textSize="18sp"
+                android:layout_marginTop="20dp"
+                app:cornerRadius = "20dp"/>
+
+        </LinearLayout>
+    </androidx.cardview.widget.CardView>
+</ScrollView>

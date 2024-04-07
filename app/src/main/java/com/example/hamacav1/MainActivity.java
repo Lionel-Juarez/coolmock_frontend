@@ -22,6 +22,7 @@ import com.example.hamacav1.entidades.calculos.CalcsFragment;
 import com.example.hamacav1.entidades.hamacas.SunbedFragment;
 import com.example.hamacav1.entidades.reports.ReportsFragment;
 import com.example.hamacav1.databinding.ActivityMainBinding;
+import com.example.hamacav1.entidades.usuarios.UsuarioFragment;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -73,38 +74,26 @@ public class MainActivity extends AppCompatActivity {
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
         dialog.setContentView(R.layout.bottomsheetlayout);
 
-        LinearLayout videoLayout = dialog.findViewById(R.id.layoutVideo);
-        LinearLayout shortsLayout = dialog.findViewById(R.id.layoutShorts);
+        LinearLayout usuarioLayout = dialog.findViewById(R.id.layoutUsuario);
+        LinearLayout clienteLayout = dialog.findViewById(R.id.layoutCliente);
         LinearLayout liveLayout = dialog.findViewById(R.id.layoutLive);
         ImageView cancelButton = dialog.findViewById(R.id.cancelButton);
 
-        videoLayout.setOnClickListener(new View.OnClickListener() {
+        clienteLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
+                // Reemplazar el fragmento actual con ClienteFragment
+                //replaceFragment(new ClienteFragment());
                 dialog.dismiss();
-                Toast.makeText(MainActivity.this,"Upload a Video is clicked",Toast.LENGTH_SHORT).show();
-
             }
         });
 
-        shortsLayout.setOnClickListener(new View.OnClickListener() {
+        usuarioLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
+                // Reemplazar el fragmento actual con UserFragment
+                replaceFragment(new UsuarioFragment());
                 dialog.dismiss();
-                Toast.makeText(MainActivity.this,"Create a short is Clicked",Toast.LENGTH_SHORT).show();
-
-            }
-        });
-
-        liveLayout.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-                dialog.dismiss();
-                Toast.makeText(MainActivity.this,"Go live is Clicked",Toast.LENGTH_SHORT).show();
-
             }
         });
 
