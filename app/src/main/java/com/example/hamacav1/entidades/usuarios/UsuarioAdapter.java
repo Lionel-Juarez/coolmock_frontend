@@ -54,7 +54,6 @@ public class UsuarioAdapter extends RecyclerView.Adapter<UsuarioAdapter.UsuarioV
         TextView nombre, rol;
         ImageButton edit;
         ImageView delete; // Cambiado a ImageView para reflejar tu XML
-        View expandableView; // Este es el contenedor que quieres expandir/colapsar
 
         public UsuarioViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -63,7 +62,6 @@ public class UsuarioAdapter extends RecyclerView.Adapter<UsuarioAdapter.UsuarioV
 
             delete = itemView.findViewById(R.id.eliminarUsuario); // Asegúrate de que esto coincida con tu XML
             edit = itemView.findViewById(R.id.modificarUsuario); // Asegúrate de que esto coincida con tu XML
-            expandableView = itemView.findViewById(R.id.expandable_view); // Asume que tienes una sección llamada así
 
             //expandableView.setVisibility(View.GONE);
         }

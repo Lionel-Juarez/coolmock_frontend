@@ -19,6 +19,7 @@ import android.widget.Toast;
 
 import com.example.hamacav1.bottomMenu.HomeFragment;
 import com.example.hamacav1.entidades.calculos.CalcsFragment;
+import com.example.hamacav1.entidades.clientes.ClienteFragment;
 import com.example.hamacav1.entidades.hamacas.SunbedFragment;
 import com.example.hamacav1.entidades.reports.ReportsFragment;
 import com.example.hamacav1.databinding.ActivityMainBinding;
@@ -83,7 +84,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 // Reemplazar el fragmento actual con ClienteFragment
-                //replaceFragment(new ClienteFragment());
+                replaceFragment(new ClienteFragment());
                 dialog.dismiss();
             }
         });

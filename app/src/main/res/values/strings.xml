@@ -35,7 +35,7 @@
     <string name="eliminar_Usuario">Delete user</string>
     <string name="esAdministrador">Rol del trabajador:</string>
     <string name="settings">Settings</string>
-    <string name="ajuste_clientes">Client settings</string>
+    <string name="ajuste_clientes">Customer settings</string>
     <string name="ajustes_usuarios">User settings</string>
     <string name="nuevo_usuario">New User</string>
     <string name="rol">Select rol</string>
@@ -47,6 +47,13 @@
     <string name="rol_card">Rol:</string>
     <string name="user_name_hint">Full name</string>
     <string name="password_hint">Password</string>
+    <string name="desc_imagen_telefono">Phone img</string>
+    <string name="nuevo_cliente">New Customer</string>
+    <string name="telefono_hint">Phone number</string>
+    <string name="error_telefono_formato">Phone number fotmat error</string>
+    <string name="eliminar_cliente">Delete Customer</string>
+    <string name="fab_add_cliente">Add customer</string>
+    <string name="clientes">Customers</string>
 
     //Spinners
     <string-array name="rol">

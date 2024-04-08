@@ -28,8 +28,8 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.example.hamacav1.util.Internetop;
 import com.example.hamacav1.R;
+import com.example.hamacav1.util.Internetop;
 
 import org.jetbrains.annotations.NotNull;
 import org.json.JSONArray;
@@ -48,100 +48,96 @@ import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
 
-public class ReportsFragment extends Fragment implements ReportsAdapter.ReportsAdapterCallback {
+public class ClienteFragment extends Fragment implements ClienteAdapter.ClienteAdapterCallback {
 
-    private RecyclerView reportsRecyclerView;
-    private ReportsAdapter reportsAdapter;
-    private List<Report> reportsList;
+    private RecyclerView clienteRecyclerView;
+    private ClienteAdapter cliente;
+    private List<Cliente> clienteList;
     ActivityResultLauncher<Intent> nuevoResultLauncher = registerForActivityResult(
             new ActivityResultContracts.StartActivityForResult(),
             new ActivityResultCallback<ActivityResult>() {
                 @Override
                 public void onActivityResult(ActivityResult result) {
                     if (result.getResultCode() == Activity.RESULT_OK) {
-                        cargarReportes();
+                        cargarClientes();
                     }
                 }
             });
 
     @Override
     public void editPressed(int position) {
-        if (reportsList != null) {
-            if (reportsList.size() > position) {
-                Report report = reportsList.get(position);
-                Intent myIntent = new Intent(getActivity(), NewReport.class);
-                myIntent.putExtra("idReporte", report.getCreadoPor());
+        if (clienteList != null) {
+            if (clienteList.size() > position) {
+                Cliente cliente = clienteList.get(position);
+                Intent myIntent = new Intent(getActivity(), NuevoCliente.class);
+                myIntent.putExtra("idCliente", cliente.getIdCLiente());
                 nuevoResultLauncher.launch(myIntent);
             }
         }
     }
 
-    public interface OnReportsReceivedListener {
-        void onReceived(List<Report> reports);
-    }
-
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_reports, container, false);
-        reportsRecyclerView = view.findViewById(R.id.reportsRecyclerView);
-        reportsRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
-        reportsList = new ArrayList<>();
-        reportsAdapter = new ReportsAdapter(reportsList, getContext(), this);
-        reportsRecyclerView.setAdapter(reportsAdapter);
+        View view = inflater.inflate(R.layout.fragment_clientes, container, false);
+        clienteRecyclerView = view.findViewById(R.id.clientesRecyclerView);
+        clienteRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+        clienteList = new ArrayList<>();
+        cliente = new ClienteAdapter(clienteList, getContext(), this);
+        clienteRecyclerView.setAdapter(cliente);
 
-        loadReportsFromBackend();
+        loadClientesFromBackend();
 
-        view.findViewById(R.id.fab_add_report).setOnClickListener(v -> newReport());
+        view.findViewById(R.id.fab_add_cliente).setOnClickListener(v -> newCliente());
 
         return view;
     }
 
-    private void newReport() {
-        Intent intent = new Intent(getContext(), NewReport.class);
+    private void newCliente() {
+        Intent intent = new Intent(getContext(), NuevoCliente.class);
         nuevoResultLauncher.launch(intent);
     }
 
-    private void loadReportsFromBackend() {
-        String url = getResources().getString(R.string.url_reportes) ;
+    private void loadClientesFromBackend() {
+        String url = getResources().getString(R.string.url_clientes) ;
         OkHttpClient client = new OkHttpClient();
         Request request = new Request.Builder().url(url).build();
 
-        Log.d("ReportsFragment", "Iniciando carga de reportes desde el backend: " + url);
+        Log.d("ClientesFragment", "Iniciando carga de Clientes desde el backend: " + url);
 
         client.newCall(request).enqueue(new Callback() {
             @Override
             public void onFailure(@NotNull Call call, @NotNull IOException e) {
-                Log.e("ReportsFragment", "Error al cargar reportes: ", e);
-                // Aquí puedes añadir un mensaje de UI para informar al usuario
+                Log.e("ClientesFragment", "Error al cargar Clientes: ", e);
+                // Aquí puedes añadir un mensaje de UI para informar al cliente
             }
 
             @Override
             public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
                 if (!response.isSuccessful()) {
-                    Log.e("ReportsFragment", "Respuesta no exitosa del servidor: " + response);
+                    Log.e("ClientesFragment", "Respuesta no exitosa del servidor: " + response);
                     throw new IOException("Código inesperado " + response);
                 }
 
                 final String responseData = response.body().string();
-                Log.d("ReportsFragment", "Reportes cargados correctamente: " + responseData);
+                Log.d("ClientesFragment", "Clientes cargados correctamente: " + responseData);
 
                 getActivity().runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
                         try {
                             JSONArray jsonArray = new JSONArray(responseData);
-                            reportsList.clear();
+                            clienteList.clear();
                             for (int i = 0; i < jsonArray.length(); i++) {
                                 JSONObject jsonObject = jsonArray.getJSONObject(i);
-                                Report report = new Report();
-                                report.fromJSON(jsonObject);
-                                reportsList.add(report);
+                                Cliente Cliente = new Cliente();
+                                Cliente.fromJSON(jsonObject);
+                                clienteList.add(Cliente);
                             }
-                            reportsAdapter.notifyDataSetChanged();
-                            Log.d("ReportsFragment", "Reportes actualizados en la interfaz de usuario.");
+                            cliente.notifyDataSetChanged();
+                            Log.d("ClientesFragment", "Clientes actualizados en la interfaz de cliente.");
                         } catch (JSONException e) {
-                            Log.e("ReportsFragment", "Error al parsear reportes: ", e);
+                            Log.e("ClientesFragment", "Error al parsear Clientes: ", e);
                         }
                     }
                 });
@@ -158,11 +154,11 @@ public class ReportsFragment extends Fragment implements ReportsAdapter.ReportsA
     private AlertDialog AskOption(final int position) {
         AlertDialog myQuittingDialogBox = new AlertDialog.Builder(getActivity())
 
-                .setTitle(R.string.eliminar_reporte)
+                .setTitle(R.string.eliminar_cliente)
                 .setMessage(R.string.are_you_sure)
                 .setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int whichButton) {
-                        eliminarReporte(position);
+                        eliminarCliente(position);
                         dialog.dismiss();
                     }
                 })
@@ -175,20 +171,20 @@ public class ReportsFragment extends Fragment implements ReportsAdapter.ReportsA
         return myQuittingDialogBox;
     }
 
-    private void eliminarReporte(int position){
-        if(reportsList !=null && reportsList.size() > position) {
-            Report report = reportsList.get(position);
-            Log.d("ReportsFragment", "Eliminando reporte: " + report.getIdReporte());
+    private void eliminarCliente(int position){
+        if(clienteList !=null && clienteList.size() > position) {
+            Cliente Cliente = clienteList.get(position);
+            Log.d("ClientesFragment", "Eliminando Cliente: " + Cliente.getIdCLiente());
 
             if (isNetworkAvailable()) {
-                String url = getResources().getString(R.string.url_reportes) + "deleteReport/" + report.getIdReporte();
+                String url = getResources().getString(R.string.url_clientes) + "eliminarCliente/" + Cliente.getIdCLiente();
                 eliminarTask(url);
             } else {
-                Log.e("ReportsFragment", "Conexión de red no disponible para eliminar reporte.");
+                Log.e("ClientesFragment", "Conexión de red no disponible para eliminar Cliente.");
                 showError("error.IOException");
             }
         } else {
-            Log.e("ReportsFragment", "Posición de reporte no válida o lista de reportes vacía.");
+            Log.e("ClientesFragment", "Posición de Cliente no válida o lista de Clientes vacía.");
             showError("error.desconocido");
         }
     }
@@ -227,7 +223,7 @@ public class ReportsFragment extends Fragment implements ReportsAdapter.ReportsA
                 Internetop interopera= Internetop.getInstance();
                 String result = interopera.deleteTask(url);
                 handler.post(new Runnable() {/*Una vez handler recoge el resultado de la tarea en
-                segundo plano, hacemos los cambios pertinentes en la interfaz de usuario en función
+                segundo plano, hacemos los cambios pertinentes en la interfaz de cliente en función
                 del resultado obtenido*/
                     @Override
                     public void run() {
@@ -241,7 +237,7 @@ public class ReportsFragment extends Fragment implements ReportsAdapter.ReportsA
                         else{
 //                            ProgressBar pbMain = (ProgressBar) findViewById(R.id.pb_main);
 //                            pbMain.setVisibility(View.GONE);
-                            cargarReportes();
+                            cargarClientes();
                         }
                     }
                 });
@@ -249,22 +245,22 @@ public class ReportsFragment extends Fragment implements ReportsAdapter.ReportsA
         });
     }
 
-    private void cargarReportes() {
-        Log.d("ReportsFragment", "Intentando cargar reportes...");
+    private void cargarClientes() {
+        Log.d("ClientesFragment", "Intentando cargar Clientes...");
         if (isNetworkAvailable()) {
-            Log.d("ReportsFragment", "Conexión de red disponible. Cargando reportes...");
+            Log.d("ClientesFragment", "Conexión de red disponible. Cargando Clientes...");
 
             // Aquí podría ir el código para mostrar una barra de progreso si es necesario
             // ProgressBar pbMain = (ProgressBar) findViewById(R.id.pb_main);
             // pbMain.setVisibility(View.VISIBLE);
 
             Resources res = getResources();
-            String url = res.getString(R.string.url_reportes);
-            Log.d("ReportsFragment", "URL de carga de reportes: " + url);
+            String url = res.getString(R.string.url_clientes);
+            Log.d("ClientesFragment", "URL de carga de Clientes: " + url);
 
             getListaTask(url);
         } else {
-            Log.e("ReportsFragment", "Conexión de red no disponible.");
+            Log.e("ClientesFragment", "Conexión de red no disponible.");
             showError("error.IOException");
         }
     }
@@ -299,23 +295,23 @@ public class ReportsFragment extends Fragment implements ReportsAdapter.ReportsA
     }
     private void resetLista(String result){
         try {
-            JSONArray listaReportesJson = new JSONArray(result);
-            if (reportsList == null) {
-                reportsList = new ArrayList<>();
+            JSONArray listaClientesJson = new JSONArray(result);
+            if (clienteList == null) {
+                clienteList = new ArrayList<>();
             } else {
-                reportsList.clear();
+                clienteList.clear();
             }
-            for (int i = 0; i < listaReportesJson.length(); ++i) {
-                JSONObject jsonUser = listaReportesJson.getJSONObject(i);
-                Report report = new Report();
-                report.fromJSON(jsonUser);
-                reportsList.add(report);
+            for (int i = 0; i < listaClientesJson.length(); ++i) {
+                JSONObject jsonUser = listaClientesJson.getJSONObject(i);
+                Cliente Cliente = new Cliente();
+                Cliente.fromJSON(jsonUser);
+                clienteList.add(Cliente);
             }
-            if (reportsAdapter == null) {
-                reportsAdapter = new ReportsAdapter(reportsList, getContext(), this);
-                reportsRecyclerView.setAdapter(reportsAdapter);
+            if (cliente == null) {
+                cliente = new ClienteAdapter(clienteList, getContext(), this);
+                clienteRecyclerView.setAdapter(cliente);
             } else {
-                reportsAdapter.notifyDataSetChanged();
+                cliente.notifyDataSetChanged();
             }
             // Si estás utilizando una ProgressBar, aquí iría el código para ocultarla
             // Por ejemplo:
@@ -344,6 +340,6 @@ public class ReportsFragment extends Fragment implements ReportsAdapter.ReportsA
         }
         Toast toast = Toast.makeText(getActivity(), message, duration);
         toast.show();
-        Log.d("ReportsFragment", "Mostrando error: " + message);
+        Log.d("ClientesFragment", "Mostrando error: " + message);
     }
 }

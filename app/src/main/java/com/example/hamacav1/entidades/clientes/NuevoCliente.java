@@ -15,7 +15,6 @@ import android.os.Looper;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.Toast;
@@ -26,9 +25,6 @@ import com.example.hamacav1.R;
 
 import org.json.JSONObject;
 
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
-import java.util.Locale;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -39,30 +35,16 @@ import okhttp3.RequestBody;
 import okhttp3.Response;
 
 
-public class NewReport extends AppCompatActivity {
-
-
-    private long creadoPor;
-    private String fechaCreacion;
-    private EditText etTitulo;
-    //private EditText descriptionEditText;
-    private EditText etComentarioCompleto;
-    private Spinner spinnerEstado;
-
+public class NuevoCliente extends AppCompatActivity {
+    private EditText etNombreCompleto;
+    private EditText etNumeroTelefono;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_new_report);
+        setContentView(R.layout.activity_new_cliente);
 
-        etTitulo = findViewById(R.id.et_new_title_report);
-        etComentarioCompleto = findViewById(R.id.et_full_comment);
-        spinnerEstado = findViewById(R.id.spinner_report_state);
-
-        // Establece automáticamente la fecha actual como fecha de creación
-        SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy HH:mm", Locale.getDefault());
-        fechaCreacion = sdf.format(Calendar.getInstance().getTime());
-        // Aquí deberías obtener el ID del usuario actualmente autenticado, por ejemplo, desde SharedPreferences o de alguna manera que mantengas el estado de la sesión del usuario
-        creadoPor = getCurrentUserId();
+        etNombreCompleto = findViewById(R.id.et_new_nombreCompleto_cliente);
+        etNumeroTelefono = findViewById(R.id.et_new_telefono_cliente);
     }
 
     @Override
@@ -70,14 +52,10 @@ public class NewReport extends AppCompatActivity {
         super.onSaveInstanceState(outState);
     }
     private Boolean isNetworkAvailable() {
-        /*La clase ConnectivityManager nos devolverá información sobre el estado de la conexión a
-         * Internet. Puede ser que no tengamos cobertura o que directamente no tengamos activado
-         * la red WiFi o la red de datos móviles*/
+
         ConnectivityManager connectivityManager = (ConnectivityManager)
                 getSystemService(Context.CONNECTIVITY_SERVICE);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            /*Si la versión de Android es superior a Android M, debemos usar las clase Network
-             * en lugar de NetworkInfo para comprobar la conectividad*/
             Network nw = connectivityManager.getActiveNetwork();
             if (nw == null) {
                 return false;
@@ -92,38 +70,47 @@ public class NewReport extends AppCompatActivity {
         }
     }
 
-    public void addReporte(View view) {
-        String titulo = etTitulo.getText().toString();
-        String comentarioCompleto = etComentarioCompleto.getText().toString();
-        String estado = String.valueOf(spinnerEstado.getSelectedItemPosition() + 1); // Asegúrate de que los estados en el spinner estén correctamente alineados con tu backend
+    public void addCliente(View view) {
+        String nombreCompleto = etNombreCompleto.getText().toString();
+        String numeroTelefono = etNumeroTelefono.getText().toString();
 
-        if (validateInput(titulo, comentarioCompleto)) {
+        if (validateInput(nombreCompleto, numeroTelefono)) {
             if (isNetworkAvailable()) {
-                String url = getResources().getString(R.string.url_reportes) + "newReport";
-                sendTask(url, titulo, comentarioCompleto, estado, fechaCreacion, String.valueOf(creadoPor));
+                String url = getResources().getString(R.string.url_clientes) + "nuevoCliente";
+                sendTask(url, nombreCompleto, numeroTelefono);
             } else {
                 showError("error.IOException");
             }
         }
     }
 
-    private boolean validateInput(String title, String fullComment) {
+    private boolean validateInput(String nombre, String telefono) {
         boolean isValid = true;
         Resources res = getResources();
 
-        if (title.isEmpty()) {
-            etTitulo.setError(res.getString(R.string.campo_obligatorio));
+        // Validación para el nombre
+        if (nombre.isEmpty()) {
+            etNombreCompleto.setError(res.getString(R.string.campo_obligatorio));
+            isValid = false;
+        } else if (nombre.length() > 50) { // Asumiendo que el máximo es 50 caracteres para el nombre
+            etNombreCompleto.setError(res.getString(R.string.error_nombre_largo));
             isValid = false;
         }
 
-        if (fullComment.isEmpty()) {
-            etComentarioCompleto.setError(res.getString(R.string.campo_obligatorio));
+        // Validación para el teléfono
+        if (telefono.isEmpty()) {
+            etNumeroTelefono.setError(res.getString(R.string.campo_obligatorio));
+            isValid = false;
+        } else if (!telefono.matches("\\d{9,15}")) { // Asume que el teléfono debe tener entre 9 y 15 dígitos
+            etNumeroTelefono.setError(res.getString(R.string.error_telefono_formato));
             isValid = false;
         }
 
         return isValid;
     }
-    private void sendTask(String url, String titulo, String comentarioCompleto, String estado, String fechaCreacion, String creadoPor) {
+
+
+    private void sendTask(String url, String nombreCompleto, String numeroTelefono) {
         ExecutorService executor = Executors.newSingleThreadExecutor();
         Handler handler = new Handler(Looper.getMainLooper());
 
@@ -133,13 +120,8 @@ public class NewReport extends AppCompatActivity {
                 MediaType MEDIA_TYPE_JSON = MediaType.parse("application/json; charset=utf-8");
 
                 JSONObject json = new JSONObject();
-                json.put("titulo", titulo);
-                json.put("comentarioCompleto", comentarioCompleto);
-                json.put("estado", estado);
-                json.put("fechaCreacion", fechaCreacion);
-                JSONObject creadoPorObj = new JSONObject();
-                creadoPorObj.put("id", creadoPor);
-                json.put("creadoPor", creadoPorObj);
+                json.put("nombreCompleto",nombreCompleto);
+                json.put("numeroTelefono", numeroTelefono);
 
                 RequestBody body = RequestBody.create(json.toString(), MEDIA_TYPE_JSON);
                 Request request = new Request.Builder().url(url).post(body).build();
@@ -147,45 +129,24 @@ public class NewReport extends AppCompatActivity {
                 try (Response response = client.newCall(request).execute()) {
                     String result = response.body().string();
                     handler.post(() -> {
-                        Log.d("NewReport", "Respuesta del servidor: " + result);
+                        Log.d("Newcliente", "Respuesta del servidor: " + result);
                         if (response.isSuccessful()) {
-                            Log.d("NewReport", "Reporte añadido con éxito.");
-                            Toast.makeText(getApplicationContext(), "Reporte añadido con éxito", Toast.LENGTH_SHORT).show();
-                            // Actualizar lista de reportes
+                            Log.d("Newcliente", "clientee añadido con éxito.");
+                            Toast.makeText(getApplicationContext(), "clientee añadido con éxito", Toast.LENGTH_SHORT).show();
+                            // Actualizar lista de clientees
                             setResult(Activity.RESULT_OK);
                             finish();
                         } else {
-                            Log.e("NewReport", "Error al añadir reporte: " + result);
-                            showError("Error desconocido al añadir reporte.");
+                            Log.e("Newcliente", "Error al añadir clientee: " + result);
+                            showError("Error desconocido al añadir clientee.");
                         }
                     });
                 }
             } catch (Exception e) {
-                Log.e("NewReport", "Excepción al enviar tarea: " + e.getMessage(), e);
+                Log.e("Newcliente", "Excepción al enviar tarea: " + e.getMessage(), e);
                 handler.post(() -> showError("Error al procesar la solicitud."));
             }
         });
-    }
-
-
-
-
-    private void processResult(String result) {
-        Button btAceptar = findViewById(R.id.bt_report_accept);
-        btAceptar.setEnabled(true);
-        btAceptar.setClickable(true);
-
-        if (result != null && !result.startsWith("error")) {
-            setResult(RESULT_OK);
-            finish();
-        } else {
-            showError("error.desconocido");
-        }
-    }
-
-    private long getCurrentUserId() {
-        // Implementa la lógica para obtener el ID del usuario actual
-        return 1;
     }
 
     private void showError(String error) {
