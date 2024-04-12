@@ -15,12 +15,11 @@ import android.view.ViewGroup;
 import android.view.Window;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.Toast;
 
 import com.example.hamacav1.bottomMenu.HomeFragment;
 import com.example.hamacav1.entidades.calculos.CalcsFragment;
 import com.example.hamacav1.entidades.clientes.ClienteFragment;
-import com.example.hamacav1.entidades.hamacas.SunbedFragment;
+import com.example.hamacav1.entidades.hamacas.HamacaFragment;
 import com.example.hamacav1.entidades.reports.ReportsFragment;
 import com.example.hamacav1.databinding.ActivityMainBinding;
 import com.example.hamacav1.entidades.usuarios.UsuarioFragment;
@@ -44,7 +43,7 @@ public class MainActivity extends AppCompatActivity {
             if (itemId == R.id.home) {
                 replaceFragment(new HomeFragment());
             } else if (itemId == R.id.sunbed) {
-                replaceFragment(new SunbedFragment());
+                replaceFragment(new HamacaFragment());
             } else if (itemId == R.id.reports) {
                 replaceFragment(new ReportsFragment());
             } else if (itemId == R.id.calcs) {

@@ -54,6 +54,9 @@
     <string name="eliminar_cliente">Delete Customer</string>
     <string name="fab_add_cliente">Add customer</string>
     <string name="clientes">Customers</string>
+    <string name="numero_hamaca">Hamaca %1$s</string>
+    <string name="estado_hamaca">Sunbed state</string>
+
 
     //Spinners
     <string-array name="rol">
@@ -65,5 +68,10 @@
         <item>Canceled</item>
         <item>Warning</item>
         <item>Information</item>
+    </string-array>
+    <string-array name="planos_array">
+        <item>Plano 1</item>
+        <item>Plano 2</item>
+        <item>Plano 3</item>
     </string-array>
 </resources>

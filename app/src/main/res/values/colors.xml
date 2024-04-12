@@ -9,5 +9,8 @@
     <color name="white">#FFFFFFFF</color>
     <color name="principalColor">#EEC878</color>
     <color name="blueColor">#7FB6DC</color>
+    <color name="colorReservada">#61C124</color>
+    <color name="colorOcupada">#E10D20</color>
+    <color name="colorDisponible">#FFFFFF</color>
 
 </resources>
