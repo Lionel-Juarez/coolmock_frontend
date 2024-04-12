@@ -41,24 +41,29 @@ public class HamacaAdapter extends RecyclerView.Adapter<HamacaAdapter.HamacaView
     @Override
     public void onBindViewHolder(@NonNull HamacaViewHolder holder, int position) {
         Hamaca hamaca = listaHamacas.get(position);
-        // Usamos %d porque idHamaca es de tipo long, que es un número entero.
         holder.tvNumeroHamaca.setText(String.format(context.getString(R.string.numero_hamaca), hamaca.getIdHamaca()));
 
-        if (hamaca.isReservada()) {
-            holder.itemView.setBackgroundColor(context.getResources().getColor(R.color.colorReservada));
-        } else if (hamaca.isOcupada()) {
-            holder.itemView.setBackgroundColor(context.getResources().getColor(R.color.colorOcupada));
-        } else {
-            holder.itemView.setBackgroundColor(context.getResources().getColor(R.color.colorDisponible));
-        }
+        updateViewColor(holder.ivEstadoHamaca, hamaca);  // Actualizar el color basado en el estado
 
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                HamacaDetalles hamacaDetalles = new HamacaDetalles(hamaca);
-                hamacaDetalles.show(fragmentManager, hamacaDetalles.getTag()); // Necesitas pasar el FragmentManager
+                HamacaDetalles dialogFragment = HamacaDetalles.newInstance(hamaca);
+                dialogFragment.show(fragmentManager, "hamaca_details");
             }
         });
+    }
+
+
+    // Método para actualizar el color del ImageView basado en el estado de la hamaca
+    private void updateViewColor(ImageView imageView, Hamaca hamaca) {
+        if (hamaca.isReservada()) {
+            imageView.setBackgroundColor(context.getResources().getColor(R.color.colorReservada));
+        } else if (hamaca.isOcupada()) {
+            imageView.setBackgroundColor(context.getResources().getColor(R.color.colorOcupada));
+        } else {
+            imageView.setBackgroundColor(context.getResources().getColor(R.color.colorDisponible));
+        }
     }
 
 
@@ -69,16 +74,21 @@ public class HamacaAdapter extends RecyclerView.Adapter<HamacaAdapter.HamacaView
 
     public static class HamacaViewHolder extends RecyclerView.ViewHolder {
         TextView tvNumeroHamaca;
+        ImageView ivEstadoHamaca;  // Agregado para gestionar el cambio de color
 
         public HamacaViewHolder(@NonNull View itemView) {
             super(itemView);
             tvNumeroHamaca = itemView.findViewById(R.id.tvNumeroHamaca);
+            ivEstadoHamaca = itemView.findViewById(R.id.ivEstadoHamaca);  // Inicializar ImageView
         }
     }
+
 
     // Método para actualizar la lista de hamacas en el adaptador
     public void setHamacas(List<Hamaca> hamacas) {
         this.listaHamacas = hamacas;
         notifyDataSetChanged();
     }
+
+
 }

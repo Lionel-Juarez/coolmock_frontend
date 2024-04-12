@@ -1,9 +1,12 @@
 package com.example.hamacav1.entidades.hamacas;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 import org.json.JSONException;
 import org.json.JSONObject;
 
-public class Hamaca {
+public class Hamaca implements Parcelable {
 
     private long idHamaca;
     private double precio;
@@ -22,6 +25,39 @@ public class Hamaca {
         this.planoId = planoId;
     }
 
+    protected Hamaca(Parcel in) {
+        idHamaca = in.readLong();
+        precio = in.readDouble();
+        reservada = in.readByte() != 0;
+        ocupada = in.readByte() != 0;
+        planoId = in.readInt();
+    }
+
+    public static final Creator<Hamaca> CREATOR = new Creator<Hamaca>() {
+        @Override
+        public Hamaca createFromParcel(Parcel in) {
+            return new Hamaca(in);
+        }
+
+        @Override
+        public Hamaca[] newArray(int size) {
+            return new Hamaca[size];
+        }
+    };
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel parcel, int i) {
+        parcel.writeLong(idHamaca);
+        parcel.writeDouble(precio);
+        parcel.writeByte((byte) (reservada ? 1 : 0));
+        parcel.writeByte((byte) (ocupada ? 1 : 0));
+        parcel.writeInt(planoId);
+    }
     public int getPlanoId() {
         return planoId;
     }
