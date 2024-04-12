@@ -1,11 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:padding="16dp"
     tools:context=".entidades.hamacas.HamacaFragment"
     android:background="@color/principalColor">
 
@@ -14,14 +12,14 @@
         android:id="@+id/spinner_planos"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:entries="@array/planos_array" /> <!-- Asume que tienes un array de strings en res/values/strings.xml para los planos -->
+        android:layout_gravity="top"
+        android:entries="@array/planos_array" />
 
     <!-- RecyclerView para mostrar las hamacas -->
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/hamacasRecyclerView"
         android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1"
-        android:layout_marginTop="16dp"/>
+        android:layout_height="match_parent"
+        android:layout_marginTop="48dp" />
 
-</LinearLayout>
+</FrameLayout>

@@ -45,6 +45,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.stream.Collectors;
 
 import okhttp3.Call;
 import okhttp3.Callback;
@@ -60,17 +61,18 @@ public class HamacaFragment extends Fragment {
     private List<Hamaca> todasLasHamacas; // Lista de todas las hamacas disponibles
     private Spinner spinnerPlanos;
 
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_hamaca, container, false);
 
-        inicializarHamacas(); // Simulamos la creación de las hamacas y su asignación a planos
+        // Inicializa la lista de todas las hamacas
+        todasLasHamacas = new ArrayList<>();
 
-        // Inicialización del RecyclerView con GridLayoutManager
         hamacasRecyclerView = view.findViewById(R.id.hamacasRecyclerView);
-        int numberOfColumns = 4; // Establecemos el número de columnas en la cuadrícula
-        hamacasRecyclerView.setLayoutManager(new GridLayoutManager(getContext(), numberOfColumns)); // Usamos GridLayoutManager
-        hamacasAdapter = new HamacaAdapter(new ArrayList<>(), getContext()); // Inicializa con lista vacía
+        hamacasRecyclerView.setLayoutManager(new GridLayoutManager(getContext(), 4));
+        // Aquí pasamos getChildFragmentManager() si estás dentro de un Fragment
+        hamacasAdapter = new HamacaAdapter(todasLasHamacas, getContext(), getChildFragmentManager());
         hamacasRecyclerView.setAdapter(hamacasAdapter);
 
         // Configuración del Spinner para seleccionar planos
@@ -82,35 +84,34 @@ public class HamacaFragment extends Fragment {
         spinnerPlanos.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parentView, View selectedItemView, int position, long id) {
-                cargarHamacasPorPlano(position + 1); // Asumiendo que tus planos empiezan en 1
+                cargarHamacasPorPlano(position + 1);
             }
 
             @Override
-            public void onNothingSelected(AdapterView<?> parentView) {
-            }
+            public void onNothingSelected(AdapterView<?> parentView) {}
         });
 
         return view;
     }
 
-
-    private void inicializarHamacas() {
-        todasLasHamacas = new ArrayList<>();
-        // Simulamos la creación de 45 hamacas distribuidas entre 3 planos
-        for (int i = 1; i <= 45; i++) {
-            int planoId = i <= 10 ? 1 : i <= 25 ? 2 : 3; // Asigna el plano basado en el índice de la hamaca
-            todasLasHamacas.add(new Hamaca((long) i, 10.0, false, false, planoId));
-        }
-    }
-
     private void cargarHamacasPorPlano(int planoId) {
-        List<Hamaca> hamacasFiltradas = new ArrayList<>();
-        for (Hamaca hamaca : todasLasHamacas) {
-            if (hamaca.getPlanoId() == planoId) {
-                hamacasFiltradas.add(hamaca);
+        // Solo crea y carga hamacas si no han sido creadas previamente
+        if (todasLasHamacas.stream().noneMatch(h -> h.getPlanoId() == planoId)) {
+            for (int i = 1; i <= cantidadDeHamacasPorPlano(planoId); i++) {
+                todasLasHamacas.add(new Hamaca((long) i, 10.0, false, false, planoId));
             }
         }
+        List<Hamaca> hamacasFiltradas = todasLasHamacas.stream().filter(h -> h.getPlanoId() == planoId).collect(Collectors.toList());
         hamacasAdapter.setHamacas(hamacasFiltradas);
         hamacasAdapter.notifyDataSetChanged();
+    }
+
+    private int cantidadDeHamacasPorPlano(int planoId) {
+        switch (planoId) {
+            case 1: return 12;
+            case 2: return 16;
+            case 3: return 20;
+            default: return 0;
+        }
     }
 }

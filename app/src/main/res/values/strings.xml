@@ -54,8 +54,9 @@
     <string name="eliminar_cliente">Delete Customer</string>
     <string name="fab_add_cliente">Add customer</string>
     <string name="clientes">Customers</string>
-    <string name="numero_hamaca">Hamaca %1$s</string>
+    <string name="numero_hamaca">Hamaca #%d</string>
     <string name="estado_hamaca">Sunbed state</string>
+
 
 
     //Spinners
