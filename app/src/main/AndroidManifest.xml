@@ -48,8 +48,14 @@
                 android:name="android.app.lib_name"
                 android:value="" />
         </activity>
+        <activity android:name=".entidades.hamacas.HamacaFragment"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+            </intent-filter>
+        </activity>
         <activity
-            android:name=".entidades.reports.NewReport"
+            android:name=".entidades.reportes.NuevoReporte"
             android:exported="false">
             <meta-data
                 android:name="android.app.lib_name"
@@ -64,6 +70,13 @@
         </activity>
         <activity
             android:name=".entidades.clientes.NuevoCliente"
+            android:exported="false">
+            <meta-data
+                android:name="android.app.lib_name"
+                android:value="" />
+        </activity>
+        <activity
+            android:name=".entidades.reservas.NuevaReserva"
             android:exported="false">
             <meta-data
                 android:name="android.app.lib_name"

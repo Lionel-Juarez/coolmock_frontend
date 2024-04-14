@@ -1,5 +1,7 @@
 package com.example.hamacav1.entidades.reservas;
 
+import android.util.Log;
+
 import com.example.hamacav1.entidades.clientes.Cliente;
 import com.example.hamacav1.entidades.hamacas.Hamaca;
 import com.example.hamacav1.entidades.usuarios.Usuario;
@@ -29,6 +31,7 @@ public class Reserva implements Serializable {
 
     // Método fromJSON en la clase que contiene reservas
     public void fromJSON(JSONObject json) throws JSONException {
+        Log.d("Reserva", "JSON recibido: " + json.toString());
         this.idReserva = json.optLong("idReserva", -1);
         this.estado = json.optString("estado", "");
         this.pagada = json.optBoolean("pagada", false);
@@ -48,10 +51,14 @@ public class Reserva implements Serializable {
             this.cliente.fromJSON(clienteJson);
         }
 
-        JSONObject usuarioJson = json.optJSONObject("creadoPor");
+        JSONObject usuarioJson = json.optJSONObject("creadaPor");
         if (usuarioJson != null) {
             this.creadoPor = new Usuario();
             this.creadoPor.fromJSON(usuarioJson);
+            Log.d("Reserva", "Usuario creado correctamente");
+        } else {
+            Log.d("Reserva", "No se encontró el objeto 'creadoPor' en el JSON");
+            this.creadoPor = null;
         }
 
     }

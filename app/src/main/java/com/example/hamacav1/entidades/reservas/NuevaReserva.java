@@ -3,7 +3,6 @@ package com.example.hamacav1.entidades.reservas;
 
 import android.app.Activity;
 import android.content.Context;
-import android.content.res.Resources;
 import android.net.ConnectivityManager;
 import android.net.Network;
 import android.net.NetworkCapabilities;
@@ -13,8 +12,6 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.util.Log;
-import android.view.Gravity;
-import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.CalendarView;
@@ -28,7 +25,6 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.example.hamacav1.R;
 import com.example.hamacav1.entidades.clientes.Cliente;
 import com.example.hamacav1.entidades.hamacas.Hamaca;
-import com.example.hamacav1.entidades.reports.Report;
 import com.example.hamacav1.entidades.usuarios.Usuario;
 
 import org.jetbrains.annotations.NotNull;
@@ -226,7 +222,7 @@ public class NuevaReserva extends AppCompatActivity {
                 json.put("fechaReserva", reserva.getFechaReserva());
 
                 RequestBody body = RequestBody.create(json.toString(), MEDIA_TYPE_JSON);
-                Request request = new Request.Builder().url("URL_A_TU_API_DE_RESERVAS").post(body).build();
+                Request request = new Request.Builder().url(getResources().getString(R.string.url_reservas)).post(body).build();
 
                 try (Response response = client.newCall(request).execute()) {
                     String result = response.body().string();

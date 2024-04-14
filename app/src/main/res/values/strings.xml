@@ -3,7 +3,7 @@
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="singup">Sing up!!</string>
     <string name="sunbed">Sunbed</string>
-    <string name="reports">Reports</string>
+    <string name="reportes">Reports</string>
     <string name="calcs">Daily calculations</string>
     <string name="user">User</string>
     <string name="logout">Log out</string>
@@ -15,14 +15,14 @@
     <string name="accept">Accept</string>
     <string name="full_comment_hint">Full comment hint</string>
     <string name="description">Esta es la descripcion del reporte, como maximo, tendra 2 lineas...</string>
-    <string name="delete_comment">Delete report</string>
+    <string name="delete_comment">Delete reporte</string>
     <string name="url_reportes">http://10.0.2.2:8080/api/reportes/</string>
     <string name="url_hamacas">http://10.0.2.2:8080/api/hamacas/</string>
     <string name="url_clientes">http://10.0.2.2:8080/api/clientes/</string>
     <string name="url_reservas">http://10.0.2.2:8080/api/reservas/</string>
     <string name="url_usuarios">http://10.0.2.2:8080/api/usuarios/</string>
     <string name="url_calculos">http://10.0.2.2:8080/api/calculos</string>
-    <string name="eliminar_reporte">Delete report</string>
+    <string name="eliminar_reporte">Delete reporte</string>
     <string name="are_you_sure">Are you sure?</string>
     <string name="yes">Yes</string>
     <string name="no">No</string>

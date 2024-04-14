@@ -1,4 +1,4 @@
-package com.example.hamacav1.entidades.reports;
+package com.example.hamacav1.entidades.reportes;
 
 
 
@@ -41,7 +41,7 @@ import okhttp3.RequestBody;
 import okhttp3.Response;
 
 
-public class NewReport extends AppCompatActivity {
+public class NuevoReporte extends AppCompatActivity {
 
 
     private long creadoPor;

@@ -1,4 +1,4 @@
-package com.example.hamacav1.entidades.reports;
+package com.example.hamacav1.entidades.reportes;
 
 import androidx.activity.result.ActivityResult;
 import androidx.activity.result.ActivityResultCallback;
@@ -55,11 +55,11 @@ import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
 
-public class ReportsFragment extends Fragment implements ReportsAdapter.ReportsAdapterCallback {
+public class ReportsFragment extends Fragment implements ReporteAdapter.ReportsAdapterCallback {
 
     private RecyclerView reportsRecyclerView;
-    private ReportsAdapter reportsAdapter;
-    private List<Report> reportsList;
+    private ReporteAdapter reporteAdapter;
+    private List<Reporte> reportsList;
     ActivityResultLauncher<Intent> nuevoResultLauncher = registerForActivityResult(
             new ActivityResultContracts.StartActivityForResult(),
             new ActivityResultCallback<ActivityResult>() {
@@ -75,16 +75,16 @@ public class ReportsFragment extends Fragment implements ReportsAdapter.ReportsA
     public void editPressed(int position) {
         if (reportsList != null) {
             if (reportsList.size() > position) {
-                Report report = reportsList.get(position);
-                Intent myIntent = new Intent(getActivity(), NewReport.class);
-                myIntent.putExtra("idReporte", report.getCreadoPor());
+                Reporte reporte = reportsList.get(position);
+                Intent myIntent = new Intent(getActivity(), NuevoReporte.class);
+                myIntent.putExtra("idReporte", reporte.getCreadoPor());
                 nuevoResultLauncher.launch(myIntent);
             }
         }
     }
 
     public interface OnReportsReceivedListener {
-        void onReceived(List<Report> reports);
+        void onReceived(List<Reporte> reportes);
     }
 
     @Override
@@ -94,8 +94,8 @@ public class ReportsFragment extends Fragment implements ReportsAdapter.ReportsA
         reportsRecyclerView = view.findViewById(R.id.reportsRecyclerView);
         reportsRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         reportsList = new ArrayList<>();
-        reportsAdapter = new ReportsAdapter(reportsList, getContext(), this);
-        reportsRecyclerView.setAdapter(reportsAdapter);
+        reporteAdapter = new ReporteAdapter(reportsList, getContext(), this);
+        reportsRecyclerView.setAdapter(reporteAdapter);
 
         loadReportsFromBackend();
 
@@ -105,7 +105,7 @@ public class ReportsFragment extends Fragment implements ReportsAdapter.ReportsA
     }
 
     private void newReport() {
-        Intent intent = new Intent(getContext(), NewReport.class);
+        Intent intent = new Intent(getContext(), NuevoReporte.class);
         nuevoResultLauncher.launch(intent);
     }
 
@@ -141,11 +141,11 @@ public class ReportsFragment extends Fragment implements ReportsAdapter.ReportsA
                             reportsList.clear();
                             for (int i = 0; i < jsonArray.length(); i++) {
                                 JSONObject jsonObject = jsonArray.getJSONObject(i);
-                                Report report = new Report();
-                                report.fromJSON(jsonObject);
-                                reportsList.add(report);
+                                Reporte reporte = new Reporte();
+                                reporte.fromJSON(jsonObject);
+                                reportsList.add(reporte);
                             }
-                            reportsAdapter.notifyDataSetChanged();
+                            reporteAdapter.notifyDataSetChanged();
                             Log.d("ReportsFragment", "Reportes actualizados en la interfaz de usuario.");
                         } catch (JSONException e) {
                             Log.e("ReportsFragment", "Error al parsear reportes: ", e);
@@ -184,11 +184,11 @@ public class ReportsFragment extends Fragment implements ReportsAdapter.ReportsA
 
     private void eliminarReporte(int position){
         if(reportsList !=null && reportsList.size() > position) {
-            Report report = reportsList.get(position);
-            Log.d("ReportsFragment", "Eliminando reporte: " + report.getIdReporte());
+            Reporte reporte = reportsList.get(position);
+            Log.d("ReportsFragment", "Eliminando reporte: " + reporte.getIdReporte());
 
             if (isNetworkAvailable()) {
-                String url = getResources().getString(R.string.url_reportes) + "deleteReport/" + report.getIdReporte();
+                String url = getResources().getString(R.string.url_reportes) + "deleteReport/" + reporte.getIdReporte();
                 eliminarTask(url);
             } else {
                 Log.e("ReportsFragment", "Conexión de red no disponible para eliminar reporte.");
@@ -314,15 +314,15 @@ public class ReportsFragment extends Fragment implements ReportsAdapter.ReportsA
             }
             for (int i = 0; i < listaReportesJson.length(); ++i) {
                 JSONObject jsonUser = listaReportesJson.getJSONObject(i);
-                Report report = new Report();
-                report.fromJSON(jsonUser);
-                reportsList.add(report);
+                Reporte reporte = new Reporte();
+                reporte.fromJSON(jsonUser);
+                reportsList.add(reporte);
             }
-            if (reportsAdapter == null) {
-                reportsAdapter = new ReportsAdapter(reportsList, getContext(), this);
-                reportsRecyclerView.setAdapter(reportsAdapter);
+            if (reporteAdapter == null) {
+                reporteAdapter = new ReporteAdapter(reportsList, getContext(), this);
+                reportsRecyclerView.setAdapter(reporteAdapter);
             } else {
-                reportsAdapter.notifyDataSetChanged();
+                reporteAdapter.notifyDataSetChanged();
             }
             // Si estás utilizando una ProgressBar, aquí iría el código para ocultarla
             // Por ejemplo:

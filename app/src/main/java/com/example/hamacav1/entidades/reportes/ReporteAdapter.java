@@ -1,4 +1,4 @@
-package com.example.hamacav1.entidades.reports;
+package com.example.hamacav1.entidades.reportes;
 
 import android.content.Context;
 import android.transition.AutoTransition;
@@ -17,13 +17,13 @@ import com.example.hamacav1.R;
 
 import java.util.List;
 
-public class ReportsAdapter extends RecyclerView.Adapter<ReportsAdapter.ReportViewHolder> {
+public class ReporteAdapter extends RecyclerView.Adapter<ReporteAdapter.ReportViewHolder> {
 
-    private List<Report> reportsList;
+    private List<Reporte> reportsList;
     private Context context;
     private ReportsAdapterCallback callback; // Asegúrate de tener esta interfaz definida y de establecer el callback
 
-    public ReportsAdapter(List<Report> reportsList, Context context, ReportsAdapterCallback callback) {
+    public ReporteAdapter(List<Reporte> reportsList, Context context, ReportsAdapterCallback callback) {
         this.reportsList = reportsList;
         this.context = context;
         this.callback = callback;
@@ -38,15 +38,15 @@ public class ReportsAdapter extends RecyclerView.Adapter<ReportsAdapter.ReportVi
 
     @Override
     public void onBindViewHolder(@NonNull ReportViewHolder holder, int position) {
-        Report report = reportsList.get(position);
-        holder.title.setText(report.getTitulo());
-        holder.fullComment.setText(report.getComentarioCompleto());
+        Reporte reporte = reportsList.get(position);
+        holder.title.setText(reporte.getTitulo());
+        holder.fullComment.setText(reporte.getComentarioCompleto());
 
         // Inicialmente mostrar solo 2 líneas del comentario.
         holder.fullComment.setMaxLines(2);
-        holder.state.setText(report.getEstado());
-        holder.creationDate.setText(report.getFechaCreacion());
-        holder.createdBy.setText("Creado por: " + report.getCreadoPor());
+        holder.state.setText(reporte.getEstado());
+        holder.creationDate.setText(reporte.getFechaCreacion());
+        holder.createdBy.setText("Creado por: " + reporte.getCreadoPor());
         // Evento de clic para expandir/colapsar el comentario y mostrar los detalles.
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override

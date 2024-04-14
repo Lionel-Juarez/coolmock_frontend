@@ -9,6 +9,7 @@ import android.app.Dialog;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,12 +17,12 @@ import android.view.Window;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 
-import com.example.hamacav1.bottomMenu.HomeFragment;
 import com.example.hamacav1.entidades.calculos.CalcsFragment;
 import com.example.hamacav1.entidades.clientes.ClienteFragment;
 import com.example.hamacav1.entidades.hamacas.HamacaFragment;
-import com.example.hamacav1.entidades.reports.ReportsFragment;
+import com.example.hamacav1.entidades.reportes.ReportsFragment;
 import com.example.hamacav1.databinding.ActivityMainBinding;
+import com.example.hamacav1.entidades.reservas.ReservaFragment;
 import com.example.hamacav1.entidades.usuarios.UsuarioFragment;
 
 public class MainActivity extends AppCompatActivity {
@@ -34,17 +35,18 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
-        replaceFragment(new HomeFragment());
+        replaceFragment(new ReservaFragment());
 
         binding.bottomNavigationView.setBackground(null);
         binding.bottomNavigationView.setOnItemSelectedListener(item -> {
             int itemId = item.getItemId();
 
             if (itemId == R.id.home) {
-                replaceFragment(new HomeFragment());
+                replaceFragment(new ReservaFragment());
             } else if (itemId == R.id.sunbed) {
+                Log.d("Main", "El boton sunbed se ha pulsado");
                 replaceFragment(new HamacaFragment());
-            } else if (itemId == R.id.reports) {
+            } else if (itemId == R.id.reportes) {
                 replaceFragment(new ReportsFragment());
             } else if (itemId == R.id.calcs) {
                 replaceFragment(new CalcsFragment());
@@ -61,7 +63,7 @@ public class MainActivity extends AppCompatActivity {
         });
 
     }
-    private  void replaceFragment(Fragment fragment) {
+    public  void replaceFragment(Fragment fragment) {
         FragmentManager fragmentManager = getSupportFragmentManager();
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
         fragmentTransaction.replace(R.id.frame_layout, fragment);
@@ -111,4 +113,9 @@ public class MainActivity extends AppCompatActivity {
         dialog.getWindow().setGravity(Gravity.BOTTOM);
 
     }
+
+    public void selectSunbed() {
+        binding.bottomNavigationView.setSelectedItemId(R.id.sunbed); // Establece el elemento seleccionado programáticamente
+    }
+
 }

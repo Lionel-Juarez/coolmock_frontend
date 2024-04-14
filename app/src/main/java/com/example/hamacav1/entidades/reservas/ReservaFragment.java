@@ -25,9 +25,13 @@ import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.hamacav1.MainActivity;
+import com.example.hamacav1.entidades.hamacas.HamacaFragment;
 import com.example.hamacav1.util.Internetop;
 import com.example.hamacav1.R;
 
@@ -92,18 +96,23 @@ public class ReservaFragment extends Fragment implements ReservaAdapter.Reservas
 
         loadReservasFromBackend();
 
-        view.findViewById(R.id.fab_add_reserva).setOnClickListener(v -> newReserva());
+        view.findViewById(R.id.fab_add_reserva).setOnClickListener(v -> irHamacas());
 
         return view;
     }
 
-    private void newReserva() {
-        Intent intent = new Intent(getContext(), NuevaReserva.class);
-        nuevoResultLauncher.launch(intent);
+    private void irHamacas() {
+        if (getActivity() instanceof MainActivity) {
+            ((MainActivity) getActivity()).selectSunbed();
+        }
     }
+
+
+
 
     private void loadReservasFromBackend() {
         String url = getResources().getString(R.string.url_reservas) ;
+        Log.d("ReservaFragment", "Iniciando carga de reservas desde el backend: " + url);
         OkHttpClient client = new OkHttpClient();
         Request request = new Request.Builder().url(url).build();
 
@@ -139,12 +148,14 @@ public class ReservaFragment extends Fragment implements ReservaAdapter.Reservas
                                 reservasList.add(reserva);
                             }
                             reservasAdapter.notifyDataSetChanged();
-                            Log.d("ReservaFragment", "Reservas actualizados en la interfaz de usuario.");
+                            Log.d("ReservaFragment", "Reservas actualizadas en la interfaz de usuario.");
+                            Toast.makeText(getContext(), "Reservas cargadas y actualizadas.", Toast.LENGTH_SHORT).show();
                         } catch (JSONException e) {
                             Log.e("ReservaFragment", "Error al parsear reservas: ", e);
                         }
                     }
                 });
+
             }
         });
     }

@@ -1,4 +1,4 @@
-package com.example.hamacav1.entidades.reports;
+package com.example.hamacav1.entidades.reportes;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class Report {
+public class Reporte {
     private long idReporte;
     private String titulo;
     private String estado;

@@ -17,8 +17,8 @@
         android:title=""/>
 
     <item
-        android:id="@+id/reports"
-        android:title="@string/reports"
+        android:id="@+id/reportes"
+        android:title="@string/reportes"
         android:icon="@drawable/baseline_report_24" />
     <item
         android:id="@+id/calcs"

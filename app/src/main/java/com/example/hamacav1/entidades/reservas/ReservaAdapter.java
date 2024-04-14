@@ -39,14 +39,26 @@ public class ReservaAdapter extends RecyclerView.Adapter<ReservaAdapter.ReservaV
     @Override
     public void onBindViewHolder(@NonNull ReservaViewHolder holder, int position) {
         Reserva reserva = reservaList.get(position);
-        holder.clienteNombre.setText(reserva.getCliente().getNombreCompleto());
+
+        // Verificar si cliente existe y asignar valores adecuadamente
+        if (reserva.getCliente() != null) {
+            holder.clienteNombre.setText(reserva.getCliente().getNombreCompleto());
+        } else {
+            holder.clienteNombre.setText("Cliente desconocido");
+        }
+
         holder.fechaReserva.setText(context.getString(R.string.fecha_reserva, reserva.getFechaReserva()));
         holder.estado.setText(context.getString(R.string.estado_reserva, reserva.getEstado()));
         holder.metodoPago.setText(context.getString(R.string.metodo_pago, reserva.getMetodoPago()));
         holder.pagada.setText(context.getString(R.string.reserva_pagada, reserva.isPagada() ? "Sí" : "No"));
         holder.fechaPago.setText(context.getString(R.string.fecha_pago, reserva.getFechaPago()));
-        holder.creadoPor.setText(context.getString(R.string.creado_por, reserva.getCreadoPor().getNombreUsuario()));
 
+        // Verificar si creadoPor (Usuario) existe antes de acceder a sus métodos
+        if (reserva.getCreadoPor() != null && reserva.getCreadoPor().getNombreUsuario() != null) {
+            holder.creadoPor.setText(context.getString(R.string.creado_por, reserva.getCreadoPor().getNombreUsuario()));
+        } else {
+            holder.creadoPor.setText(context.getString(R.string.creado_por, "Información no disponible"));
+        }
 
         holder.expandIcon.setOnClickListener(v -> {
             boolean isExpanded = holder.expandableView.getVisibility() == View.VISIBLE;
@@ -55,8 +67,9 @@ public class ReservaAdapter extends RecyclerView.Adapter<ReservaAdapter.ReservaV
             holder.expandIcon.setImageResource(isExpanded ? R.drawable.baseline_expand_more_24 : R.drawable.baseline_arrow_drop_down_24);
         });
 
-        holder.delete.setOnClickListener(v -> callback.deletePressed(position));
+        //holder.delete.setOnClickListener(v -> callback.deletePressed(position));
     }
+
 
     @Override
     public int getItemCount() {
