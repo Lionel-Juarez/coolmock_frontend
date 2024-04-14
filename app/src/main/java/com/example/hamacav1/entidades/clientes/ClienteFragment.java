@@ -70,7 +70,7 @@ public class ClienteFragment extends Fragment implements ClienteAdapter.ClienteA
             if (clienteList.size() > position) {
                 Cliente cliente = clienteList.get(position);
                 Intent myIntent = new Intent(getActivity(), NuevoCliente.class);
-                myIntent.putExtra("idCliente", cliente.getIdCLiente());
+                myIntent.putExtra("idCliente", cliente.getIdCliente());
                 nuevoResultLauncher.launch(myIntent);
             }
         }
@@ -174,10 +174,10 @@ public class ClienteFragment extends Fragment implements ClienteAdapter.ClienteA
     private void eliminarCliente(int position){
         if(clienteList !=null && clienteList.size() > position) {
             Cliente Cliente = clienteList.get(position);
-            Log.d("ClientesFragment", "Eliminando Cliente: " + Cliente.getIdCLiente());
+            Log.d("ClientesFragment", "Eliminando Cliente: " + Cliente.getIdCliente());
 
             if (isNetworkAvailable()) {
-                String url = getResources().getString(R.string.url_clientes) + "eliminarCliente/" + Cliente.getIdCLiente();
+                String url = getResources().getString(R.string.url_clientes) + "eliminarCliente/" + Cliente.getIdCliente();
                 eliminarTask(url);
             } else {
                 Log.e("ClientesFragment", "Conexión de red no disponible para eliminar Cliente.");

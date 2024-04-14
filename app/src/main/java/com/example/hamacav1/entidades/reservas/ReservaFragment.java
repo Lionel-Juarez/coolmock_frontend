@@ -48,100 +48,100 @@ import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
 
-public class ReportsFragment extends Fragment implements ReportsAdapter.ReportsAdapterCallback {
+public class ReservaFragment extends Fragment implements ReservaAdapter.ReservasAdapterCallback {
 
-    private RecyclerView reportsRecyclerView;
-    private ReportsAdapter reportsAdapter;
-    private List<Report> reportsList;
+    private RecyclerView reservasRecyclerView;
+    private ReservaAdapter reservasAdapter;
+    private List<Reserva> reservasList;
     ActivityResultLauncher<Intent> nuevoResultLauncher = registerForActivityResult(
             new ActivityResultContracts.StartActivityForResult(),
             new ActivityResultCallback<ActivityResult>() {
                 @Override
                 public void onActivityResult(ActivityResult result) {
                     if (result.getResultCode() == Activity.RESULT_OK) {
-                        cargarReportes();
+                        cargarReservas();
                     }
                 }
             });
 
     @Override
     public void editPressed(int position) {
-        if (reportsList != null) {
-            if (reportsList.size() > position) {
-                Report report = reportsList.get(position);
-                Intent myIntent = new Intent(getActivity(), NewReport.class);
-                myIntent.putExtra("idReporte", report.getCreadoPor());
+        if (reservasList != null) {
+            if (reservasList.size() > position) {
+                Reserva reserva = reservasList.get(position);
+                Intent myIntent = new Intent(getActivity(), NuevaReserva.class);
+                //myIntent.putExtra("idReserva", reserva.getCreadoPor());
                 nuevoResultLauncher.launch(myIntent);
             }
         }
     }
 
-    public interface OnReportsReceivedListener {
-        void onReceived(List<Report> reports);
+    public interface OnReservasReceivedListener {
+        void onReceived(List<Reserva> reservas);
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_reports, container, false);
-        reportsRecyclerView = view.findViewById(R.id.reportsRecyclerView);
-        reportsRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
-        reportsList = new ArrayList<>();
-        reportsAdapter = new ReportsAdapter(reportsList, getContext(), this);
-        reportsRecyclerView.setAdapter(reportsAdapter);
+        View view = inflater.inflate(R.layout.fragment_reservas, container, false);
+        reservasRecyclerView = view.findViewById(R.id.reservasRecyclerView);
+        reservasRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+        reservasList = new ArrayList<>();
+        reservasAdapter = new ReservaAdapter(reservasList, getContext(), this);
+        reservasRecyclerView.setAdapter(reservasAdapter);
 
-        loadReportsFromBackend();
+        loadReservasFromBackend();
 
-        view.findViewById(R.id.fab_add_report).setOnClickListener(v -> newReport());
+        view.findViewById(R.id.fab_add_reserva).setOnClickListener(v -> newReserva());
 
         return view;
     }
 
-    private void newReport() {
-        Intent intent = new Intent(getContext(), NewReport.class);
+    private void newReserva() {
+        Intent intent = new Intent(getContext(), NuevaReserva.class);
         nuevoResultLauncher.launch(intent);
     }
 
-    private void loadReportsFromBackend() {
-        String url = getResources().getString(R.string.url_reportes) ;
+    private void loadReservasFromBackend() {
+        String url = getResources().getString(R.string.url_reservas) ;
         OkHttpClient client = new OkHttpClient();
         Request request = new Request.Builder().url(url).build();
 
-        Log.d("ReportsFragment", "Iniciando carga de reportes desde el backend: " + url);
+        Log.d("ReservaFragment", "Iniciando carga de reservas desde el backend: " + url);
 
         client.newCall(request).enqueue(new Callback() {
             @Override
             public void onFailure(@NotNull Call call, @NotNull IOException e) {
-                Log.e("ReportsFragment", "Error al cargar reportes: ", e);
+                Log.e("ReservaFragment", "Error al cargar reservas: ", e);
                 // Aquí puedes añadir un mensaje de UI para informar al usuario
             }
 
             @Override
             public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
                 if (!response.isSuccessful()) {
-                    Log.e("ReportsFragment", "Respuesta no exitosa del servidor: " + response);
+                    Log.e("ReservaFragment", "Respuesta no exitosa del servidor: " + response);
                     throw new IOException("Código inesperado " + response);
                 }
 
                 final String responseData = response.body().string();
-                Log.d("ReportsFragment", "Reportes cargados correctamente: " + responseData);
+                Log.d("ReservaFragment", "Reservas cargados correctamente: " + responseData);
 
                 getActivity().runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
                         try {
                             JSONArray jsonArray = new JSONArray(responseData);
-                            reportsList.clear();
+                            reservasList.clear();
                             for (int i = 0; i < jsonArray.length(); i++) {
                                 JSONObject jsonObject = jsonArray.getJSONObject(i);
-                                Report report = new Report();
-                                report.fromJSON(jsonObject);
-                                reportsList.add(report);
+                                Reserva reserva = new Reserva();
+                                reserva.fromJSON(jsonObject);
+                                reservasList.add(reserva);
                             }
-                            reportsAdapter.notifyDataSetChanged();
-                            Log.d("ReportsFragment", "Reportes actualizados en la interfaz de usuario.");
+                            reservasAdapter.notifyDataSetChanged();
+                            Log.d("ReservaFragment", "Reservas actualizados en la interfaz de usuario.");
                         } catch (JSONException e) {
-                            Log.e("ReportsFragment", "Error al parsear reportes: ", e);
+                            Log.e("ReservaFragment", "Error al parsear reservas: ", e);
                         }
                     }
                 });
@@ -158,11 +158,11 @@ public class ReportsFragment extends Fragment implements ReportsAdapter.ReportsA
     private AlertDialog AskOption(final int position) {
         AlertDialog myQuittingDialogBox = new AlertDialog.Builder(getActivity())
 
-                .setTitle(R.string.eliminar_reporte)
+                .setTitle(R.string.eliminar_reserva)
                 .setMessage(R.string.are_you_sure)
                 .setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int whichButton) {
-                        eliminarReporte(position);
+//                        eliminarReserva(position);
                         dialog.dismiss();
                     }
                 })
@@ -175,20 +175,20 @@ public class ReportsFragment extends Fragment implements ReportsAdapter.ReportsA
         return myQuittingDialogBox;
     }
 
-    private void eliminarReporte(int position){
-        if(reportsList !=null && reportsList.size() > position) {
-            Report report = reportsList.get(position);
-            Log.d("ReportsFragment", "Eliminando reporte: " + report.getIdReporte());
+    private void eliminarReserva(int position){
+        if(reservasList !=null && reservasList.size() > position) {
+            Reserva reserva = reservasList.get(position);
+            Log.d("ReservaFragment", "Eliminando reserva: " + reserva.getIdReserva());
 
             if (isNetworkAvailable()) {
-                String url = getResources().getString(R.string.url_reportes) + "deleteReport/" + report.getIdReporte();
+                String url = getResources().getString(R.string.url_reservas) + "eliminarReserva/" + reserva.getIdReserva();
                 eliminarTask(url);
             } else {
-                Log.e("ReportsFragment", "Conexión de red no disponible para eliminar reporte.");
+                Log.e("ReservaFragment", "Conexión de red no disponible para eliminar reserva.");
                 showError("error.IOException");
             }
         } else {
-            Log.e("ReportsFragment", "Posición de reporte no válida o lista de reportes vacía.");
+            Log.e("ReservaFragment", "Posición de reserva no válida o lista de reservas vacía.");
             showError("error.desconocido");
         }
     }
@@ -215,33 +215,26 @@ public class ReportsFragment extends Fragment implements ReportsAdapter.ReportsA
 
 
     private void eliminarTask(String url){
-        //La clase Executor será la encargada de lanzar un nuevo hilo en background con la tarea
         ExecutorService executor = Executors.newSingleThreadExecutor();
-        //Handler es la clase encargada de manejar el resultado de la tarea ejecutada en segundo plano
         Handler handler = new Handler(Looper.getMainLooper());
-        executor.execute(new Runnable() {//Ejecutamos el nuevo hilo
+        executor.execute(new Runnable() {
             @Override
             public void run() {
-                /*Aquí ejecutamos el código en segundo plano, que consiste en obtener del servidor
-                 * la lista de alumnos*/
+
                 Internetop interopera= Internetop.getInstance();
                 String result = interopera.deleteTask(url);
-                handler.post(new Runnable() {/*Una vez handler recoge el resultado de la tarea en
-                segundo plano, hacemos los cambios pertinentes en la interfaz de usuario en función
-                del resultado obtenido*/
+                handler.post(new Runnable() {
                     @Override
                     public void run() {
                         if(result.equalsIgnoreCase("error.IOException")||
-                                result.equals("error.OKHttp")) {//Controlamos los posibles errores
+                                result.equals("error.OKHttp")) {
                             showError(result);
                         }
                         else if(result.equalsIgnoreCase("null")){
                             showError("error.desconocido");
                         }
                         else{
-//                            ProgressBar pbMain = (ProgressBar) findViewById(R.id.pb_main);
-//                            pbMain.setVisibility(View.GONE);
-                            cargarReportes();
+                            cargarReservas();
                         }
                     }
                 });
@@ -249,22 +242,18 @@ public class ReportsFragment extends Fragment implements ReportsAdapter.ReportsA
         });
     }
 
-    private void cargarReportes() {
-        Log.d("ReportsFragment", "Intentando cargar reportes...");
+    private void cargarReservas() {
+        Log.d("ReservaFragment", "Intentando cargar reservas...");
         if (isNetworkAvailable()) {
-            Log.d("ReportsFragment", "Conexión de red disponible. Cargando reportes...");
-
-            // Aquí podría ir el código para mostrar una barra de progreso si es necesario
-            // ProgressBar pbMain = (ProgressBar) findViewById(R.id.pb_main);
-            // pbMain.setVisibility(View.VISIBLE);
+            Log.d("ReservaFragment", "Conexión de red disponible. Cargando reservas...");
 
             Resources res = getResources();
-            String url = res.getString(R.string.url_reportes);
-            Log.d("ReportsFragment", "URL de carga de reportes: " + url);
+            String url = res.getString(R.string.url_reservas);
+            Log.d("ReservaFragment", "URL de carga de reservas: " + url);
 
             getListaTask(url);
         } else {
-            Log.e("ReportsFragment", "Conexión de red no disponible.");
+            Log.e("ReservaFragment", "Conexión de red no disponible.");
             showError("error.IOException");
         }
     }
@@ -299,23 +288,23 @@ public class ReportsFragment extends Fragment implements ReportsAdapter.ReportsA
     }
     private void resetLista(String result){
         try {
-            JSONArray listaReportesJson = new JSONArray(result);
-            if (reportsList == null) {
-                reportsList = new ArrayList<>();
+            JSONArray listaReservasJson = new JSONArray(result);
+            if (reservasList == null) {
+                reservasList = new ArrayList<>();
             } else {
-                reportsList.clear();
+                reservasList.clear();
             }
-            for (int i = 0; i < listaReportesJson.length(); ++i) {
-                JSONObject jsonUser = listaReportesJson.getJSONObject(i);
-                Report report = new Report();
-                report.fromJSON(jsonUser);
-                reportsList.add(report);
+            for (int i = 0; i < listaReservasJson.length(); ++i) {
+                JSONObject jsonUser = listaReservasJson.getJSONObject(i);
+                Reserva reserva = new Reserva();
+                reserva.fromJSON(jsonUser);
+                reservasList.add(reserva);
             }
-            if (reportsAdapter == null) {
-                reportsAdapter = new ReportsAdapter(reportsList, getContext(), this);
-                reportsRecyclerView.setAdapter(reportsAdapter);
+            if (reservasAdapter == null) {
+                reservasAdapter = new ReservaAdapter(reservasList, getContext(), this);
+                reservasRecyclerView.setAdapter(reservasAdapter);
             } else {
-                reportsAdapter.notifyDataSetChanged();
+                reservasAdapter.notifyDataSetChanged();
             }
             // Si estás utilizando una ProgressBar, aquí iría el código para ocultarla
             // Por ejemplo:
@@ -344,6 +333,6 @@ public class ReportsFragment extends Fragment implements ReportsAdapter.ReportsA
         }
         Toast toast = Toast.makeText(getActivity(), message, duration);
         toast.show();
-        Log.d("ReportsFragment", "Mostrando error: " + message);
+        Log.d("ReservaFragment", "Mostrando error: " + message);
     }
 }

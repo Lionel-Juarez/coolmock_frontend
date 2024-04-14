@@ -1,8 +1,6 @@
 package com.example.hamacav1.entidades.usuarios;
 
 import android.content.Context;
-import android.transition.AutoTransition;
-import android.transition.TransitionManager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -32,7 +30,7 @@ public class UsuarioAdapter extends RecyclerView.Adapter<UsuarioAdapter.UsuarioV
     @NonNull
     @Override
     public UsuarioViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(context).inflate(R.layout.usuario_card, parent, false);
+        View view = LayoutInflater.from(context).inflate(R.layout.card_usuario, parent, false);
         return new UsuarioViewHolder(view);
     }
 

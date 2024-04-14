@@ -1,30 +1,26 @@
 package com.example.hamacav1.entidades.hamacas;
 
+import org.json.JSONException;
+import org.json.JSONObject;
 import android.os.Parcel;
 import android.os.Parcelable;
 
-import org.json.JSONException;
-import org.json.JSONObject;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
 public class Hamaca implements Parcelable {
 
     private long idHamaca;
     private double precio;
     private boolean reservada;
     private boolean ocupada;
-    private int planoId; // Añade este campo
+    private int planoId;
 
-    public Hamaca() {
-    }
-
-    public Hamaca(long idHamaca, double precio, boolean reservada, boolean ocupada, int planoId) {
-        this.idHamaca = idHamaca;
-        this.precio = precio;
-        this.reservada = reservada;
-        this.ocupada = ocupada;
-        this.planoId = planoId;
-    }
-
+    // Parcelable interface methods and creator
     protected Hamaca(Parcel in) {
         idHamaca = in.readLong();
         precio = in.readDouble();
@@ -58,51 +54,12 @@ public class Hamaca implements Parcelable {
         parcel.writeByte((byte) (ocupada ? 1 : 0));
         parcel.writeInt(planoId);
     }
-    public int getPlanoId() {
-        return planoId;
-    }
 
-    public void setPlanoId(int planoId) {
-        this.planoId = planoId;
+    public void fromJSON(JSONObject json) throws JSONException {
+        idHamaca = json.optLong("idHamaca", -1);
+        precio = json.optDouble("precio", 0.0);
+        reservada = json.optBoolean("reservada", false);
+        ocupada = json.optBoolean("ocupada", false);
+        planoId = json.optInt("planoId", 0);
     }
-
-    public long getIdHamaca() {
-        return idHamaca;
-    }
-
-    public void setIdHamaca(long idHamaca) {
-        this.idHamaca = idHamaca;
-    }
-
-    public double getPrecio() {
-        return precio;
-    }
-
-    public void setPrecio(double precio) {
-        this.precio = precio;
-    }
-
-    public boolean isReservada() {
-        return reservada;
-    }
-
-    public void setReservada(boolean reservada) {
-        this.reservada = reservada;
-    }
-
-    public boolean isOcupada() {
-        return ocupada;
-    }
-
-    public void setOcupada(boolean ocupada) {
-        this.ocupada = ocupada;
-    }
-
-    public void fromJSON(JSONObject fcjson) throws JSONException {
-        this.idHamaca = fcjson.optLong("idHamaca", -1);
-        this.precio = fcjson.optDouble("precio", 0);
-        this.reservada = fcjson.optBoolean("reservada", false);
-        this.ocupada = fcjson.optBoolean("ocupada", false);
-    }
-
 }

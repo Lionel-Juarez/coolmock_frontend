@@ -4,4 +4,9 @@
     <style name="RoundedButton" parent="">
         <item name="cornerSize">20dp</item>
     </style>
+    <!-- Estilo personalizado para las fechas en el CalendarView -->
+    <style name="CalendarDateStyle" parent="@android:style/TextAppearance.DeviceDefault.Small">
+        <item name="android:textSize">18sp</item>
+        <item name="android:textColor">@color/black</item>
+    </style>
 </resources>

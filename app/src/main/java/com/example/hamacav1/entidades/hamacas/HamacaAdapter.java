@@ -1,12 +1,10 @@
 package com.example.hamacav1.entidades.hamacas;
 
 import android.content.Context;
-import android.transition.AutoTransition;
-import android.transition.TransitionManager;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -34,7 +32,7 @@ public class HamacaAdapter extends RecyclerView.Adapter<HamacaAdapter.HamacaView
     @NonNull
     @Override
     public HamacaViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(context).inflate(R.layout.hamaca_item, parent, false);
+        View view = LayoutInflater.from(context).inflate(R.layout.card_hamaca, parent, false);
         return new HamacaViewHolder(view);
     }
 
@@ -42,27 +40,37 @@ public class HamacaAdapter extends RecyclerView.Adapter<HamacaAdapter.HamacaView
     public void onBindViewHolder(@NonNull HamacaViewHolder holder, int position) {
         Hamaca hamaca = listaHamacas.get(position);
         holder.tvNumeroHamaca.setText(String.format(context.getString(R.string.numero_hamaca), hamaca.getIdHamaca()));
+        updateViewColor(holder.ivEstadoHamaca, hamaca);
 
-        updateViewColor(holder.ivEstadoHamaca, hamaca);  // Actualizar el color basado en el estado
-
-        holder.itemView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                HamacaDetalles dialogFragment = HamacaDetalles.newInstance(hamaca);
+        holder.itemView.setOnClickListener(view -> {
+            int adapterPosition = holder.getAdapterPosition(); // Obtiene la posición actualizada
+            if (adapterPosition != RecyclerView.NO_POSITION) {
+                Hamaca currentHamaca = listaHamacas.get(adapterPosition);
+                HamacaDetalles dialogFragment = HamacaDetalles.newInstance(currentHamaca, new HamacaDetalles.HamacaUpdateListener() {
+                    @Override
+                    public void onHamacaUpdated(Hamaca updatedHamaca) {
+                        notifyItemChanged(adapterPosition);
+                    }
+                });
                 dialogFragment.show(fragmentManager, "hamaca_details");
             }
         });
     }
 
 
+
+
     // Método para actualizar el color del ImageView basado en el estado de la hamaca
     private void updateViewColor(ImageView imageView, Hamaca hamaca) {
         if (hamaca.isReservada()) {
             imageView.setBackgroundColor(context.getResources().getColor(R.color.colorReservada));
+            Log.d("HamacaAdapter", "Hamaca #" + hamaca.getIdHamaca() + " está reservada.");
         } else if (hamaca.isOcupada()) {
             imageView.setBackgroundColor(context.getResources().getColor(R.color.colorOcupada));
+            Log.d("HamacaAdapter", "Hamaca #" + hamaca.getIdHamaca() + " está ocupada.");
         } else {
             imageView.setBackgroundColor(context.getResources().getColor(R.color.colorDisponible));
+            Log.d("HamacaAdapter", "Hamaca #" + hamaca.getIdHamaca() + " está disponible.");
         }
     }
 

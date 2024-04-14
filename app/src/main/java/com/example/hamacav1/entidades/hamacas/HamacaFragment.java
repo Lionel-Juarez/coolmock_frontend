@@ -70,7 +70,7 @@ public class HamacaFragment extends Fragment {
         todasLasHamacas = new ArrayList<>();
 
         hamacasRecyclerView = view.findViewById(R.id.hamacasRecyclerView);
-        hamacasRecyclerView.setLayoutManager(new GridLayoutManager(getContext(), 4));
+        hamacasRecyclerView.setLayoutManager(new GridLayoutManager(getContext(), 7));
         // Aquí pasamos getChildFragmentManager() si estás dentro de un Fragment
         hamacasAdapter = new HamacaAdapter(todasLasHamacas, getContext(), getChildFragmentManager());
         hamacasRecyclerView.setAdapter(hamacasAdapter);

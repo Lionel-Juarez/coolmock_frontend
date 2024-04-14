@@ -50,19 +50,29 @@ public class HamacaDetalles  extends DialogFragment {
                 hamaca.setReservada(true);
                 hamaca.setOcupada(false);
                 actualizarEstado(tvDetalleEstado, hamaca);
+                if (updateListener != null) {
+                    updateListener.onHamacaUpdated(hamaca);
+                }
             });
 
             btnOcupar.setOnClickListener(v -> {
                 hamaca.setOcupada(true);
                 hamaca.setReservada(false);
                 actualizarEstado(tvDetalleEstado, hamaca);
+                if (updateListener != null) {
+                    updateListener.onHamacaUpdated(hamaca);
+                }
             });
 
             btnLiberar.setOnClickListener(v -> {
                 hamaca.setReservada(false);
                 hamaca.setOcupada(false);
                 actualizarEstado(tvDetalleEstado, hamaca);
+                if (updateListener != null) {
+                    updateListener.onHamacaUpdated(hamaca);
+                }
             });
+
         }
 
         return view;
@@ -78,5 +88,20 @@ public class HamacaDetalles  extends DialogFragment {
         Dialog dialog = super.onCreateDialog(savedInstanceState);
         dialog.getWindow().getAttributes().windowAnimations = R.style.DialogAnimation;  // Estilo personalizado para animación
         return dialog;
+    }
+
+    public interface HamacaUpdateListener {
+        void onHamacaUpdated(Hamaca hamaca);
+    }
+
+    private HamacaUpdateListener updateListener;
+
+    public static HamacaDetalles newInstance(Hamaca hamaca, HamacaUpdateListener listener) {
+        HamacaDetalles fragment = new HamacaDetalles();
+        fragment.updateListener = listener;
+        Bundle args = new Bundle();
+        args.putParcelable(ARG_HAMACA, hamaca);
+        fragment.setArguments(args);
+        return fragment;
     }
 }

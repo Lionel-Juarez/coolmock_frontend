@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/reserva_card"
+    android:layout_marginStart="12dp"
+    android:layout_marginEnd="12dp"
+    android:layout_marginHorizontal="10dp"
+    android:layout_marginVertical="10dp"
+    app:cardCornerRadius="20dp"
+    app:cardElevation="8dp">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <TextView
+            android:id="@+id/tvReservaCliente"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Nombre del Cliente"
+            android:gravity="center_horizontal"
+            android:textSize="24sp"
+            android:textStyle="bold"
+            android:layout_marginTop="20dp"
+            android:layout_margin="20dp"/>
+
+        <TextView
+            android:id="@+id/tvFechaReserva"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/tvReservaCliente"
+            android:layout_marginStart="20dp"
+            android:layout_marginTop="10dp"
+            android:text="Fecha de Reserva"
+            android:textSize="18sp"
+            android:textAlignment="textStart"
+            android:textColor="@color/black"/>
+
+        <TextView
+            android:id="@+id/tvEstado"
+            android:text="Estado de la Reserva"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textColor="@color/black"
+            android:textSize="18sp"
+            android:layout_below="@id/tvFechaReserva"
+            android:layout_marginStart="20dp"
+            android:layout_marginTop="10dp"
+            android:layout_marginEnd="20dp"/>
+
+        <LinearLayout
+            android:id="@+id/expandable_view"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:visibility="gone"
+            android:orientation="vertical"
+            android:layout_below="@id/tvEstado"
+            android:padding="16dp">
+
+            <TextView
+                android:id="@+id/tvMetodoPago"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Método de Pago"
+                android:layout_marginBottom="4dp"/>
+
+            <TextView
+                android:id="@+id/tvPagada"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Pagada"/>
+
+            <TextView
+                android:id="@+id/tvFechaPago"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Fecha de Pago"/>
+
+            <TextView
+                android:id="@+id/tvCreadoPor"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Creado por"/>
+
+        </LinearLayout>
+
+        <ImageView
+            android:id="@+id/expand_icon"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:layout_alignParentEnd="true"
+            android:layout_below="@id/tvEstado"
+            android:layout_marginTop="10dp"
+            android:layout_marginEnd="16dp"
+            android:contentDescription="@string/toggle_details"
+            android:src="@drawable/baseline_expand_more_24"
+            android:onClick="toggleDetails"/>
+    </RelativeLayout>
+</androidx.cardview.widget.CardView>

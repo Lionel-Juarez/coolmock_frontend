@@ -13,7 +13,7 @@
         android:layout_height="wrap_content"
         android:textSize="24sp"
         android:textStyle="bold"
-        android:text="Hamaca #"/>
+        android:text=""/>
 
     <TextView
         android:id="@+id/tvHamacaDetalleEstado"

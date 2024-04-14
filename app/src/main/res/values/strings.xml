@@ -56,6 +56,21 @@
     <string name="clientes">Customers</string>
     <string name="numero_hamaca">Hamaca #%d</string>
     <string name="estado_hamaca">Sunbed state</string>
+    <string name="reserva">Books</string>
+    <string name="create_new_reservation">Create a new reservation</string>
+    <string name="pagada">Paid</string>
+    <string name="sp_clientes">Select a customer</string>
+    <string name="save">Save reservation</string>
+    <string name="eliminar_reserva">Delete reservation</string>
+    <string name="toggle_details">Details</string>
+    <string name="reservas">Reservations</string>
+    <string name="fab_add_reserva">Fab add reservation</string>
+    <string name="fecha_reserva">Fecha de Reserva: %s</string>
+    <string name="estado_reserva">Estado: %s</string>
+    <string name="metodo_pago">Método de Pago: %s</string>
+    <string name="reserva_pagada">Reserva Pagada: %s</string>
+    <string name="fecha_pago">Fecha de Pago: %s</string>
+    <string name="creado_por">Creado Por: %s</string>
 
 
 
@@ -75,4 +90,9 @@
         <item>Plano 2</item>
         <item>Plano 3</item>
     </string-array>
+    <string-array name="payment_array">
+        <item>Cash</item>
+        <item>Credit Card</item>
+    </string-array>
+
 </resources>
