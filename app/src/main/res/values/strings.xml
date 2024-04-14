@@ -71,7 +71,7 @@
     <string name="reserva_pagada">Reserva Pagada: %s</string>
     <string name="fecha_pago">Fecha de Pago: %s</string>
     <string name="creado_por">Creado Por: %s</string>
-
+    <string name="reservations">Reservations</string>
 
 
     //Spinners
