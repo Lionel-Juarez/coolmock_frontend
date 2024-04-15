@@ -75,6 +75,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:prompt="@string/estado_reserva"
+                android:entries="@array/estado_reserva_array"
                 android:layout_marginTop="10dp" />
 
             <Button
@@ -84,6 +85,7 @@
                 android:text="@string/save"
                 android:layout_marginTop="20dp"
                 android:layout_marginBottom="20dp"
+                android:onClick="addReserva"
                 app:cornerRadius="10dp" />
 
         </LinearLayout>

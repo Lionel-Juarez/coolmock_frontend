@@ -40,7 +40,6 @@ public class ReservaAdapter extends RecyclerView.Adapter<ReservaAdapter.ReservaV
     public void onBindViewHolder(@NonNull ReservaViewHolder holder, int position) {
         Reserva reserva = reservaList.get(position);
 
-        // Verificar si cliente existe y asignar valores adecuadamente
         if (reserva.getCliente() != null) {
             holder.clienteNombre.setText(reserva.getCliente().getNombreCompleto());
         } else {
@@ -49,15 +48,23 @@ public class ReservaAdapter extends RecyclerView.Adapter<ReservaAdapter.ReservaV
 
         holder.fechaReserva.setText(context.getString(R.string.fecha_reserva, reserva.getFechaReserva()));
         holder.estado.setText(context.getString(R.string.estado_reserva, reserva.getEstado()));
-        holder.metodoPago.setText(context.getString(R.string.metodo_pago, reserva.getMetodoPago()));
         holder.pagada.setText(context.getString(R.string.reserva_pagada, reserva.isPagada() ? "Sí" : "No"));
-        holder.fechaPago.setText(context.getString(R.string.fecha_pago, reserva.getFechaPago()));
 
-        // Verificar si creadoPor (Usuario) existe antes de acceder a sus métodos
-        if (reserva.getCreadoPor() != null && reserva.getCreadoPor().getNombreUsuario() != null) {
-            holder.creadoPor.setText(context.getString(R.string.creado_por, reserva.getCreadoPor().getNombreUsuario()));
+        // Ocultar fecha de pago si la reserva no está pagada
+        if (reserva.isPagada()) {
+            holder.fechaPago.setText(context.getString(R.string.fecha_pago, reserva.getFechaPago()));
+            holder.fechaPago.setVisibility(View.VISIBLE);
+            holder.metodoPago.setText(context.getString(R.string.metodo_pago, reserva.getMetodoPago()));
+            holder.metodoPago.setVisibility(View.VISIBLE);
         } else {
-            holder.creadoPor.setText(context.getString(R.string.creado_por, "Información no disponible"));
+            holder.fechaPago.setVisibility(View.GONE);
+            holder.metodoPago.setVisibility(View.GONE);
+        }
+
+        if (reserva.getCreadaPor() != null && reserva.getCreadaPor().getNombreUsuario() != null) {
+            holder.creadaPor.setText(context.getString(R.string.creado_por, reserva.getCreadaPor().getNombreUsuario()));
+        } else {
+            holder.creadaPor.setText(context.getString(R.string.creado_por, "Información no disponible"));
         }
 
         holder.expandIcon.setOnClickListener(v -> {
@@ -71,13 +78,14 @@ public class ReservaAdapter extends RecyclerView.Adapter<ReservaAdapter.ReservaV
     }
 
 
+
     @Override
     public int getItemCount() {
         return reservaList.size();
     }
 
     public static class ReservaViewHolder extends RecyclerView.ViewHolder {
-        TextView clienteNombre, fechaReserva, estado, metodoPago, pagada, fechaPago, creadoPor;
+        TextView clienteNombre, fechaReserva, estado, metodoPago, pagada, fechaPago, creadaPor;
         ImageView delete, expandIcon;
         LinearLayout expandableView;
 
@@ -89,7 +97,7 @@ public class ReservaAdapter extends RecyclerView.Adapter<ReservaAdapter.ReservaV
             metodoPago = itemView.findViewById(R.id.tvMetodoPago);
             pagada = itemView.findViewById(R.id.tvPagada);
             fechaPago = itemView.findViewById(R.id.tvFechaPago);
-            creadoPor = itemView.findViewById(R.id.tvCreadoPor);
+            creadaPor = itemView.findViewById(R.id.tvCreadoPor);
             delete = itemView.findViewById(R.id.deleteIcon);
             expandIcon = itemView.findViewById(R.id.expand_icon);
             expandableView = itemView.findViewById(R.id.expandable_view);

@@ -64,13 +64,10 @@ public class HamacaAdapter extends RecyclerView.Adapter<HamacaAdapter.HamacaView
     private void updateViewColor(ImageView imageView, Hamaca hamaca) {
         if (hamaca.isReservada()) {
             imageView.setBackgroundColor(context.getResources().getColor(R.color.colorReservada));
-            Log.d("HamacaAdapter", "Hamaca #" + hamaca.getIdHamaca() + " está reservada.");
         } else if (hamaca.isOcupada()) {
             imageView.setBackgroundColor(context.getResources().getColor(R.color.colorOcupada));
-            Log.d("HamacaAdapter", "Hamaca #" + hamaca.getIdHamaca() + " está ocupada.");
         } else {
             imageView.setBackgroundColor(context.getResources().getColor(R.color.colorDisponible));
-            Log.d("HamacaAdapter", "Hamaca #" + hamaca.getIdHamaca() + " está disponible.");
         }
     }
 

@@ -59,14 +59,13 @@ public class ReservaFragment extends Fragment implements ReservaAdapter.Reservas
     private List<Reserva> reservasList;
     ActivityResultLauncher<Intent> nuevoResultLauncher = registerForActivityResult(
             new ActivityResultContracts.StartActivityForResult(),
-            new ActivityResultCallback<ActivityResult>() {
-                @Override
-                public void onActivityResult(ActivityResult result) {
-                    if (result.getResultCode() == Activity.RESULT_OK) {
-                        cargarReservas();
-                    }
+            result -> {
+                if (result.getResultCode() == Activity.RESULT_OK) {
+                    Log.d("ReservaFragment", "Una nueva reserva fue añadida. Recargando reservas...");
+                    cargarReservas(); // Asumiendo que este método recarga la lista desde el backend
                 }
             });
+
 
     @Override
     public void editPressed(int position) {
@@ -108,36 +107,32 @@ public class ReservaFragment extends Fragment implements ReservaAdapter.Reservas
     }
 
 
-
-
     private void loadReservasFromBackend() {
-        String url = getResources().getString(R.string.url_reservas) ;
-        Log.d("ReservaFragment", "Iniciando carga de reservas desde el backend: " + url);
+        String url = getResources().getString(R.string.url_reservas);
+        Log.d("ReservaFragment", "Cargando reservas desde el backend: " + url);
         OkHttpClient client = new OkHttpClient();
         Request request = new Request.Builder().url(url).build();
-
-        Log.d("ReservaFragment", "Iniciando carga de reservas desde el backend: " + url);
 
         client.newCall(request).enqueue(new Callback() {
             @Override
             public void onFailure(@NotNull Call call, @NotNull IOException e) {
                 Log.e("ReservaFragment", "Error al cargar reservas: ", e);
-                // Aquí puedes añadir un mensaje de UI para informar al usuario
+                getActivity().runOnUiThread(() -> Toast.makeText(getContext(), "Error al cargar datos: " + e.getMessage(), Toast.LENGTH_LONG).show());
             }
 
             @Override
-            public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
-                if (!response.isSuccessful()) {
-                    Log.e("ReservaFragment", "Respuesta no exitosa del servidor: " + response);
-                    throw new IOException("Código inesperado " + response);
-                }
+            public void onResponse(@NotNull Call call, @NotNull Response response) {
+                try {
+                    if (!response.isSuccessful()) {
+                        Log.e("ReservaFragment", "Respuesta no exitosa del servidor: " + response);
+                        getActivity().runOnUiThread(() -> Toast.makeText(getContext(), "Error en respuesta del servidor: Código " + response.code(), Toast.LENGTH_LONG).show());
+                        return;
+                    }
 
-                final String responseData = response.body().string();
-                Log.d("ReservaFragment", "Reservas cargados correctamente: " + responseData);
+                    final String responseData = response.body().string();
+                    Log.d("ReservaFragment", "Reservas cargadas correctamente: " + responseData);
 
-                getActivity().runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
+                    getActivity().runOnUiThread(() -> {
                         try {
                             JSONArray jsonArray = new JSONArray(responseData);
                             reservasList.clear();
@@ -149,17 +144,27 @@ public class ReservaFragment extends Fragment implements ReservaAdapter.Reservas
                             }
                             reservasAdapter.notifyDataSetChanged();
                             Log.d("ReservaFragment", "Reservas actualizadas en la interfaz de usuario.");
-                            Toast.makeText(getContext(), "Reservas cargadas y actualizadas.", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(getContext(), "Reservas actualizadas.", Toast.LENGTH_SHORT).show();
                         } catch (JSONException e) {
                             Log.e("ReservaFragment", "Error al parsear reservas: ", e);
+                            Toast.makeText(getContext(), "Error al procesar las reservas: " + e.getMessage(), Toast.LENGTH_LONG).show();
                         }
-                    }
-                });
-
+                    });
+                } catch (IOException e) {
+                    Log.e("ReservaFragment", "Error al leer la respuesta: ", e);
+                    getActivity().runOnUiThread(() -> Toast.makeText(getContext(), "Error al leer respuesta: " + e.getMessage(), Toast.LENGTH_LONG).show());
+                }
             }
         });
     }
 
+
+
+    private void scrollToNewestReserva() {
+        if (!reservasList.isEmpty()) {
+            reservasRecyclerView.scrollToPosition(reservasList.size() - 1);
+        }
+    }
 
     @Override
     public void deletePressed(int position) {
@@ -253,20 +258,10 @@ public class ReservaFragment extends Fragment implements ReservaAdapter.Reservas
         });
     }
 
+
     private void cargarReservas() {
-        Log.d("ReservaFragment", "Intentando cargar reservas...");
-        if (isNetworkAvailable()) {
-            Log.d("ReservaFragment", "Conexión de red disponible. Cargando reservas...");
-
-            Resources res = getResources();
-            String url = res.getString(R.string.url_reservas);
-            Log.d("ReservaFragment", "URL de carga de reservas: " + url);
-
-            getListaTask(url);
-        } else {
-            Log.e("ReservaFragment", "Conexión de red no disponible.");
-            showError("error.IOException");
-        }
+        Log.d("ReservaFragment", "Cargando reservas...");
+        loadReservasFromBackend(); // Este método debe manejar la carga de reservas desde el backend
     }
 
 

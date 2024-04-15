@@ -54,7 +54,7 @@
     <string name="eliminar_cliente">Delete Customer</string>
     <string name="fab_add_cliente">Add customer</string>
     <string name="clientes">Customers</string>
-    <string name="numero_hamaca">Hamaca #%d</string>
+    <string name="numero_hamaca">#%d</string>
     <string name="estado_hamaca">Sunbed state</string>
     <string name="reserva">Books</string>
     <string name="create_new_reservation">Create a new reservation</string>
@@ -93,6 +93,11 @@
     <string-array name="payment_array">
         <item>Cash</item>
         <item>Credit Card</item>
+    </string-array>
+    <string-array name="estado_reserva_array">
+        <item>Pendiente</item>
+        <item>Ha llegado</item>
+        <item>Cancelada</item>
     </string-array>
 
 </resources>

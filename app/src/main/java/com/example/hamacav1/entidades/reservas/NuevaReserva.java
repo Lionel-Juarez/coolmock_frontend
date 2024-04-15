@@ -3,6 +3,7 @@ package com.example.hamacav1.entidades.reservas;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.res.Resources;
 import android.net.ConnectivityManager;
 import android.net.Network;
 import android.net.NetworkCapabilities;
@@ -12,10 +13,13 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.util.Log;
+import android.view.Gravity;
+import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.CalendarView;
 import android.widget.CheckBox;
+import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.Toast;
 
@@ -49,15 +53,13 @@ import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
 
-
 public class NuevaReserva extends AppCompatActivity {
-
-
     private CalendarView calendarViewReserva;
     private Spinner spCliente, spEstado, spMetodoPago;
     private CheckBox cbPagada;
     private Button btnGuardarReserva;
-    private String fechaReservaSeleccionada;
+    private String fechaReservaSeleccionada, fechaPago;
+    private List<Cliente> fullClientsList;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -79,12 +81,13 @@ public class NuevaReserva extends AppCompatActivity {
                 // Guardar la fecha seleccionada en el formato "dd-MM-yyyy"
                 Calendar calendar = Calendar.getInstance();
                 calendar.set(year, month, dayOfMonth);
-                SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy", Locale.getDefault());
+                SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy HH:mm", Locale.getDefault());
                 fechaReservaSeleccionada = sdf.format(calendar.getTime());
+
             }
         });
 
-        btnGuardarReserva.setOnClickListener(v -> guardarReserva());
+//        btnGuardarReserva.setOnClickListener(v -> guardarReserva());
 
         // Cargar clientes en el spinner
         loadClientsFromBackend();
@@ -135,55 +138,15 @@ public class NuevaReserva extends AppCompatActivity {
         });
     }
 
-    private void updateClientsSpinner(List<Cliente> clientsList) {
-        ArrayAdapter<Cliente> adapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, clientsList);
-        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        spCliente.setAdapter(adapter);
-        Log.d("NuevaReserva", "Clientes actualizados en la interfaz de usuario.");
-    }
-
-
-    private void guardarReserva() {
-        if (validateInput()) {
-            Cliente selectedCliente = (Cliente) spCliente.getSelectedItem();
-            String estado = spEstado.getSelectedItem().toString();
-            String metodoPago = spMetodoPago.getSelectedItem().toString();
-
-            // Construcción de la reserva con todos los campos necesarios
-            Reserva reserva = new Reserva();
-            reserva.setCliente(selectedCliente);
-            reserva.setEstado(estado);
-            reserva.setMetodoPago(metodoPago);
-            reserva.setPagada(cbPagada.isChecked());
-            reserva.setFechaReserva(fechaReservaSeleccionada);
-
-            // Simula obtener un Usuario y una Hamaca, reemplazar con lógica real
-            Usuario usuarioCreador = obtenerUsuarioCreador();
-            Hamaca hamacaAsociada = obtenerHamacaSeleccionada();  // Esta función debe implementarse según cómo se gestione la selección de hamacas
-
-            reserva.setCreadoPor(usuarioCreador);
-            reserva.setHamaca(hamacaAsociada);
-
-            if (isNetworkAvailable()) {
-                sendTask(reserva);
-            } else {
-                showError("No hay conexión a Internet.");
-            }
-        }
-    }
     @Override
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
     }
     private Boolean isNetworkAvailable() {
-        /*La clase ConnectivityManager nos devolverá información sobre el estado de la conexión a
-         * Internet. Puede ser que no tengamos cobertura o que directamente no tengamos activado
-         * la red WiFi o la red de datos móviles*/
+
         ConnectivityManager connectivityManager = (ConnectivityManager)
                 getSystemService(Context.CONNECTIVITY_SERVICE);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            /*Si la versión de Android es superior a Android M, debemos usar las clase Network
-             * en lugar de NetworkInfo para comprobar la conectividad*/
             Network nw = connectivityManager.getActiveNetwork();
             if (nw == null) {
                 return false;
@@ -198,49 +161,98 @@ public class NuevaReserva extends AppCompatActivity {
         }
     }
 
-    private boolean validateInput() {
-        if (fechaReservaSeleccionada == null || fechaReservaSeleccionada.isEmpty()) {
-            Toast.makeText(this, "Por favor, seleccione una fecha.", Toast.LENGTH_SHORT).show();
-            return false;
+    public void addReserva(View view) {
+        // Obtiene los datos de los componentes de la interfaz de usuario
+        String fechaReserva = fechaReservaSeleccionada;
+        String estado = spEstado.getSelectedItem().toString();
+        String metodoPago = spMetodoPago.getSelectedItem().toString();
+        boolean pagada = cbPagada.isChecked();
+        Cliente cliente = (Cliente) spCliente.getSelectedItem();  // Ahora esto es seguro
+
+        // Valida la entrada del usuario
+        if (validateInput(fechaReserva)) {
+            if (isNetworkAvailable()) {
+                Log.d("NuevaReserva", "Se va a ejecutar sendTask (dentro de addReserva).");
+                // Construye la URL de la solicitud HTTP
+                String url = getResources().getString(R.string.url_reservas) + "nuevaReserva";
+                // Envía la solicitud HTTP para agregar una nueva reserva
+                sendTask(url, fechaReserva, estado, pagada, metodoPago, cliente.getIdCliente());  // Asume que getId() te da el ID del cliente
+            } else {
+                showError("Error en la fecha de reserva");
+            }
         }
-        return true;
     }
-    private void sendTask(Reserva reserva) {
+
+
+    private boolean validateInput(String fechaReserva) {
+        boolean isValid = true;
+
+        // Validación para la fecha de reserva
+        if (fechaReserva == null || fechaReserva.isEmpty()) {
+            showError("Fecha de reserva no seleccionada.");
+            isValid = false;
+        }
+
+        return isValid;
+    }
+
+    private void sendTask(String url, String fechaReserva, String estado, boolean pagada, String metodoPago, long idCliente) {
         ExecutorService executor = Executors.newSingleThreadExecutor();
         Handler handler = new Handler(Looper.getMainLooper());
+        Log.d("NuevaReserva", "Ejecutando send task.");
 
         executor.execute(() -> {
             try {
                 OkHttpClient client = new OkHttpClient();
                 MediaType MEDIA_TYPE_JSON = MediaType.parse("application/json; charset=utf-8");
 
-                JSONObject json = new JSONObject();
-                json.put("idCliente", reserva.getCliente().getIdCliente());  // Asegúrate de que el cliente tiene un id
-                json.put("estado", reserva.getEstado());
-                json.put("metodoPago", reserva.getMetodoPago());
-                json.put("pagada", reserva.isPagada());
-                json.put("fechaReserva", reserva.getFechaReserva());
+                // Asegúrate de que el formato de fecha es el correcto
+                // Considera convertir la fecha aquí si es necesario para coincidir con el formato "dd-MM-yyyy HH:mm"
 
+                JSONObject json = new JSONObject();
+                json.put("fechaReserva", fechaReserva);
+                json.put("estado", estado);
+                json.put("pagada", pagada);
+                json.put("metodoPago", metodoPago);
+                json.put("idCliente", idCliente);
+                json.put("idHamaca", 1); // Asegúrate de que estos datos son correctos o dinámicos según sea necesario
+                json.put("idUsuario", 1); // Asumiendo que creadaPor se refiere al Usuario
+
+                // Añadir fecha de pago si la reserva está pagada
+                if (pagada) {
+                    json.put("fechaPago", fechaReserva); // Utiliza la misma fecha de la reserva para la fecha de pago
+                }
                 RequestBody body = RequestBody.create(json.toString(), MEDIA_TYPE_JSON);
-                Request request = new Request.Builder().url(getResources().getString(R.string.url_reservas)).post(body).build();
+                Request request = new Request.Builder().url(url).post(body).build();
 
                 try (Response response = client.newCall(request).execute()) {
                     String result = response.body().string();
                     handler.post(() -> {
                         if (response.isSuccessful()) {
-                            Toast.makeText(getApplicationContext(), "Reserva guardada con éxito", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(getApplicationContext(), "Reserva añadida con éxito", Toast.LENGTH_SHORT).show();
+                            Log.d("NuevaReserva", "Reserva añadida con éxito.");
                             setResult(Activity.RESULT_OK);
                             finish();
                         } else {
-                            showError("Error al guardar reserva: " + result);
+                            Log.e("NuevaReserva", "Error al añadir reserva: " + result);
+                            showError("Error al añadir reserva: " + result);
                         }
                     });
                 }
             } catch (Exception e) {
-                Log.e("NuevaReserva", "Excepción al enviar reserva: " + e.getMessage(), e);
-                handler.post(() -> showError("Error al procesar la solicitud."));
+                Log.e("NuevaReserva", "Excepción al enviar tarea: " + e.getMessage(), e);
+                handler.post(() -> showError("Error al procesar la solicitud: " + e.getMessage()));
             }
         });
+    }
+
+
+
+    private void updateClientsSpinner(List<Cliente> clientsList) {
+        ArrayAdapter<Cliente> adapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, clientsList);
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spCliente.setAdapter(adapter);
+        Log.d("NuevaReserva", "Clientes actualizados en la interfaz de usuario.");
     }
 
 
@@ -259,3 +271,4 @@ public class NuevaReserva extends AppCompatActivity {
         Toast.makeText(this, message, Toast.LENGTH_LONG).show();
     }
 }
+

@@ -108,9 +108,9 @@ public class HamacaFragment extends Fragment {
 
     private int cantidadDeHamacasPorPlano(int planoId) {
         switch (planoId) {
-            case 1: return 12;
-            case 2: return 16;
-            case 3: return 20;
+            case 1: return 35;
+            case 2: return 30;
+            case 3: return 25;
             default: return 0;
         }
     }

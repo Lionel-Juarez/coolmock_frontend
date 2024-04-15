@@ -1,4 +1,5 @@
 package com.example.hamacav1.entidades.hamacas;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -17,6 +18,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.example.hamacav1.R;
+import com.example.hamacav1.entidades.reservas.NuevaReserva;
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
 public class HamacaDetalles  extends DialogFragment {
     private static final String ARG_HAMACA = "hamaca";
@@ -47,6 +49,8 @@ public class HamacaDetalles  extends DialogFragment {
             actualizarEstado(tvDetalleEstado, hamaca);
 
             btnReservar.setOnClickListener(v -> {
+                Intent intent = new Intent(getActivity(), NuevaReserva.class);
+                startActivity(intent);
                 hamaca.setReservada(true);
                 hamaca.setOcupada(false);
                 actualizarEstado(tvDetalleEstado, hamaca);

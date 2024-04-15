@@ -21,7 +21,7 @@ public class Reserva implements Serializable {
     private Long idReserva;
     private Hamaca hamaca;
     private Cliente cliente;
-    private Usuario creadoPor;
+    private Usuario creadaPor;
     private String estado;
     private boolean pagada;
     private String metodoPago;
@@ -53,15 +53,13 @@ public class Reserva implements Serializable {
 
         JSONObject usuarioJson = json.optJSONObject("creadaPor");
         if (usuarioJson != null) {
-            this.creadoPor = new Usuario();
-            this.creadoPor.fromJSON(usuarioJson);
+            this.creadaPor = new Usuario();
+            this.creadaPor.fromJSON(usuarioJson);
             Log.d("Reserva", "Usuario creado correctamente");
         } else {
             Log.d("Reserva", "No se encontró el objeto 'creadoPor' en el JSON");
-            this.creadoPor = null;
+            this.creadaPor = null;
         }
 
     }
-
-
 }

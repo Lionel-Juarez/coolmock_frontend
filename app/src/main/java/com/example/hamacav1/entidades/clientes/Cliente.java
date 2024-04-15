@@ -14,6 +14,12 @@ public class Cliente {
     private String nombreCompleto;
     private String numeroTelefono;
 
+    @Override
+    public String toString() {
+        return this.getNombreCompleto();  // Asume que getNombreCompleto() es el método para obtener el nombre del cliente
+    }
+
+
     public void fromJSON(JSONObject jsonObject) throws JSONException {
         this.idCliente = jsonObject.optLong("idCliente", -1);
         this.nombreCompleto = jsonObject.optString("nombreCompleto", "");
