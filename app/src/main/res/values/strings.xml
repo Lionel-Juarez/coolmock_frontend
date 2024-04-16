@@ -64,13 +64,13 @@
     <string name="eliminar_reserva">Delete reservation</string>
     <string name="toggle_details">Details</string>
     <string name="reservas">Reservations</string>
-    <string name="fab_add_reserva">Fab add reservation</string>
-    <string name="fecha_reserva">Fecha de Reserva: %s</string>
-    <string name="estado_reserva">Estado: %s</string>
-    <string name="metodo_pago">Método de Pago: %s</string>
-    <string name="reserva_pagada">Reserva Pagada: %s</string>
-    <string name="fecha_pago">Fecha de Pago: %s</string>
-    <string name="creado_por">Creado Por: %s</string>
+    <string name="fab_add_reserva">Make a reservation</string>
+    <string name="fecha_reserva">Date: %s</string>
+    <string name="estado_reserva">State: %s</string>
+    <string name="metodo_pago">Payment method: %s</string>
+    <string name="reserva_pagada">Paid?: %s</string>
+    <string name="fecha_pago">Payment date: %s</string>
+    <string name="creado_por">Created by: %s</string>
     <string name="reservations">Reservations</string>
 
 

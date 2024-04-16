@@ -78,11 +78,6 @@ public class ReservaFragment extends Fragment implements ReservaAdapter.Reservas
             }
         }
     }
-
-    public interface OnReservasReceivedListener {
-        void onReceived(List<Reserva> reservas);
-    }
-
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -164,30 +159,6 @@ public class ReservaFragment extends Fragment implements ReservaAdapter.Reservas
         });
     }
 
-    private void procesarRespuestaReservas(String responseData) {
-        try {
-            JSONArray jsonArray = new JSONArray(responseData);
-            reservasList.clear();
-            for (int i = 0; i < jsonArray.length(); i++) {
-                JSONObject jsonObject = jsonArray.getJSONObject(i);
-                Reserva reserva = new Reserva();
-                reserva.fromJSON(jsonObject);
-                reservasList.add(reserva);
-            }
-            reservasAdapter.notifyDataSetChanged();
-            Toast.makeText(getContext(), "Reservas actualizadas.", Toast.LENGTH_SHORT).show();
-        } catch (JSONException e) {
-            Toast.makeText(getContext(), "Error al procesar las reservas: " + e.getMessage(), Toast.LENGTH_LONG).show();
-        }
-    }
-
-
-    private void scrollToNewestReserva() {
-        if (!reservasList.isEmpty()) {
-            reservasRecyclerView.scrollToPosition(reservasList.size() - 1);
-        }
-    }
-
     @Override
     public void deletePressed(int position) {
         AlertDialog diaBox = AskOption(position);
@@ -213,25 +184,6 @@ public class ReservaFragment extends Fragment implements ReservaAdapter.Reservas
         return myQuittingDialogBox;
     }
 
-    private void eliminarReserva(int position){
-        if(reservasList !=null && reservasList.size() > position) {
-            Reserva reserva = reservasList.get(position);
-            Log.d("ReservaFragment", "Eliminando reserva: " + reserva.getIdReserva());
-
-            if (isNetworkAvailable()) {
-                String url = getResources().getString(R.string.url_reservas) + "eliminarReserva/" + reserva.getIdReserva();
-                eliminarTask(url);
-            } else {
-                Log.e("ReservaFragment", "Conexión de red no disponible para eliminar reserva.");
-                showError("error.IOException");
-            }
-        } else {
-            Log.e("ReservaFragment", "Posición de reserva no válida o lista de reservas vacía.");
-            showError("error.desconocido");
-        }
-    }
-
-
     private Boolean isNetworkAvailable() {
         ConnectivityManager connectivityManager = (ConnectivityManager)
                 getContext().getSystemService(Context.CONNECTIVITY_SERVICE);
@@ -252,86 +204,10 @@ public class ReservaFragment extends Fragment implements ReservaAdapter.Reservas
     }
 
 
-    private void eliminarTask(String url){
-        ExecutorService executor = Executors.newSingleThreadExecutor();
-        Handler handler = new Handler(Looper.getMainLooper());
-        executor.execute(new Runnable() {
-            @Override
-            public void run() {
-
-                Internetop interopera= Internetop.getInstance();
-                String result = interopera.deleteTask(url);
-                handler.post(new Runnable() {
-                    @Override
-                    public void run() {
-                        if(result.equalsIgnoreCase("error.IOException")||
-                                result.equals("error.OKHttp")) {
-                            showError(result);
-                        }
-                        else if(result.equalsIgnoreCase("null")){
-                            showError("error.desconocido");
-                        }
-                        else{
-                            cargarReservas();
-                        }
-                    }
-                });
-            }
-        });
-    }
-
 
     private void cargarReservas() {
         Log.d("ReservaFragment", "Cargando reservas...");
         loadReservasFromBackend(); // Este método debe manejar la carga de reservas desde el backend
     }
-    private void resetLista(String result){
-        try {
-            JSONArray listaReservasJson = new JSONArray(result);
-            if (reservasList == null) {
-                reservasList = new ArrayList<>();
-            } else {
-                reservasList.clear();
-            }
-            for (int i = 0; i < listaReservasJson.length(); ++i) {
-                JSONObject jsonUser = listaReservasJson.getJSONObject(i);
-                Reserva reserva = new Reserva();
-                reserva.fromJSON(jsonUser);
-                reservasList.add(reserva);
-            }
-            if (reservasAdapter == null) {
-                reservasAdapter = new ReservaAdapter(reservasList, getContext(), this);
-                reservasRecyclerView.setAdapter(reservasAdapter);
-            } else {
-                reservasAdapter.notifyDataSetChanged();
-            }
-            // Si estás utilizando una ProgressBar, aquí iría el código para ocultarla
-            // Por ejemplo:
-            // ProgressBar pbMain = findViewById(R.id.pb_main);
-            // pbMain.setVisibility(View.GONE);
-        } catch (JSONException e) {
-            showError(e.getMessage());
-        }
-    }
 
-    private void showError(String error) {
-        String message;
-        Resources res = getResources();
-        int duration;
-        if (error.equals("error.IOException")||error.equals("error.OKHttp")) {
-            message = res.getString(R.string.error_connection);
-            duration = Toast.LENGTH_SHORT;
-        }
-        else if(error.equals("error.undelivered")){
-            message = res.getString(R.string.error_undelivered);
-            duration = Toast.LENGTH_LONG;
-        }
-        else {
-            message = res.getString(R.string.error_unknown);
-            duration = Toast.LENGTH_SHORT;
-        }
-        Toast toast = Toast.makeText(getActivity(), message, duration);
-        toast.show();
-        Log.d("ReservaFragment", "Mostrando error: " + message);
-    }
 }
