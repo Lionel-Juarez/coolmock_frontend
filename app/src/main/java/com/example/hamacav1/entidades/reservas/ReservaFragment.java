@@ -108,6 +108,10 @@ public class ReservaFragment extends Fragment implements ReservaAdapter.Reservas
 
 
     private void loadReservasFromBackend() {
+        if (!isNetworkAvailable()) {
+            Toast.makeText(getContext(), "No hay conexión a Internet", Toast.LENGTH_LONG).show();
+            return;
+        }
         String url = getResources().getString(R.string.url_reservas);
         Log.d("ReservaFragment", "Cargando reservas desde el backend: " + url);
         OkHttpClient client = new OkHttpClient();
@@ -133,22 +137,24 @@ public class ReservaFragment extends Fragment implements ReservaAdapter.Reservas
                     Log.d("ReservaFragment", "Reservas cargadas correctamente: " + responseData);
 
                     getActivity().runOnUiThread(() -> {
-                        try {
-                            JSONArray jsonArray = new JSONArray(responseData);
-                            reservasList.clear();
-                            for (int i = 0; i < jsonArray.length(); i++) {
-                                JSONObject jsonObject = jsonArray.getJSONObject(i);
-                                Reserva reserva = new Reserva();
-                                reserva.fromJSON(jsonObject);
-                                reservasList.add(reserva);
-                            }
-                            reservasAdapter.notifyDataSetChanged();
-                            Log.d("ReservaFragment", "Reservas actualizadas en la interfaz de usuario.");
-                            Toast.makeText(getContext(), "Reservas actualizadas.", Toast.LENGTH_SHORT).show();
-                        } catch (JSONException e) {
-                            Log.e("ReservaFragment", "Error al parsear reservas: ", e);
-                            Toast.makeText(getContext(), "Error al procesar las reservas: " + e.getMessage(), Toast.LENGTH_LONG).show();
-                        }
+                        if (isAdded()) { // Verifica que el fragmento esté aún adjunto a la actividad
+                            Toast.makeText(getContext(), "Mensaje", Toast.LENGTH_LONG).show();
+                            try {
+                                JSONArray jsonArray = new JSONArray(responseData);
+                                reservasList.clear();
+                                for (int i = 0; i < jsonArray.length(); i++) {
+                                    JSONObject jsonObject = jsonArray.getJSONObject(i);
+                                    Reserva reserva = new Reserva();
+                                    reserva.fromJSON(jsonObject);
+                                    reservasList.add(reserva);
+                                }
+                                reservasAdapter.notifyDataSetChanged();
+                                Log.d("ReservaFragment", "Reservas actualizadas en la interfaz de usuario.");
+                                Toast.makeText(getContext(), "Reservas actualizadas.", Toast.LENGTH_SHORT).show();
+                            } catch (JSONException e) {
+                                Log.e("ReservaFragment", "Error al parsear reservas: ", e);
+                                Toast.makeText(getContext(), "Error al procesar las reservas: " + e.getMessage(), Toast.LENGTH_LONG).show();
+                            }                        }
                     });
                 } catch (IOException e) {
                     Log.e("ReservaFragment", "Error al leer la respuesta: ", e);
@@ -158,6 +164,22 @@ public class ReservaFragment extends Fragment implements ReservaAdapter.Reservas
         });
     }
 
+    private void procesarRespuestaReservas(String responseData) {
+        try {
+            JSONArray jsonArray = new JSONArray(responseData);
+            reservasList.clear();
+            for (int i = 0; i < jsonArray.length(); i++) {
+                JSONObject jsonObject = jsonArray.getJSONObject(i);
+                Reserva reserva = new Reserva();
+                reserva.fromJSON(jsonObject);
+                reservasList.add(reserva);
+            }
+            reservasAdapter.notifyDataSetChanged();
+            Toast.makeText(getContext(), "Reservas actualizadas.", Toast.LENGTH_SHORT).show();
+        } catch (JSONException e) {
+            Toast.makeText(getContext(), "Error al procesar las reservas: " + e.getMessage(), Toast.LENGTH_LONG).show();
+        }
+    }
 
 
     private void scrollToNewestReserva() {
@@ -262,35 +284,6 @@ public class ReservaFragment extends Fragment implements ReservaAdapter.Reservas
     private void cargarReservas() {
         Log.d("ReservaFragment", "Cargando reservas...");
         loadReservasFromBackend(); // Este método debe manejar la carga de reservas desde el backend
-    }
-
-
-    private void getListaTask(String url) {
-        ExecutorService executor = Executors.newSingleThreadExecutor();
-        Handler handler = new Handler(Looper.getMainLooper());
-        executor.execute(new Runnable() {
-            @Override
-            public void run() {
-                Internetop interopera= Internetop.getInstance();
-                String result = interopera.getString(url);
-                handler.post(new Runnable() {
-                    @Override
-                    public void run() {
-                        if(result.equalsIgnoreCase("error.IOException")||
-                                result.equals("error.OKHttp")) {
-
-                            showError(result);
-                        }
-                        else if(result.equalsIgnoreCase("null")){
-                            showError("error.desconocido");
-                        }
-                        else{
-                            resetLista(result);
-                        }
-                    }
-                });
-            }
-        });
     }
     private void resetLista(String result){
         try {

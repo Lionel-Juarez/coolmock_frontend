@@ -58,6 +58,17 @@
             android:orientation="vertical"
             android:layout_below="@id/tvEstado"
             android:padding="16dp">
+            <TextView
+                android:id="@+id/tvCreadoPor"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Creado por"/>
+
+            <TextView
+                android:id="@+id/tvPagada"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Pagada"/>
 
             <TextView
                 android:id="@+id/tvMetodoPago"
@@ -67,22 +78,10 @@
                 android:layout_marginBottom="4dp"/>
 
             <TextView
-                android:id="@+id/tvPagada"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="Pagada"/>
-
-            <TextView
                 android:id="@+id/tvFechaPago"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="Fecha de Pago"/>
-
-            <TextView
-                android:id="@+id/tvCreadoPor"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="Creado por"/>
 
         </LinearLayout>
 

@@ -33,6 +33,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.hamacav1.R;
+import com.example.hamacav1.entidades.reservas.Reserva;
 import com.example.hamacav1.util.Internetop;
 
 import org.jetbrains.annotations.NotNull;
@@ -95,16 +96,69 @@ public class HamacaFragment extends Fragment {
     }
 
     private void cargarHamacasPorPlano(int planoId) {
-        // Solo crea y carga hamacas si no han sido creadas previamente
-        if (todasLasHamacas.stream().noneMatch(h -> h.getPlanoId() == planoId)) {
-            for (int i = 1; i <= cantidadDeHamacasPorPlano(planoId); i++) {
-                todasLasHamacas.add(new Hamaca((long) i, 10.0, false, false, planoId));
+        String url =getResources().getString(R.string.url_hamacas) ; // Asegúrate de usar la URL correcta de tu API
+
+        OkHttpClient client = new OkHttpClient();
+        Request request = new Request.Builder()
+                .url(url)
+                .get()
+                .build();
+
+        client.newCall(request).enqueue(new Callback() {
+            @Override
+            public void onFailure(@NotNull Call call, @NotNull IOException e) {
+                e.printStackTrace();
+                getActivity().runOnUiThread(() -> {
+                    Toast.makeText(getContext(), "Error al cargar hamacas", Toast.LENGTH_SHORT).show();
+                });
             }
-        }
-        List<Hamaca> hamacasFiltradas = todasLasHamacas.stream().filter(h -> h.getPlanoId() == planoId).collect(Collectors.toList());
-        hamacasAdapter.setHamacas(hamacasFiltradas);
-        hamacasAdapter.notifyDataSetChanged();
+
+            @Override
+            public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
+                if (response.isSuccessful()) {
+                    final String responseBody = response.body().string();
+                    getActivity().runOnUiThread(() -> {
+                        try {
+                            todasLasHamacas.clear();
+                            JSONArray jsonArray = new JSONArray(responseBody);
+                            for (int i = 0; i < jsonArray.length(); i++) {
+                                JSONObject jsonObject = jsonArray.getJSONObject(i);
+
+                                Reserva reserva = null;
+                                if (jsonObject.has("idReserva") && !jsonObject.isNull("idReserva")) {
+                                    JSONObject reservaJson = jsonObject.getJSONObject("idReserva");
+                                    reserva = new Reserva();
+                                    reserva.fromJSON(reservaJson); // Asegúrate de que Reserva tiene un método adecuado para esto
+                                }
+
+                                Hamaca hamaca = new Hamaca(
+                                        jsonObject.getLong("idHamaca"),
+                                        jsonObject.getDouble("precio"),
+                                        jsonObject.getBoolean("reservada"),
+                                        jsonObject.getBoolean("ocupada"),
+                                        jsonObject.getInt("planoId"),
+                                        reserva
+                                );
+                                todasLasHamacas.add(hamaca);
+                            }
+
+                            List<Hamaca> hamacasFiltradas = todasLasHamacas.stream().filter(h -> h.getPlanoId() == planoId).collect(Collectors.toList());
+                            hamacasAdapter.setHamacas(hamacasFiltradas);
+                            hamacasAdapter.notifyDataSetChanged();
+                        } catch (JSONException e) {
+                            Toast.makeText(getContext(), "Error al procesar los datos", Toast.LENGTH_SHORT).show();
+                            e.printStackTrace();
+                        }
+                    });
+                } else {
+                    getActivity().runOnUiThread(() -> {
+                        Toast.makeText(getContext(), "Respuesta no exitosa del servidor", Toast.LENGTH_SHORT).show();
+                    });
+                }
+            }
+        });
     }
+
 
     private int cantidadDeHamacasPorPlano(int planoId) {
         switch (planoId) {

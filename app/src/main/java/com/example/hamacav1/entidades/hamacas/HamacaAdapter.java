@@ -42,19 +42,19 @@ public class HamacaAdapter extends RecyclerView.Adapter<HamacaAdapter.HamacaView
         holder.tvNumeroHamaca.setText(String.format(context.getString(R.string.numero_hamaca), hamaca.getIdHamaca()));
         updateViewColor(holder.ivEstadoHamaca, hamaca);
 
-        holder.itemView.setOnClickListener(view -> {
-            int adapterPosition = holder.getAdapterPosition(); // Obtiene la posición actualizada
-            if (adapterPosition != RecyclerView.NO_POSITION) {
-                Hamaca currentHamaca = listaHamacas.get(adapterPosition);
-                HamacaDetalles dialogFragment = HamacaDetalles.newInstance(currentHamaca, new HamacaDetalles.HamacaUpdateListener() {
-                    @Override
-                    public void onHamacaUpdated(Hamaca updatedHamaca) {
-                        notifyItemChanged(adapterPosition);
-                    }
-                });
-                dialogFragment.show(fragmentManager, "hamaca_details");
-            }
-        });
+//        holder.itemView.setOnClickListener(view -> {
+//            int adapterPosition = holder.getAdapterPosition(); // Obtiene la posición actualizada
+//            if (adapterPosition != RecyclerView.NO_POSITION) {
+//                Hamaca currentHamaca = listaHamacas.get(adapterPosition);
+//                HamacaDetalles dialogFragment = HamacaDetalles.newInstance(currentHamaca, new HamacaDetalles.HamacaUpdateListener() {
+//                    @Override
+//                    public void onHamacaUpdated(Hamaca updatedHamaca) {
+//                        notifyItemChanged(adapterPosition);
+//                    }
+//                });
+//                dialogFragment.show(fragmentManager, "hamaca_details");
+//            }
+//        });
     }
 
 

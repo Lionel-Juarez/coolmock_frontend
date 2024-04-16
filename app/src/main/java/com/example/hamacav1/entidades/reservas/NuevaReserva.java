@@ -176,7 +176,7 @@ public class NuevaReserva extends AppCompatActivity {
                 // Construye la URL de la solicitud HTTP
                 String url = getResources().getString(R.string.url_reservas) + "nuevaReserva";
                 // Envía la solicitud HTTP para agregar una nueva reserva
-                sendTask(url, fechaReserva, estado, pagada, metodoPago, cliente.getIdCliente());  // Asume que getId() te da el ID del cliente
+                sendTask(url, fechaReserva, estado, pagada, metodoPago, cliente.getIdCliente(), 1, 1);  // Asume que getId() te da el ID del cliente
             } else {
                 showError("Error en la fecha de reserva");
             }
@@ -196,18 +196,14 @@ public class NuevaReserva extends AppCompatActivity {
         return isValid;
     }
 
-    private void sendTask(String url, String fechaReserva, String estado, boolean pagada, String metodoPago, long idCliente) {
+    private void sendTask(String url, String fechaReserva, String estado, boolean pagada, String metodoPago, long idCliente, long idHamaca, long idUsuario) {
         ExecutorService executor = Executors.newSingleThreadExecutor();
         Handler handler = new Handler(Looper.getMainLooper());
-        Log.d("NuevaReserva", "Ejecutando send task.");
 
         executor.execute(() -> {
             try {
                 OkHttpClient client = new OkHttpClient();
                 MediaType MEDIA_TYPE_JSON = MediaType.parse("application/json; charset=utf-8");
-
-                // Asegúrate de que el formato de fecha es el correcto
-                // Considera convertir la fecha aquí si es necesario para coincidir con el formato "dd-MM-yyyy HH:mm"
 
                 JSONObject json = new JSONObject();
                 json.put("fechaReserva", fechaReserva);
@@ -215,13 +211,14 @@ public class NuevaReserva extends AppCompatActivity {
                 json.put("pagada", pagada);
                 json.put("metodoPago", metodoPago);
                 json.put("idCliente", idCliente);
-                json.put("idHamaca", 1); // Asegúrate de que estos datos son correctos o dinámicos según sea necesario
-                json.put("idUsuario", 1); // Asumiendo que creadaPor se refiere al Usuario
+                json.put("idHamaca", idHamaca);
+                json.put("idUsuario", idUsuario);
 
-                // Añadir fecha de pago si la reserva está pagada
                 if (pagada) {
-                    json.put("fechaPago", fechaReserva); // Utiliza la misma fecha de la reserva para la fecha de pago
+                    // Asumir que la fecha de pago puede ser diferente, ajustar lógicamente
+                    json.put("fechaPago", fechaReserva);
                 }
+
                 RequestBody body = RequestBody.create(json.toString(), MEDIA_TYPE_JSON);
                 Request request = new Request.Builder().url(url).post(body).build();
 
@@ -245,6 +242,7 @@ public class NuevaReserva extends AppCompatActivity {
             }
         });
     }
+
 
 
 

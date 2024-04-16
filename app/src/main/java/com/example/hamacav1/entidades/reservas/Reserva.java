@@ -6,10 +6,14 @@ import com.example.hamacav1.entidades.clientes.Cliente;
 import com.example.hamacav1.entidades.hamacas.Hamaca;
 import com.example.hamacav1.entidades.usuarios.Usuario;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
+
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -19,7 +23,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class Reserva implements Serializable {
     private Long idReserva;
-    private Hamaca hamaca;
+    private List<Hamaca> hamacas;  // Cambiado de un objeto singular a una lista
     private Cliente cliente;
     private Usuario creadaPor;
     private String estado;
@@ -39,10 +43,15 @@ public class Reserva implements Serializable {
         this.fechaPago = json.optString("fechaPago", "");
         this.fechaReserva = json.optString("fechaReserva", "");
 
-        JSONObject hamacaJson = json.optJSONObject("hamaca");
-        if (hamacaJson != null) {
-            this.hamaca = new Hamaca();
-            this.hamaca.fromJSON(hamacaJson);
+        JSONArray hamacasJson = json.optJSONArray("hamacas");
+        if (hamacasJson != null) {
+            this.hamacas = new ArrayList<>();
+            for (int i = 0; i < hamacasJson.length(); i++) {
+                JSONObject hamacaObj = hamacasJson.getJSONObject(i);
+                Hamaca hamaca = new Hamaca();
+                hamaca.fromJSON(hamacaObj);
+                this.hamacas.add(hamaca);
+            }
         }
 
         JSONObject clienteJson = json.optJSONObject("cliente");
