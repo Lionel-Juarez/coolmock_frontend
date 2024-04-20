@@ -59,6 +59,11 @@
             android:layout_below="@id/tvEstado"
             android:padding="16dp">
             <TextView
+                android:id="@+id/tvHamacas"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/tvHamacas"/>
+            <TextView
                 android:id="@+id/tvCreadoPor"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -68,20 +73,20 @@
                 android:id="@+id/tvPagada"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Pagada"/>
+                android:text="@string/reserva_pagada"/>
 
             <TextView
                 android:id="@+id/tvMetodoPago"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Método de Pago"
+                android:text="@string/metodo_pago"
                 android:layout_marginBottom="4dp"/>
 
             <TextView
                 android:id="@+id/tvFechaPago"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Fecha de Pago"/>
+                android:text="@string/payment_date"/>
 
         </LinearLayout>
 

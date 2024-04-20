@@ -14,19 +14,20 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.hamacav1.R;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class HamacaAdapter extends RecyclerView.Adapter<HamacaAdapter.HamacaViewHolder> {
-    private List<Hamaca> listaHamacas;
+    private List<Hamaca> listaHamacas = new ArrayList<>();
     private Context context;
     private FragmentManager fragmentManager;
 
 
     // Constructor
     public HamacaAdapter(List<Hamaca> listaHamacas, Context context, FragmentManager fragmentManager) {
-        this.listaHamacas = listaHamacas;
+        this.listaHamacas = listaHamacas != null ? listaHamacas : new ArrayList<>();
         this.context = context;
-        this.fragmentManager = fragmentManager;  // Asigna el FragmentManager aquí
+        this.fragmentManager = fragmentManager;
     }
 
     @NonNull
@@ -42,22 +43,17 @@ public class HamacaAdapter extends RecyclerView.Adapter<HamacaAdapter.HamacaView
         holder.tvNumeroHamaca.setText(String.format(context.getString(R.string.numero_hamaca), hamaca.getIdHamaca()));
         updateViewColor(holder.ivEstadoHamaca, hamaca);
 
-//        holder.itemView.setOnClickListener(view -> {
-//            int adapterPosition = holder.getAdapterPosition(); // Obtiene la posición actualizada
-//            if (adapterPosition != RecyclerView.NO_POSITION) {
-//                Hamaca currentHamaca = listaHamacas.get(adapterPosition);
-//                HamacaDetalles dialogFragment = HamacaDetalles.newInstance(currentHamaca, new HamacaDetalles.HamacaUpdateListener() {
-//                    @Override
-//                    public void onHamacaUpdated(Hamaca updatedHamaca) {
-//                        notifyItemChanged(adapterPosition);
-//                    }
-//                });
-//                dialogFragment.show(fragmentManager, "hamaca_details");
-//            }
-//        });
+        holder.itemView.setOnClickListener(view -> {
+            int adapterPosition = holder.getAdapterPosition(); // Obtiene la posición actualizada
+            if (adapterPosition != RecyclerView.NO_POSITION) {
+                Hamaca currentHamaca = listaHamacas.get(adapterPosition);
+                HamacaDetalles dialogFragment = HamacaDetalles.newInstance(currentHamaca, updatedHamaca -> {
+                    notifyItemChanged(adapterPosition);
+                });
+                dialogFragment.show(fragmentManager, "hamaca_details");
+            }
+        });
     }
-
-
 
 
     // Método para actualizar el color del ImageView basado en el estado de la hamaca

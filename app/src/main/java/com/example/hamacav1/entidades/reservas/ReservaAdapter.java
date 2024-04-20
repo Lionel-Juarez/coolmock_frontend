@@ -29,6 +29,12 @@ public class ReservaAdapter extends RecyclerView.Adapter<ReservaAdapter.ReservaV
         this.callback = callback;
     }
 
+    // Método para actualizar la lista de reservas
+    public void setReservas(List<Reserva> newReservas) {
+        this.reservaList = newReservas;
+        notifyDataSetChanged();  // Notifica al adaptador que los datos han cambiado
+    }
+
     @NonNull
     @Override
     public ReservaViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {

@@ -8,6 +8,18 @@
     tools:context=".entidades.reservas.ReservaFragment">
 
     <TextView
+        android:id="@+id/tvNoReservas"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/no_reservas"
+        android:gravity="center"
+        android:visibility="gone"
+        android:textSize="18sp"
+        android:layout_marginTop="16dp"
+        android:textColor="#616161"
+        android:padding="16dp" />
+
+    <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:padding="15dp"

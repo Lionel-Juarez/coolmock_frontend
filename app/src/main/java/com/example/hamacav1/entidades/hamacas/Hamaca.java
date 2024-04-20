@@ -14,7 +14,7 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class Hamaca {
+public class Hamaca implements Parcelable {
 
     private long idHamaca;
     private double precio;
@@ -22,6 +22,42 @@ public class Hamaca {
     private boolean ocupada;
     private int planoId;
     private Reserva idReserva;
+
+    protected Hamaca(Parcel in) {
+        idHamaca = in.readLong();
+        precio = in.readDouble();
+        reservada = in.readByte() != 0;
+        ocupada = in.readByte() != 0;
+        planoId = in.readInt();
+        idReserva = (Reserva) in.readSerializable();
+    }
+
+    public static final Creator<Hamaca> CREATOR = new Creator<Hamaca>() {
+        @Override
+        public Hamaca createFromParcel(Parcel in) {
+            return new Hamaca(in);
+        }
+
+        @Override
+        public Hamaca[] newArray(int size) {
+            return new Hamaca[size];
+        }
+    };
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel parcel, int flags) {
+        parcel.writeLong(idHamaca);
+        parcel.writeDouble(precio);
+        parcel.writeByte((byte) (reservada ? 1 : 0));
+        parcel.writeByte((byte) (ocupada ? 1 : 0));
+        parcel.writeInt(planoId);
+        parcel.writeSerializable(idReserva);
+    }
 
     // Método fromJSON modificado
     public void fromJSON(JSONObject json) throws JSONException {

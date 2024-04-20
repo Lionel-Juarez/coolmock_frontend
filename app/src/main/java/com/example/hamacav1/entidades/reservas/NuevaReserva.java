@@ -3,6 +3,7 @@ package com.example.hamacav1.entidades.reservas;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.content.res.Resources;
 import android.net.ConnectivityManager;
 import android.net.Network;
@@ -61,10 +62,20 @@ public class NuevaReserva extends AppCompatActivity {
     private String fechaReservaSeleccionada, fechaPago;
     private List<Cliente> fullClientsList;
 
+    private List<Long> idsHamacas;
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_new_reserva);
+
+        // Obtener el ID de la hamaca desde el Intent
+        Intent intent = getIntent();
+        if (intent != null && intent.hasExtra("idsHamacas")) {
+            idsHamacas = (ArrayList<Long>) intent.getSerializableExtra("idsHamacas"); // Recibiendo una lista
+        }
+        Log.d("NuevaReserva", "ID de la hamaca: " + idsHamacas);
 
         calendarViewReserva = findViewById(R.id.calendarView);
         spMetodoPago = findViewById(R.id.sp_metodo_pago);
@@ -91,6 +102,130 @@ public class NuevaReserva extends AppCompatActivity {
 
         // Cargar clientes en el spinner
         loadClientsFromBackend();
+    }
+
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+    }
+    private Boolean isNetworkAvailable() {
+
+        ConnectivityManager connectivityManager = (ConnectivityManager)
+                getSystemService(Context.CONNECTIVITY_SERVICE);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            Network nw = connectivityManager.getActiveNetwork();
+            if (nw == null) {
+                return false;
+            } else {
+                NetworkCapabilities actNw = connectivityManager.getNetworkCapabilities(nw);
+                return (actNw != null) && (actNw.hasTransport(NetworkCapabilities.TRANSPORT_WIFI) ||
+                        actNw.hasTransport(NetworkCapabilities.TRANSPORT_CELLULAR));
+            }
+        } else {
+            NetworkInfo nwInfo = connectivityManager.getActiveNetworkInfo();
+            return nwInfo != null && nwInfo.isConnected();
+        }
+    }
+
+    public void addReserva(View view) {
+        String fechaReserva = fechaReservaSeleccionada;
+        String estado = spEstado.getSelectedItem().toString();
+        String metodoPago = spMetodoPago.getSelectedItem().toString();
+        boolean pagada = cbPagada.isChecked();
+        Cliente cliente = (Cliente) spCliente.getSelectedItem();
+
+        if (cliente == null) {
+            showError("No se ha seleccionado ningún cliente.");
+            return;
+        }
+
+        long idCliente = cliente.getIdCliente();
+        if (idCliente <= 0) {
+            showError("El ID del cliente no es válido.");
+            return;
+        }
+
+        if (validateInput(fechaReserva, cliente, idsHamacas)) {
+            if (isNetworkAvailable()) {
+                String url = getResources().getString(R.string.url_reservas) + "nuevaReserva";
+                sendTask(url, fechaReserva, estado, pagada, metodoPago, cliente.getIdCliente(), idsHamacas, 1);  // Ajustar para enviar una lista de IDs de hamacas
+            } else {
+                showError("No hay conexión a Internet.");
+            }
+        }
+    }
+
+    private boolean validateInput(String fechaReserva, Cliente cliente, List<Long> idsHamacas) {
+        boolean isValid = true;
+        if (fechaReserva == null || fechaReserva.isEmpty()) {
+            showError("Fecha de reserva no seleccionada.");
+            isValid = false;
+        }
+        if (cliente == null || cliente.getIdCliente() <= 0 || idsHamacas == null || idsHamacas.isEmpty()) {
+            showError("Información crítica de la reserva está incompleta o incorrecta.");
+            isValid = false;
+        }
+        return isValid;
+    }
+
+    private void sendTask(String url, String fechaReserva, String estado, boolean pagada, String metodoPago, long idCliente, List<Long> idsHamacas, long idUsuario) {
+        ExecutorService executor = Executors.newSingleThreadExecutor();
+        Handler handler = new Handler(Looper.getMainLooper());
+
+        executor.execute(() -> {
+            OkHttpClient client = new OkHttpClient();
+            MediaType MEDIA_TYPE_JSON = MediaType.parse("application/json; charset=utf-8");
+            JSONObject json = new JSONObject();
+            try {
+                json.put("fechaReserva", fechaReserva);
+                json.put("estado", estado);
+                json.put("pagada", pagada);
+                json.put("metodoPago", metodoPago);
+                json.put("idCliente", idCliente);
+                json.put("idUsuario", idUsuario);
+                json.put("idHamacas", new JSONArray(idsHamacas));
+
+                if (pagada) {
+                    json.put("fechaPago", fechaReserva);
+                }
+
+                RequestBody body = RequestBody.create(json.toString(), MEDIA_TYPE_JSON);
+                Request request = new Request.Builder()
+                        .url(url)
+                        .post(body)
+                        .build();
+
+                try (Response response = client.newCall(request).execute()) {
+                    if (response.isSuccessful()) {
+                        // Actualizar estado de las hamacas como reservadas
+                        updateHamacasAsReserved(idsHamacas);
+                        Log.d("sendTask", "Reservation added successfully");
+                        handler.post(() -> {
+                            Toast.makeText(getApplicationContext(), "Reserva añadida con éxito", Toast.LENGTH_SHORT).show();
+                            setResult(Activity.RESULT_OK); // Informar a la actividad anterior para recargar datos
+                            finish(); // Cerrar esta actividad
+                        });
+                    } else {
+                        String responseBody = response.body() != null ? response.body().string() : null;
+                        handler.post(() -> {
+                            Log.e("sendTask", "Error adding reservation: " + responseBody);
+                            showError("Error al añadir reserva: " + responseBody);
+                        });
+                    }
+                }
+            } catch (Exception e) {
+                Log.e("sendTask", "Exception in sending reservation data: " + e.getMessage(), e);
+                handler.post(() -> showError("Error de conexión al servidor: " + e.getMessage()));
+            }
+        });
+    }
+
+    private void updateClientsSpinner(List<Cliente> clientsList) {
+        ArrayAdapter<Cliente> adapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, clientsList);
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spCliente.setAdapter(adapter);
+        Log.d("NuevaReserva", "Clientes actualizados en la interfaz de usuario.");
     }
 
     private void loadClientsFromBackend() {
@@ -138,133 +273,34 @@ public class NuevaReserva extends AppCompatActivity {
         });
     }
 
-    @Override
-    public void onSaveInstanceState(Bundle outState) {
-        super.onSaveInstanceState(outState);
-    }
-    private Boolean isNetworkAvailable() {
-
-        ConnectivityManager connectivityManager = (ConnectivityManager)
-                getSystemService(Context.CONNECTIVITY_SERVICE);
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            Network nw = connectivityManager.getActiveNetwork();
-            if (nw == null) {
-                return false;
-            } else {
-                NetworkCapabilities actNw = connectivityManager.getNetworkCapabilities(nw);
-                return (actNw != null) && (actNw.hasTransport(NetworkCapabilities.TRANSPORT_WIFI) ||
-                        actNw.hasTransport(NetworkCapabilities.TRANSPORT_CELLULAR));
-            }
-        } else {
-            NetworkInfo nwInfo = connectivityManager.getActiveNetworkInfo();
-            return nwInfo != null && nwInfo.isConnected();
-        }
-    }
-
-    public void addReserva(View view) {
-        // Obtiene los datos de los componentes de la interfaz de usuario
-        String fechaReserva = fechaReservaSeleccionada;
-        String estado = spEstado.getSelectedItem().toString();
-        String metodoPago = spMetodoPago.getSelectedItem().toString();
-        boolean pagada = cbPagada.isChecked();
-        Cliente cliente = (Cliente) spCliente.getSelectedItem();  // Ahora esto es seguro
-
-        // Valida la entrada del usuario
-        if (validateInput(fechaReserva)) {
-            if (isNetworkAvailable()) {
-                Log.d("NuevaReserva", "Se va a ejecutar sendTask (dentro de addReserva).");
-                // Construye la URL de la solicitud HTTP
-                String url = getResources().getString(R.string.url_reservas) + "nuevaReserva";
-                // Envía la solicitud HTTP para agregar una nueva reserva
-                sendTask(url, fechaReserva, estado, pagada, metodoPago, cliente.getIdCliente(), 1, 1);  // Asume que getId() te da el ID del cliente
-            } else {
-                showError("Error en la fecha de reserva");
-            }
-        }
-    }
-
-
-    private boolean validateInput(String fechaReserva) {
-        boolean isValid = true;
-
-        // Validación para la fecha de reserva
-        if (fechaReserva == null || fechaReserva.isEmpty()) {
-            showError("Fecha de reserva no seleccionada.");
-            isValid = false;
-        }
-
-        return isValid;
-    }
-
-    private void sendTask(String url, String fechaReserva, String estado, boolean pagada, String metodoPago, long idCliente, long idHamaca, long idUsuario) {
-        ExecutorService executor = Executors.newSingleThreadExecutor();
-        Handler handler = new Handler(Looper.getMainLooper());
-
-        executor.execute(() -> {
+    private void updateHamacasAsReserved(List<Long> idsHamacas) {
+        for (Long idHamaca : idsHamacas) {
+            String urlUpdate = getResources().getString(R.string.url_hamacas) + "updateHamaca/" + idHamaca;
+            OkHttpClient client = new OkHttpClient();
+            MediaType JSON = MediaType.parse("application/json; charset=utf-8");
+            JSONObject jsonObject = new JSONObject();
             try {
-                OkHttpClient client = new OkHttpClient();
-                MediaType MEDIA_TYPE_JSON = MediaType.parse("application/json; charset=utf-8");
+                jsonObject.put("reservada", true);
+                RequestBody body = RequestBody.create(jsonObject.toString(), JSON);
+                Request request = new Request.Builder()
+                        .url(urlUpdate)
+                        .put(body)
+                        .build();
 
-                JSONObject json = new JSONObject();
-                json.put("fechaReserva", fechaReserva);
-                json.put("estado", estado);
-                json.put("pagada", pagada);
-                json.put("metodoPago", metodoPago);
-                json.put("idCliente", idCliente);
-                json.put("idHamaca", idHamaca);
-                json.put("idUsuario", idUsuario);
-
-                if (pagada) {
-                    // Asumir que la fecha de pago puede ser diferente, ajustar lógicamente
-                    json.put("fechaPago", fechaReserva);
-                }
-
-                RequestBody body = RequestBody.create(json.toString(), MEDIA_TYPE_JSON);
-                Request request = new Request.Builder().url(url).post(body).build();
-
-                try (Response response = client.newCall(request).execute()) {
-                    String result = response.body().string();
-                    handler.post(() -> {
-                        if (response.isSuccessful()) {
-                            Toast.makeText(getApplicationContext(), "Reserva añadida con éxito", Toast.LENGTH_SHORT).show();
-                            Log.d("NuevaReserva", "Reserva añadida con éxito.");
-                            setResult(Activity.RESULT_OK);
-                            finish();
-                        } else {
-                            Log.e("NuevaReserva", "Error al añadir reserva: " + result);
-                            showError("Error al añadir reserva: " + result);
-                        }
-                    });
-                }
-            } catch (Exception e) {
-                Log.e("NuevaReserva", "Excepción al enviar tarea: " + e.getMessage(), e);
-                handler.post(() -> showError("Error al procesar la solicitud: " + e.getMessage()));
+                client.newCall(request).execute(); // Ejecutar la solicitud sin esperar la respuesta
+            } catch (JSONException e) {
+                Log.e("HamacaUpdate", "JSON error: " + e.getMessage(), e);
+            } catch (IOException e) {
+                Log.e("HamacaUpdate", "Network error: " + e.getMessage(), e);
             }
-        });
+        }
     }
-
-
-
-
-    private void updateClientsSpinner(List<Cliente> clientsList) {
-        ArrayAdapter<Cliente> adapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, clientsList);
-        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        spCliente.setAdapter(adapter);
-        Log.d("NuevaReserva", "Clientes actualizados en la interfaz de usuario.");
-    }
-
 
     private Usuario obtenerUsuarioCreador() {
         // Debes implementar la lógica para obtener el usuario que crea la reserva
         // Puede ser un usuario actualmente logueado o similar
         return new Usuario();  // Retorna un objeto usuario adecuado
     }
-
-    private Hamaca obtenerHamacaSeleccionada() {
-        // Implementa la lógica para obtener la hamaca seleccionada, si es relevante
-        return new Hamaca();  // Retorna la hamaca seleccionada o por defecto
-    }
-
     private void showError(String message) {
         Toast.makeText(this, message, Toast.LENGTH_LONG).show();
     }

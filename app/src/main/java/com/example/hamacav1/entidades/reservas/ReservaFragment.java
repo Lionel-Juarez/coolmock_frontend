@@ -17,6 +17,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.activity.result.ActivityResult;
@@ -27,6 +28,7 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -57,38 +59,32 @@ public class ReservaFragment extends Fragment implements ReservaAdapter.Reservas
     private RecyclerView reservasRecyclerView;
     private ReservaAdapter reservasAdapter;
     private List<Reserva> reservasList;
-    ActivityResultLauncher<Intent> nuevoResultLauncher = registerForActivityResult(
-            new ActivityResultContracts.StartActivityForResult(),
-            result -> {
-                if (result.getResultCode() == Activity.RESULT_OK) {
-                    Log.d("ReservaFragment", "Una nueva reserva fue añadida. Recargando reservas...");
-                    cargarReservas(); // Asumiendo que este método recarga la lista desde el backend
-                }
-            });
+    private ReservasViewModel viewModel;
+    private TextView tvNoReservas;
 
 
-    @Override
-    public void editPressed(int position) {
-        if (reservasList != null) {
-            if (reservasList.size() > position) {
-                Reserva reserva = reservasList.get(position);
-                Intent myIntent = new Intent(getActivity(), NuevaReserva.class);
-                //myIntent.putExtra("idReserva", reserva.getCreadoPor());
-                nuevoResultLauncher.launch(myIntent);
-            }
-        }
-    }
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_reservas, container, false);
         reservasRecyclerView = view.findViewById(R.id.reservasRecyclerView);
+        tvNoReservas = view.findViewById(R.id.tvNoReservas);  // Referencia al TextView
         reservasRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
-        reservasList = new ArrayList<>();
-        reservasAdapter = new ReservaAdapter(reservasList, getContext(), this);
+        reservasAdapter = new ReservaAdapter(new ArrayList<>(), getContext(), this);
         reservasRecyclerView.setAdapter(reservasAdapter);
 
-        loadReservasFromBackend();
+        viewModel = new ViewModelProvider(this).get(ReservasViewModel.class);
+        viewModel.getReservas().observe(getViewLifecycleOwner(), nuevasReservas -> {
+            if (nuevasReservas == null || nuevasReservas.isEmpty()) {
+                tvNoReservas.setVisibility(View.VISIBLE);
+                reservasRecyclerView.setVisibility(View.GONE);
+            } else {
+                tvNoReservas.setVisibility(View.GONE);
+                reservasRecyclerView.setVisibility(View.VISIBLE);
+                reservasAdapter.setReservas(nuevasReservas);
+                reservasAdapter.notifyDataSetChanged();
+            }
+        });
 
         view.findViewById(R.id.fab_add_reserva).setOnClickListener(v -> irHamacas());
 
@@ -101,113 +97,13 @@ public class ReservaFragment extends Fragment implements ReservaAdapter.Reservas
         }
     }
 
+    @Override
+    public void deletePressed(int position) {
 
-    private void loadReservasFromBackend() {
-        if (!isNetworkAvailable()) {
-            Toast.makeText(getContext(), "No hay conexión a Internet", Toast.LENGTH_LONG).show();
-            return;
-        }
-        String url = getResources().getString(R.string.url_reservas);
-        Log.d("ReservaFragment", "Cargando reservas desde el backend: " + url);
-        OkHttpClient client = new OkHttpClient();
-        Request request = new Request.Builder().url(url).build();
-
-        client.newCall(request).enqueue(new Callback() {
-            @Override
-            public void onFailure(@NotNull Call call, @NotNull IOException e) {
-                Log.e("ReservaFragment", "Error al cargar reservas: ", e);
-                getActivity().runOnUiThread(() -> Toast.makeText(getContext(), "Error al cargar datos: " + e.getMessage(), Toast.LENGTH_LONG).show());
-            }
-
-            @Override
-            public void onResponse(@NotNull Call call, @NotNull Response response) {
-                try {
-                    if (!response.isSuccessful()) {
-                        Log.e("ReservaFragment", "Respuesta no exitosa del servidor: " + response);
-                        getActivity().runOnUiThread(() -> Toast.makeText(getContext(), "Error en respuesta del servidor: Código " + response.code(), Toast.LENGTH_LONG).show());
-                        return;
-                    }
-
-                    final String responseData = response.body().string();
-                    Log.d("ReservaFragment", "Reservas cargadas correctamente: " + responseData);
-
-                    getActivity().runOnUiThread(() -> {
-                        if (isAdded()) { // Verifica que el fragmento esté aún adjunto a la actividad
-                            Toast.makeText(getContext(), "Mensaje", Toast.LENGTH_LONG).show();
-                            try {
-                                JSONArray jsonArray = new JSONArray(responseData);
-                                reservasList.clear();
-                                for (int i = 0; i < jsonArray.length(); i++) {
-                                    JSONObject jsonObject = jsonArray.getJSONObject(i);
-                                    Reserva reserva = new Reserva();
-                                    reserva.fromJSON(jsonObject);
-                                    reservasList.add(reserva);
-                                }
-                                reservasAdapter.notifyDataSetChanged();
-                                Log.d("ReservaFragment", "Reservas actualizadas en la interfaz de usuario.");
-                                Toast.makeText(getContext(), "Reservas actualizadas.", Toast.LENGTH_SHORT).show();
-                            } catch (JSONException e) {
-                                Log.e("ReservaFragment", "Error al parsear reservas: ", e);
-                                Toast.makeText(getContext(), "Error al procesar las reservas: " + e.getMessage(), Toast.LENGTH_LONG).show();
-                            }                        }
-                    });
-                } catch (IOException e) {
-                    Log.e("ReservaFragment", "Error al leer la respuesta: ", e);
-                    getActivity().runOnUiThread(() -> Toast.makeText(getContext(), "Error al leer respuesta: " + e.getMessage(), Toast.LENGTH_LONG).show());
-                }
-            }
-        });
     }
 
     @Override
-    public void deletePressed(int position) {
-        AlertDialog diaBox = AskOption(position);
-        diaBox.show();//Mostramos un diálogo de confirmación
+    public void editPressed(int position) {
+
     }
-    private AlertDialog AskOption(final int position) {
-        AlertDialog myQuittingDialogBox = new AlertDialog.Builder(getActivity())
-
-                .setTitle(R.string.eliminar_reserva)
-                .setMessage(R.string.are_you_sure)
-                .setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int whichButton) {
-//                        eliminarReserva(position);
-                        dialog.dismiss();
-                    }
-                })
-                .setNegativeButton(R.string.no, new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int which) {
-                        dialog.dismiss();
-                    }
-                })
-                .create();
-        return myQuittingDialogBox;
-    }
-
-    private Boolean isNetworkAvailable() {
-        ConnectivityManager connectivityManager = (ConnectivityManager)
-                getContext().getSystemService(Context.CONNECTIVITY_SERVICE);
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            Network nw = connectivityManager.getActiveNetwork();
-            if (nw == null) {
-                return false;
-            } else {
-                NetworkCapabilities actNw = connectivityManager.getNetworkCapabilities(nw);
-                return (actNw != null) && (actNw.hasTransport(NetworkCapabilities.TRANSPORT_WIFI) ||
-                        actNw.hasTransport(NetworkCapabilities.TRANSPORT_CELLULAR));
-            }
-        } else {
-            @SuppressWarnings("deprecation")
-            NetworkInfo nwInfo = connectivityManager.getActiveNetworkInfo();
-            return nwInfo != null && nwInfo.isConnected();
-        }
-    }
-
-
-
-    private void cargarReservas() {
-        Log.d("ReservaFragment", "Cargando reservas...");
-        loadReservasFromBackend(); // Este método debe manejar la carga de reservas desde el backend
-    }
-
 }

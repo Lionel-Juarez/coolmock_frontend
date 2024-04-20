@@ -72,6 +72,9 @@
     <string name="fecha_pago">Payment date: %s</string>
     <string name="creado_por">Created by: %s</string>
     <string name="reservations">Reservations</string>
+    <string name="no_reservas">There are no reservations for today</string>
+    <string name="tvHamacas">Hamacas reservadas:</string>
+    <string name="payment_date">Payment date</string>
 
 
     //Spinners

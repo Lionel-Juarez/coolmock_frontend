@@ -55,46 +55,56 @@ import okhttp3.Request;
 import okhttp3.Response;
 
 
-public class HamacaFragment extends Fragment {
+public class HamacaFragment extends Fragment implements HamacaDetalles.HamacaUpdateListener {
 
     private RecyclerView hamacasRecyclerView;
     private HamacaAdapter hamacasAdapter;
-    private List<Hamaca> todasLasHamacas; // Lista de todas las hamacas disponibles
+    private List<Hamaca> todasLasHamacas = new ArrayList<>(); // Initialize directly
     private Spinner spinnerPlanos;
+    private ArrayAdapter<CharSequence> adapter;
+    private int selectedPlano = 0;
 
+    @Override
+    public void onResume() {
+        super.onResume();
+        if (spinnerPlanos != null && adapter != null) {
+            spinnerPlanos.setSelection(selectedPlano);
+        }
+    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_hamaca, container, false);
+        setupRecyclerView(view);
+        setupSpinner(view);
+        return view;
+    }
 
-        // Inicializa la lista de todas las hamacas
-        todasLasHamacas = new ArrayList<>();
 
+    private void setupRecyclerView(View view) {
         hamacasRecyclerView = view.findViewById(R.id.hamacasRecyclerView);
         hamacasRecyclerView.setLayoutManager(new GridLayoutManager(getContext(), 7));
-        // Aquí pasamos getChildFragmentManager() si estás dentro de un Fragment
         hamacasAdapter = new HamacaAdapter(todasLasHamacas, getContext(), getChildFragmentManager());
         hamacasRecyclerView.setAdapter(hamacasAdapter);
+    }
 
-        // Configuración del Spinner para seleccionar planos
+    private void setupSpinner(View view) {
         spinnerPlanos = view.findViewById(R.id.spinner_planos);
-        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(getContext(), R.array.planos_array, android.R.layout.simple_spinner_item);
+        adapter = ArrayAdapter.createFromResource(getContext(), R.array.planos_array, android.R.layout.simple_spinner_item);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spinnerPlanos.setAdapter(adapter);
-
         spinnerPlanos.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+
             @Override
-            public void onItemSelected(AdapterView<?> parentView, View selectedItemView, int position, long id) {
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                selectedPlano = position;
                 cargarHamacasPorPlano(position + 1);
             }
 
             @Override
-            public void onNothingSelected(AdapterView<?> parentView) {}
+            public void onNothingSelected(AdapterView<?> parent) {}
         });
-
-        return view;
     }
-
     private void cargarHamacasPorPlano(int planoId) {
         String url =getResources().getString(R.string.url_hamacas) ; // Asegúrate de usar la URL correcta de tu API
 
@@ -118,47 +128,50 @@ public class HamacaFragment extends Fragment {
                 if (response.isSuccessful()) {
                     final String responseBody = response.body().string();
                     getActivity().runOnUiThread(() -> {
-                        try {
+                        if (todasLasHamacas != null) { // Check if list is not null
                             todasLasHamacas.clear();
-                            JSONArray jsonArray = new JSONArray(responseBody);
-                            for (int i = 0; i < jsonArray.length(); i++) {
-                                JSONObject jsonObject = jsonArray.getJSONObject(i);
-
-                                Reserva reserva = null;
-                                if (jsonObject.has("idReserva") && !jsonObject.isNull("idReserva")) {
-                                    JSONObject reservaJson = jsonObject.getJSONObject("idReserva");
-                                    reserva = new Reserva();
-                                    reserva.fromJSON(reservaJson); // Asegúrate de que Reserva tiene un método adecuado para esto
+                            try {
+                                JSONArray jsonArray = new JSONArray(responseBody);
+                                for (int i = 0; i < jsonArray.length(); i++) {
+                                    JSONObject jsonObject = jsonArray.getJSONObject(i);
+                                    Hamaca hamaca = new Hamaca(); // Assuming you have a constructor or method to parse
+                                    hamaca.fromJSON(jsonObject);
+                                    todasLasHamacas.add(hamaca);
                                 }
-
-                                Hamaca hamaca = new Hamaca(
-                                        jsonObject.getLong("idHamaca"),
-                                        jsonObject.getDouble("precio"),
-                                        jsonObject.getBoolean("reservada"),
-                                        jsonObject.getBoolean("ocupada"),
-                                        jsonObject.getInt("planoId"),
-                                        reserva
-                                );
-                                todasLasHamacas.add(hamaca);
+                                List<Hamaca> hamacasFiltradas = todasLasHamacas.stream()
+                                        .filter(h -> h.getPlanoId() == selectedPlano + 1)
+                                        .collect(Collectors.toList());
+                                hamacasAdapter.setHamacas(hamacasFiltradas);
+                                hamacasAdapter.notifyDataSetChanged();
+                            } catch (JSONException e) {
+                                Toast.makeText(getContext(), "Error al procesar los datos", Toast.LENGTH_SHORT).show();
                             }
-
-                            List<Hamaca> hamacasFiltradas = todasLasHamacas.stream().filter(h -> h.getPlanoId() == planoId).collect(Collectors.toList());
-                            hamacasAdapter.setHamacas(hamacasFiltradas);
-                            hamacasAdapter.notifyDataSetChanged();
-                        } catch (JSONException e) {
-                            Toast.makeText(getContext(), "Error al procesar los datos", Toast.LENGTH_SHORT).show();
-                            e.printStackTrace();
+                        } else {
+                            // Optionally reinitialize the list or handle the case where it is null
+                            todasLasHamacas = new ArrayList<>();
                         }
                     });
                 } else {
-                    getActivity().runOnUiThread(() -> {
-                        Toast.makeText(getContext(), "Respuesta no exitosa del servidor", Toast.LENGTH_SHORT).show();
-                    });
+                    getActivity().runOnUiThread(() -> Toast.makeText(getContext(), "Respuesta no exitosa del servidor", Toast.LENGTH_SHORT).show());
                 }
             }
+
         });
     }
 
+    @Override
+    public void onHamacaUpdated(Hamaca hamaca) {
+        cargarHamacasPorPlano(selectedPlano + 1);  // Recargar la lista de hamacas
+    }
+
+
+    public interface HamacaUpdateListener {
+        void onHamacaUpdated();
+    }
+
+    public void onHamacaUpdated() {
+        cargarHamacasPorPlano(selectedPlano + 1);
+    }
 
     private int cantidadDeHamacasPorPlano(int planoId) {
         switch (planoId) {
