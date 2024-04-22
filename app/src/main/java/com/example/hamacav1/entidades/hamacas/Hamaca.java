@@ -4,6 +4,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import android.os.Parcel;
 import android.os.Parcelable;
+import android.util.Log;
 
 import com.example.hamacav1.entidades.reservas.Reserva;
 
@@ -21,7 +22,7 @@ public class Hamaca implements Parcelable {
     private boolean reservada;
     private boolean ocupada;
     private int planoId;
-    private Reserva idReserva;
+    private Long reservaId;  // Cambio aquí para manejar el ID como Long
 
     protected Hamaca(Parcel in) {
         idHamaca = in.readLong();
@@ -29,7 +30,7 @@ public class Hamaca implements Parcelable {
         reservada = in.readByte() != 0;
         ocupada = in.readByte() != 0;
         planoId = in.readInt();
-        idReserva = (Reserva) in.readSerializable();
+        reservaId = (Long) in.readValue(Long.class.getClassLoader());
     }
 
     public static final Creator<Hamaca> CREATOR = new Creator<Hamaca>() {
@@ -44,6 +45,7 @@ public class Hamaca implements Parcelable {
         }
     };
 
+
     @Override
     public int describeContents() {
         return 0;
@@ -56,21 +58,16 @@ public class Hamaca implements Parcelable {
         parcel.writeByte((byte) (reservada ? 1 : 0));
         parcel.writeByte((byte) (ocupada ? 1 : 0));
         parcel.writeInt(planoId);
-        parcel.writeSerializable(idReserva);
+        parcel.writeValue(reservaId);  // Cambio aquí para manejar el ID como Long
     }
 
-    // Método fromJSON modificado
     public void fromJSON(JSONObject json) throws JSONException {
         idHamaca = json.optLong("idHamaca", -1);
         precio = json.optDouble("precio", 0.0);
         reservada = json.optBoolean("reservada", false);
         ocupada = json.optBoolean("ocupada", false);
         planoId = json.optInt("planoId", 0);
-
-        JSONObject reservaJson = json.optJSONObject("idReserva");
-        if (reservaJson != null) {
-            this.idReserva = new Reserva();
-            this.idReserva.fromJSON(reservaJson);
-        }
+        reservaId = json.optLong("reservaId", -1);  // Asume que esto es un número, no un objeto
     }
+
 }

@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/principalColor"
-    tools:context=".bottomMenu.HomeFragment">
+    tools:context=".entidades.reservas.NuevaReserva">
 
     <TextView
         android:layout_width="match_parent"

@@ -7,20 +7,16 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
+
 import androidx.fragment.app.DialogFragment;
 
 import android.app.Dialog;
-import android.os.Bundle;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.TextView;
+import android.widget.Toast;
 
+import com.example.hamacav1.MainActivity;
 import com.example.hamacav1.R;
 import com.example.hamacav1.entidades.reservas.NuevaReserva;
-import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
+import com.example.hamacav1.entidades.reservas.ReservaFragment;
 
 import org.jetbrains.annotations.NotNull;
 import org.json.JSONException;
@@ -43,7 +39,7 @@ public class HamacaDetalles  extends DialogFragment {
     public static HamacaDetalles newInstance(Hamaca hamaca) {
         HamacaDetalles fragment = new HamacaDetalles();
         Bundle args = new Bundle();
-        args.putParcelable(ARG_HAMACA, hamaca);  // Usamos putParcelable en lugar de putSerializable
+        args.putParcelable(ARG_HAMACA, hamaca);  // Usamos putParcelable
         fragment.setArguments(args);
         return fragment;
     }
@@ -58,6 +54,7 @@ public class HamacaDetalles  extends DialogFragment {
         Button btnReservar = view.findViewById(R.id.btnReservar);
         Button btnOcupar = view.findViewById(R.id.btnOcupar);
         Button btnLiberar = view.findViewById(R.id.btnLiberar);
+        Button btnVerReserva = view.findViewById(R.id.btnVerReserva);
 
         Hamaca hamaca = getArguments() != null ? getArguments().getParcelable(ARG_HAMACA) : null;
         if (hamaca != null) {
@@ -65,39 +62,95 @@ public class HamacaDetalles  extends DialogFragment {
             tvDetallePrecio.setText("Precio: €" + hamaca.getPrecio());
             actualizarEstado(tvDetalleEstado, hamaca);
 
-            btnReservar.setOnClickListener(v -> {
-                Intent intent = new Intent(getActivity(), NuevaReserva.class);
-                ArrayList<Long> idsHamacas = new ArrayList<>();
-                idsHamacas.add(hamaca.getIdHamaca());
-                intent.putExtra("idsHamacas", idsHamacas);
-                startActivity(intent);
-                dismiss(); // Cierra el diálogo después de iniciar la actividad
-            });
+            if (hamaca.isReservada()) {
+                btnReservar.setVisibility(View.GONE);
+                btnOcupar.setVisibility(View.GONE);
+                btnLiberar.setVisibility(View.GONE);
+                btnVerReserva.setVisibility(View.VISIBLE);
 
-            btnOcupar.setOnClickListener(v -> {
-                hamaca.setOcupada(true);
-                hamaca.setReservada(false);
-                actualizarEstado(tvDetalleEstado, hamaca);
-                updateHamacaOnServer(hamaca);
-                if (updateListener != null) {
-                    updateListener.onHamacaUpdated(hamaca);
-                }
-                dismiss(); // Cierra el diálogo después de actualizar la hamaca
-            });
+//                btnVerReserva.setOnClickListener(v -> {
+//                    Log.d("HamacaDetalles", "Botón Ver Reserva pulsado.");
+//                    if (hamaca.getReservaId() != null) {
+//                        Long reservaId = hamaca.getReservaId();  // Obtiene el ID de la reserva
+//                        Log.d("HamacaDetalles", "ID de Reserva recogido: " + reservaId);
+//
+//                        // Crea una nueva instancia de ReservaFragment y le pasa el ID de la reserva
+//                        ReservaFragment reservaFragment = new ReservaFragment();
+//                        Bundle args = new Bundle();
+//                        args.putLong(ReservaFragment.EXTRA_RESERVA_ID, reservaId);
+//                        reservaFragment.setArguments(args);
+//
+//                        // Realiza la transacción del fragmento
+//                        getActivity().getSupportFragmentManager().beginTransaction()
+//                                .replace(R.id.fragment_reservas, reservaFragment)
+//                                .addToBackStack(null)
+//                                .commit();
+//                    } else {
+//                        Log.d("HamacaDetalles", "No hay ID de Reserva asociado con esta hamaca.");
+//                        Toast.makeText(getActivity(), "Esta hamaca no tiene una reserva asociada.", Toast.LENGTH_LONG).show();
+//                    }
+//                });
 
-            btnLiberar.setOnClickListener(v -> {
-                hamaca.setReservada(false);
-                hamaca.setOcupada(false);
-                actualizarEstado(tvDetalleEstado, hamaca);
-                if (updateListener != null) {
-                    updateListener.onHamacaUpdated(hamaca);
-                }
-                dismiss(); // Cierra el diálogo después de actualizar la hamaca
-            });
+                btnVerReserva.setOnClickListener(v -> {
+                    if (hamaca.getReservaId() != null) {
+                        Bundle args = new Bundle();
+                        args.putLong(ReservaFragment.EXTRA_RESERVA_ID, hamaca.getReservaId());
+                        ReservaFragment fragment = new ReservaFragment();
+                        fragment.setArguments(args);
+                        ((MainActivity) getActivity()).replaceFragment(fragment);  // Asegúrate de que este método esté correctamente definido en MainActivity
+                        dismiss();  // Cierra el dialogo o fragmento actual
+                    } else {
+                        Log.d("HamacaDetalles", "Hamaca con id: " + hamaca.getIdHamaca() + " no tiene reservas asociadas");
+                        Toast.makeText(getContext(), "No hay reserva asociada a esta hamaca", Toast.LENGTH_SHORT).show();
+                    }
+                });
+
+            } else {
+                btnReservar.setVisibility(View.VISIBLE);
+                btnOcupar.setVisibility(View.VISIBLE);
+                btnLiberar.setVisibility(View.VISIBLE);
+                btnVerReserva.setVisibility(View.GONE);
+
+                btnReservar.setOnClickListener(v -> {
+                    Intent intent = new Intent(getActivity(), NuevaReserva.class);
+                    ArrayList<Long> idsHamacas = new ArrayList<>();
+                    idsHamacas.add(hamaca.getIdHamaca());
+                    intent.putExtra("idsHamacas", idsHamacas);
+                    startActivity(intent);
+                    dismiss();
+                });
+
+                btnOcupar.setOnClickListener(v -> {
+                    hamaca.setOcupada(true);
+                    hamaca.setReservada(false);
+                    actualizarEstado(tvDetalleEstado, hamaca);
+                    updateHamacaOnServer(hamaca);
+                    if (updateListener != null) {
+                        updateListener.onHamacaUpdated(hamaca);
+                    }
+                    dismiss();
+                });
+
+                btnLiberar.setOnClickListener(v -> {
+                    hamaca.setReservada(false);
+                    hamaca.setOcupada(false);
+                    actualizarEstado(tvDetalleEstado, hamaca);
+                    if (updateListener != null) {
+                        updateListener.onHamacaUpdated(hamaca);
+                    }
+                    dismiss();
+                });
+            }
         }
 
         return view;
     }
+//    private void irReservas() {
+//        if (getActivity() instanceof MainActivity) {
+//            ((MainActivity) getActivity()).selectReservas();
+//        }
+//    }
+
 
     private void actualizarEstado(TextView tvDetalleEstado, Hamaca hamaca) {
         String estado = hamaca.isReservada() ? "Reservada" : hamaca.isOcupada() ? "Ocupada" : "Disponible";
@@ -107,7 +160,7 @@ public class HamacaDetalles  extends DialogFragment {
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
         Dialog dialog = super.onCreateDialog(savedInstanceState);
-        dialog.getWindow().getAttributes().windowAnimations = R.style.DialogAnimation;  // Estilo personalizado para animación
+        dialog.getWindow().getAttributes().windowAnimations = R.style.DialogAnimation;
         return dialog;
     }
 
@@ -127,7 +180,7 @@ public class HamacaDetalles  extends DialogFragment {
     }
 
     private void updateHamacaOnServer(Hamaca hamaca) {
-        String url = getResources().getString(R.string.url_hamacas) + "updateHamaca/" + hamaca.getIdHamaca(); // Asegúrate de que la URL es correcta
+        String url = getResources().getString(R.string.url_hamacas) + "updateHamaca/" + hamaca.getIdHamaca();
         Log.d("HamacaUpdate", "Actualizando hamaca con ID: " + hamaca.getIdHamaca() + " con URL: " + url);
         OkHttpClient client = new OkHttpClient();
         MediaType JSON = MediaType.parse("application/json; charset=utf-8");
@@ -136,7 +189,6 @@ public class HamacaDetalles  extends DialogFragment {
             jsonObject.put("idHamaca", hamaca.getIdHamaca());
             jsonObject.put("reservada", hamaca.isReservada());
             jsonObject.put("ocupada", hamaca.isOcupada());
-            jsonObject.put("precio", hamaca.getPrecio()); // Asume que quieres enviar todos los datos relevantes
             RequestBody body = RequestBody.create(jsonObject.toString(), JSON);
 
             Request request = new Request.Builder()

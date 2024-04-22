@@ -32,6 +32,7 @@ import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.hamacav1.MainActivity;
 import com.example.hamacav1.R;
 import com.example.hamacav1.entidades.reservas.Reserva;
 import com.example.hamacav1.util.Internetop;
@@ -164,14 +165,6 @@ public class HamacaFragment extends Fragment implements HamacaDetalles.HamacaUpd
         cargarHamacasPorPlano(selectedPlano + 1);  // Recargar la lista de hamacas
     }
 
-
-    public interface HamacaUpdateListener {
-        void onHamacaUpdated();
-    }
-
-    public void onHamacaUpdated() {
-        cargarHamacasPorPlano(selectedPlano + 1);
-    }
 
     private int cantidadDeHamacasPorPlano(int planoId) {
         switch (planoId) {

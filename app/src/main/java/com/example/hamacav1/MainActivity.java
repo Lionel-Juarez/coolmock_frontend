@@ -70,6 +70,7 @@ public class MainActivity extends AppCompatActivity {
         fragmentTransaction.commit();
     }
 
+
     private void showBottomDialog() {
 
         final Dialog dialog = new Dialog(this);
@@ -114,8 +115,12 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
+
+
     public void selectSunbed() {
         binding.bottomNavigationView.setSelectedItemId(R.id.sunbed); // Establece el elemento seleccionado programáticamente
     }
+
+
 
 }

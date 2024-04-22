@@ -12,5 +12,6 @@
     <color name="colorReservada">#61C124</color>
     <color name="colorOcupada">#E10D20</color>
     <color name="colorDisponible">#FFFFFF</color>
-
+    <color name="expandedBorderColor">#DAA520</color>
+    <color name="selectedExpandedBorderColor">#8B008B</color>
 </resources>

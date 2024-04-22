@@ -43,16 +43,21 @@ public class Reserva implements Serializable {
         this.fechaPago = json.optString("fechaPago", "");
         this.fechaReserva = json.optString("fechaReserva", "");
 
-        JSONArray hamacasJson = json.optJSONArray("hamacas");
-        if (hamacasJson != null) {
-            this.hamacas = new ArrayList<>();
-            for (int i = 0; i < hamacasJson.length(); i++) {
-                JSONObject hamacaObj = hamacasJson.getJSONObject(i);
-                Hamaca hamaca = new Hamaca();
-                hamaca.fromJSON(hamacaObj);
-                this.hamacas.add(hamaca);
+        try {
+            JSONArray hamacasJson = json.optJSONArray("hamacas");
+            if (hamacasJson != null) {
+                this.hamacas = new ArrayList<>();
+                for (int i = 0; i < hamacasJson.length(); i++) {
+                    JSONObject hamacaObj = hamacasJson.getJSONObject(i);
+                    Hamaca hamaca = new Hamaca();
+                    hamaca.fromJSON(hamacaObj);
+                    this.hamacas.add(hamaca);
+                }
             }
+        } catch (JSONException e) {
+            Log.e("Reserva", "Error parsing hamacas array: " + e.getMessage());
         }
+
 
         JSONObject clienteJson = json.optJSONObject("cliente");
         if (clienteJson != null) {

@@ -47,9 +47,9 @@ public class ReservasViewModel extends ViewModel {
         client.newCall(request).enqueue(new Callback() {
             @Override
             public void onFailure(@NotNull Call call, @NotNull IOException e) {
-                // Manejo de error, por ejemplo, actualizar el LiveData con un valor o estado de error
                 e.printStackTrace();
-                reservas.postValue(null);
+                reservas.postValue(null); // Considera postear una lista vacía en lugar de null
+                // Informa a la interfaz de usuario que la carga falló, por ejemplo mediante un Toast
             }
 
             @Override
@@ -76,23 +76,4 @@ public class ReservasViewModel extends ViewModel {
             }
         });
     }
-
-//    private Boolean isNetworkAvailable() {
-//        ConnectivityManager connectivityManager = (ConnectivityManager)
-//                getContext().getSystemService(Context.CONNECTIVITY_SERVICE);
-//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-//            Network nw = connectivityManager.getActiveNetwork();
-//            if (nw == null) {
-//                return false;
-//            } else {
-//                NetworkCapabilities actNw = connectivityManager.getNetworkCapabilities(nw);
-//                return (actNw != null) && (actNw.hasTransport(NetworkCapabilities.TRANSPORT_WIFI) ||
-//                        actNw.hasTransport(NetworkCapabilities.TRANSPORT_CELLULAR));
-//            }
-//        } else {
-//            @SuppressWarnings("deprecation")
-//            NetworkInfo nwInfo = connectivityManager.getActiveNetworkInfo();
-//            return nwInfo != null && nwInfo.isConnected();
-//        }
-//    }
 }

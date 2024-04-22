@@ -198,13 +198,17 @@ public class NuevaReserva extends AppCompatActivity {
 
                 try (Response response = client.newCall(request).execute()) {
                     if (response.isSuccessful()) {
-                        // Actualizar estado de las hamacas como reservadas
-                        updateHamacasAsReserved(idsHamacas);
-                        Log.d("sendTask", "Reservation added successfully");
+                        String responseData = response.body().string();
+                        JSONObject responseObject = new JSONObject(responseData);
+                        long idReserva = responseObject.getLong("idReserva");
+                        // Asume que el ID de la reserva se devuelve con el nombre "id"
+                        Log.e("NuevaReserva", "Reserva con id: " + idReserva);
+                        updateHamacasAsReserved(idsHamacas, idReserva); // Pasar ID de reserva para actualizar la relación
+
                         handler.post(() -> {
                             Toast.makeText(getApplicationContext(), "Reserva añadida con éxito", Toast.LENGTH_SHORT).show();
-                            setResult(Activity.RESULT_OK); // Informar a la actividad anterior para recargar datos
-                            finish(); // Cerrar esta actividad
+                            setResult(Activity.RESULT_OK);
+                            finish();
                         });
                     } else {
                         String responseBody = response.body() != null ? response.body().string() : null;
@@ -273,28 +277,47 @@ public class NuevaReserva extends AppCompatActivity {
         });
     }
 
-    private void updateHamacasAsReserved(List<Long> idsHamacas) {
+    private void updateHamacasAsReserved(List<Long> idsHamacas, long idReserva) {
         for (Long idHamaca : idsHamacas) {
             String urlUpdate = getResources().getString(R.string.url_hamacas) + "updateHamaca/" + idHamaca;
             OkHttpClient client = new OkHttpClient();
             MediaType JSON = MediaType.parse("application/json; charset=utf-8");
             JSONObject jsonObject = new JSONObject();
+
             try {
                 jsonObject.put("reservada", true);
+                jsonObject.put("idReserva", idReserva);  // Assuming the backend can handle just an ID
+                Log.d("HamacaUpdate", "Assigning reservation ID " + idReserva + " to hamaca ID " + idHamaca);
+
                 RequestBody body = RequestBody.create(jsonObject.toString(), JSON);
                 Request request = new Request.Builder()
                         .url(urlUpdate)
                         .put(body)
                         .build();
 
-                client.newCall(request).execute(); // Ejecutar la solicitud sin esperar la respuesta
+                client.newCall(request).enqueue(new Callback() {
+                    @Override
+                    public void onFailure(Call call, IOException e) {
+                        Log.e("HamacaUpdate", "Failed to update hamaca: " + e.getMessage(), e);
+                    }
+
+                    @Override
+                    public void onResponse(Call call, Response response) throws IOException {
+                        if (!response.isSuccessful()) {
+                            Log.e("HamacaUpdate", "Server response unsuccessful while updating hamaca: " + response.code());
+                        } else {
+                            Log.d("HamacaUpdate", "Successfully updated hamaca with ID: " + idHamaca);
+                            // Optionally, trigger any UI updates or further actions
+                        }
+                    }
+                });
             } catch (JSONException e) {
-                Log.e("HamacaUpdate", "JSON error: " + e.getMessage(), e);
-            } catch (IOException e) {
-                Log.e("HamacaUpdate", "Network error: " + e.getMessage(), e);
+                Log.e("HamacaUpdate", "JSON creation error: " + e.getMessage(), e);
             }
         }
     }
+
+
 
     private Usuario obtenerUsuarioCreador() {
         // Debes implementar la lógica para obtener el usuario que crea la reserva

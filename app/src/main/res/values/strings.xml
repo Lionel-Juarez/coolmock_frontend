@@ -75,6 +75,7 @@
     <string name="no_reservas">There are no reservations for today</string>
     <string name="tvHamacas">Hamacas reservadas:</string>
     <string name="payment_date">Payment date</string>
+    <string name="btn_verReserva">See reservation</string>
 
 
     //Spinners

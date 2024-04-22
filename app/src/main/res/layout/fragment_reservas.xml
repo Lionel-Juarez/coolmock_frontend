@@ -5,6 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/principalColor"
+    android:id="@+id/fragment_reservas"
     tools:context=".entidades.reservas.ReservaFragment">
 
     <TextView

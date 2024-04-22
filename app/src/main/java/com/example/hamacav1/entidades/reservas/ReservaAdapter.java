@@ -3,6 +3,7 @@ package com.example.hamacav1.entidades.reservas;
 import android.content.Context;
 import android.transition.AutoTransition;
 import android.transition.TransitionManager;
+import android.util.SparseBooleanArray;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,6 +12,8 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.cardview.widget.CardView;
+import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.hamacav1.R;
@@ -22,11 +25,24 @@ public class ReservaAdapter extends RecyclerView.Adapter<ReservaAdapter.ReservaV
     private List<Reserva> reservaList;
     private Context context;
     private ReservasAdapterCallback callback;
+    private SparseBooleanArray expandedState = new SparseBooleanArray();
+    private Long targetReservaId;
+    public void expandItem(int position) {
+        if (position < 0 || position >= reservaList.size()) {
+            return; // posición inválida
+        }
+        // Cambia el estado de expansión
+        boolean isExpanded = expandedState.get(position, false);
+        expandedState.put(position, !isExpanded);
+        notifyItemChanged(position);
+    }
 
-    public ReservaAdapter(List<Reserva> reservaList, Context context, ReservasAdapterCallback callback) {
+
+    public ReservaAdapter(List<Reserva> reservaList, Context context, ReservasAdapterCallback callback, Long targetReservaId) {
         this.reservaList = reservaList;
         this.context = context;
         this.callback = callback;
+        this.targetReservaId = targetReservaId; // Guardar el ID de la reserva objetivo
     }
 
     // Método para actualizar la lista de reservas
@@ -73,16 +89,53 @@ public class ReservaAdapter extends RecyclerView.Adapter<ReservaAdapter.ReservaV
             holder.creadaPor.setText(context.getString(R.string.creado_por, "Información no disponible"));
         }
 
+        boolean isExpanded = expandedState.get(position, false); // Obtiene el estado actual
+        holder.expandableView.setVisibility(isExpanded ? View.VISIBLE : View.GONE);
+        holder.expandIcon.setImageResource(isExpanded ? R.drawable.baseline_arrow_drop_down_24 : R.drawable.baseline_expand_more_24);
+
         holder.expandIcon.setOnClickListener(v -> {
-            boolean isExpanded = holder.expandableView.getVisibility() == View.VISIBLE;
-            TransitionManager.beginDelayedTransition((ViewGroup) holder.itemView, new AutoTransition());
-            holder.expandableView.setVisibility(isExpanded ? View.GONE : View.VISIBLE);
-            holder.expandIcon.setImageResource(isExpanded ? R.drawable.baseline_expand_more_24 : R.drawable.baseline_arrow_drop_down_24);
+            expandItem(position, holder); // Actualiza para incluir holder como parámetro
         });
 
-        //holder.delete.setOnClickListener(v -> callback.deletePressed(position));
+        // Determinar el drawable correcto basado en si está expandido y/o seleccionado
+        if (reserva.getIdReserva().equals(targetReservaId) && isExpanded) {
+            holder.cardView.setBackground(ContextCompat.getDrawable(context, R.drawable.card_border_selected_expanded));
+        } else if (reserva.getIdReserva().equals(targetReservaId)) {
+            holder.cardView.setBackground(ContextCompat.getDrawable(context, R.drawable.card_border_selected));
+        } else if (isExpanded) {
+            holder.cardView.setBackground(ContextCompat.getDrawable(context, R.drawable.card_border_expanded));
+        } else {
+            holder.cardView.setBackground(ContextCompat.getDrawable(context, R.drawable.card_border));
+        }
+
     }
 
+    public void expandItem(int position, ReservaViewHolder holder) {
+        boolean isExpanded = expandedState.get(position);
+        expandedState.put(position, !isExpanded);
+        Reserva reserva = reservaList.get(position);
+
+        if (!isExpanded) {
+            callback.detailExpanded(position);
+            if (reserva.getIdReserva().equals(targetReservaId)) {
+                // Si está seleccionado y ahora expandiéndose
+                holder.cardView.setBackground(ContextCompat.getDrawable(context, R.drawable.card_border_selected_expanded));
+            } else {
+                // Si solo se está expandiendo
+                holder.cardView.setBackground(ContextCompat.getDrawable(context, R.drawable.card_border_expanded));
+            }
+        } else {
+            callback.detailCollapsed(position);
+            if (reserva.getIdReserva().equals(targetReservaId)) {
+                // Si está seleccionado y ahora colapsándose
+                holder.cardView.setBackground(ContextCompat.getDrawable(context, R.drawable.card_border_selected));
+            } else {
+                // Si solo se está colapsando
+                holder.cardView.setBackground(ContextCompat.getDrawable(context, R.drawable.card_border));
+            }
+        }
+        notifyItemChanged(position);
+    }
 
 
     @Override
@@ -94,6 +147,8 @@ public class ReservaAdapter extends RecyclerView.Adapter<ReservaAdapter.ReservaV
         TextView clienteNombre, fechaReserva, estado, metodoPago, pagada, fechaPago, creadaPor;
         ImageView delete, expandIcon;
         LinearLayout expandableView;
+        CardView cardView;
+
 
         public ReservaViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -107,11 +162,16 @@ public class ReservaAdapter extends RecyclerView.Adapter<ReservaAdapter.ReservaV
             delete = itemView.findViewById(R.id.deleteIcon);
             expandIcon = itemView.findViewById(R.id.expand_icon);
             expandableView = itemView.findViewById(R.id.expandable_view);
+            cardView = itemView.findViewById(R.id.reserva_card);
+
         }
     }
 
     public interface ReservasAdapterCallback {
         void deletePressed(int position);
         void editPressed(int position);
+        void detailExpanded(int position);
+        void detailCollapsed(int position);
     }
+
 }

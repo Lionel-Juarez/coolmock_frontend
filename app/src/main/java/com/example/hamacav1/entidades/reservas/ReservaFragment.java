@@ -17,6 +17,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -38,6 +39,7 @@ import com.example.hamacav1.util.Internetop;
 import com.example.hamacav1.R;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -55,24 +57,39 @@ import okhttp3.Request;
 import okhttp3.Response;
 
 public class ReservaFragment extends Fragment implements ReservaAdapter.ReservasAdapterCallback {
-
+    public static final String EXTRA_RESERVA_ID = "EXTRA_RESERVA_ID";
     private RecyclerView reservasRecyclerView;
     private ReservaAdapter reservasAdapter;
     private List<Reserva> reservasList;
     private ReservasViewModel viewModel;
     private TextView tvNoReservas;
+    private Long reservaId;
 
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        if (getArguments() != null) {
+            reservaId = getArguments().getLong(EXTRA_RESERVA_ID, -1);
+            if (reservaId != -1) {
+                Log.d("ReservaFragment", "ID de Reserva recibido: " + reservaId);
+            } else {
+                Log.d("ReservaFragment", "No se recibió ID de Reserva válido.");
+            }
+        }
+    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_reservas, container, false);
         reservasRecyclerView = view.findViewById(R.id.reservasRecyclerView);
-        tvNoReservas = view.findViewById(R.id.tvNoReservas);  // Referencia al TextView
+        tvNoReservas = view.findViewById(R.id.tvNoReservas);
         reservasRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
-        reservasAdapter = new ReservaAdapter(new ArrayList<>(), getContext(), this);
-        reservasRecyclerView.setAdapter(reservasAdapter);
 
+        // Asegúrate de que 'this' y 'reservaId' estén en el orden correcto
+        reservasAdapter = new ReservaAdapter(new ArrayList<>(), getContext(), this, reservaId);
+
+        reservasRecyclerView.setAdapter(reservasAdapter);
         viewModel = new ViewModelProvider(this).get(ReservasViewModel.class);
         viewModel.getReservas().observe(getViewLifecycleOwner(), nuevasReservas -> {
             if (nuevasReservas == null || nuevasReservas.isEmpty()) {
@@ -81,21 +98,49 @@ public class ReservaFragment extends Fragment implements ReservaAdapter.Reservas
             } else {
                 tvNoReservas.setVisibility(View.GONE);
                 reservasRecyclerView.setVisibility(View.VISIBLE);
+                reservasList = nuevasReservas; // Actualiza reservasList aquí
                 reservasAdapter.setReservas(nuevasReservas);
                 reservasAdapter.notifyDataSetChanged();
+                if (reservaId != null) {
+                    scrollToItem(reservaId);
+                }
             }
         });
+
 
         view.findViewById(R.id.fab_add_reserva).setOnClickListener(v -> irHamacas());
 
         return view;
     }
 
+
     private void irHamacas() {
         if (getActivity() instanceof MainActivity) {
             ((MainActivity) getActivity()).selectSunbed();
         }
     }
+
+
+    private void scrollToItem(Long reservaId) {
+        int position = findReservaPositionById(reservaId);
+        if (position >= 0) {
+            Log.d("ReservaFragment", "Desplazando a la posición de Reserva: " + position);
+            reservasRecyclerView.scrollToPosition(position);
+            reservasAdapter.expandItem(position);
+        } else {
+            Log.d("ReservaFragment", "Reserva ID " + reservaId + " no encontrada.");
+        }
+    }
+    private int findReservaPositionById(Long id) {
+        if (reservasList == null) return -1;  // Retorna -1 si la lista es nula
+        for (int i = 0; i < reservasList.size(); i++) {
+            if (reservasList.get(i).getIdReserva().equals(id)) {
+                return i;
+            }
+        }
+        return -1;
+    }
+
 
     @Override
     public void deletePressed(int position) {
@@ -104,6 +149,16 @@ public class ReservaFragment extends Fragment implements ReservaAdapter.Reservas
 
     @Override
     public void editPressed(int position) {
+
+    }
+
+    @Override
+    public void detailExpanded(int position) {
+
+    }
+
+    @Override
+    public void detailCollapsed(int position) {
 
     }
 }
