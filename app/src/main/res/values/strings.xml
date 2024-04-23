@@ -76,6 +76,10 @@
     <string name="tvHamacas">Hamacas reservadas:</string>
     <string name="payment_date">Payment date</string>
     <string name="btn_verReserva">See reservation</string>
+    <string name="filter_by_name">Filtrar por nombre</string>
+    <string name="filter_by_date">Filtrar por fecha</string>
+    <string name="select_date">Selecciona fecha</string>
+    <string name="filter_by_state">Filtrar por estado</string>
 
 
     //Spinners
@@ -103,5 +107,11 @@
         <item>Ha llegado</item>
         <item>Cancelada</item>
     </string-array>
+    <string-array name="filtro_options">
+        <item>Ordenar por nombre</item>
+        <item>Ordenar por fecha</item>
+        <item>Ordenar por tipo</item>
+    </string-array>
+
 
 </resources>

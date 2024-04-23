@@ -1,6 +1,7 @@
 package com.example.hamacav1.entidades.reservas;
 
 import android.app.Activity;
+import android.app.DatePickerDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -13,11 +14,18 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
+import android.text.InputType;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.PopupMenu;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -46,6 +54,7 @@ import org.json.JSONObject;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -82,6 +91,7 @@ public class ReservaFragment extends Fragment implements ReservaAdapter.Reservas
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_reservas, container, false);
+//        Spinner spinnerFiltro = view.findViewById(R.id.spinnerFiltro);
         reservasRecyclerView = view.findViewById(R.id.reservasRecyclerView);
         tvNoReservas = view.findViewById(R.id.tvNoReservas);
         reservasRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
@@ -107,19 +117,29 @@ public class ReservaFragment extends Fragment implements ReservaAdapter.Reservas
             }
         });
 
+//        spinnerFiltro.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+//            @Override
+//            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+//                String seleccion = parent.getItemAtPosition(position).toString();
+//                viewModel.ordenarReservas(seleccion);
+//            }
+//
+//            @Override
+//            public void onNothingSelected(AdapterView<?> parent) {}
+//        });
 
+//        Button btnSelectDate = view.findViewById(R.id.btnSelectDate);
+//        btnSelectDate.setOnClickListener(v -> showDatePickerDialog());
         view.findViewById(R.id.fab_add_reserva).setOnClickListener(v -> irHamacas());
-
+        setupFilterMenu(view);
         return view;
     }
-
 
     private void irHamacas() {
         if (getActivity() instanceof MainActivity) {
             ((MainActivity) getActivity()).selectSunbed();
         }
     }
-
 
     private void scrollToItem(Long reservaId) {
         int position = findReservaPositionById(reservaId);
@@ -131,6 +151,7 @@ public class ReservaFragment extends Fragment implements ReservaAdapter.Reservas
             Log.d("ReservaFragment", "Reserva ID " + reservaId + " no encontrada.");
         }
     }
+
     private int findReservaPositionById(Long id) {
         if (reservasList == null) return -1;  // Retorna -1 si la lista es nula
         for (int i = 0; i < reservasList.size(); i++) {
@@ -141,22 +162,88 @@ public class ReservaFragment extends Fragment implements ReservaAdapter.Reservas
         return -1;
     }
 
+    private void showDatePickerDialog() {
+        Calendar c = Calendar.getInstance();
+        DatePickerDialog datePickerDialog = new DatePickerDialog(getContext(),
+                (view, year, month, dayOfMonth) -> {
+                    Calendar selectedDate = Calendar.getInstance();
+                    selectedDate.set(Calendar.YEAR, year);
+                    selectedDate.set(Calendar.MONTH, month);
+                    selectedDate.set(Calendar.DAY_OF_MONTH, dayOfMonth);
+                    viewModel.loadReservasByDate(selectedDate.getTime());
+                }, c.get(Calendar.YEAR), c.get(Calendar.MONTH), c.get(Calendar.DAY_OF_MONTH));
+        datePickerDialog.show();
+    }
+    private void setupFilterMenu(View view) {
+        ImageButton filterButton = view.findViewById(R.id.btnFilter);
+        filterButton.setOnClickListener(v -> showFilterPopup(v));
+    }
+
+
+    private void showFilterPopup(View view) {
+        PopupMenu popupMenu = new PopupMenu(getContext(), view);
+        popupMenu.getMenuInflater().inflate(R.menu.filter_options_menu, popupMenu.getMenu());
+        popupMenu.setOnMenuItemClickListener(item -> {
+            int id = item.getItemId();
+            if (id == R.id.action_filter_name) {
+                showNameSearchDialog();
+                return true;
+            } else if (id == R.id.action_filter_state) {
+                showStateSelectionDialog();
+                return true;
+            } else if (id == R.id.action_select_date) {
+                showDatePickerDialog();
+                return true;
+            } else {
+                return false;
+            }
+        });
+        popupMenu.show();
+    }
+
+    private void showNameSearchDialog() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+        builder.setTitle("Buscar por nombre");
+
+        final EditText input = new EditText(getContext());
+        input.setInputType(InputType.TYPE_CLASS_TEXT);
+        builder.setView(input);
+
+        builder.setPositiveButton("OK", (dialog, which) -> {
+            String name = input.getText().toString();
+            viewModel.filterReservasByName(name);
+        });
+        builder.setNegativeButton("Cancel", (dialog, which) -> dialog.cancel());
+
+        builder.show();
+    }
+    private void showStateSelectionDialog() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+        builder.setTitle("Seleccionar Estado");
+        String[] states = {"Pendiente", "Ha llegado", "Cancelada"};
+        builder.setItems(states, (dialog, which) -> {
+            viewModel.filterReservasByState(states[which]);
+        });
+
+        AlertDialog dialog = builder.create();
+        dialog.show();
+    }
+
+
+
 
     @Override
     public void deletePressed(int position) {
 
     }
-
     @Override
     public void editPressed(int position) {
 
     }
-
     @Override
     public void detailExpanded(int position) {
 
     }
-
     @Override
     public void detailCollapsed(int position) {
 

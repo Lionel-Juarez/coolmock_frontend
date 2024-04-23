@@ -7,7 +7,15 @@
     android:background="@color/principalColor"
     android:id="@+id/fragment_reservas"
     tools:context=".entidades.reservas.ReservaFragment">
-
+    <ImageButton
+        android:id="@+id/btnFilter"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/filtrar"
+        android:layout_alignParentEnd="true"
+        android:layout_marginEnd="16dp"
+        android:background="?attr/selectableItemBackgroundBorderless"
+        android:layout_marginTop="16dp" />
     <TextView
         android:id="@+id/tvNoReservas"
         android:layout_width="match_parent"
