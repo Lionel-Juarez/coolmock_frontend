@@ -60,7 +60,7 @@
     <string name="create_new_reservation">Create a new reservation</string>
     <string name="pagada">Paid</string>
     <string name="sp_clientes">Select a customer</string>
-    <string name="save">Save reservation</string>
+    <string name="save">Save</string>
     <string name="eliminar_reserva">Delete reservation</string>
     <string name="toggle_details">Details</string>
     <string name="reservas">Reservations</string>
@@ -80,6 +80,7 @@
     <string name="filter_by_date">Filtrar por fecha</string>
     <string name="select_date">Selecciona fecha</string>
     <string name="filter_by_state">Filtrar por estado</string>
+    <string name="cancel">Cancel</string>
 
 
     //Spinners

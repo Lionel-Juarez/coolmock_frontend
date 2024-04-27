@@ -98,8 +98,6 @@ public class NuevaReserva extends AppCompatActivity {
             }
         });
 
-//        btnGuardarReserva.setOnClickListener(v -> guardarReserva());
-
         // Cargar clientes en el spinner
         loadClientsFromBackend();
     }

@@ -35,7 +35,6 @@ public class Reserva implements Serializable {
 
     // Método fromJSON en la clase que contiene reservas
     public void fromJSON(JSONObject json) throws JSONException {
-        Log.d("Reserva", "JSON recibido: " + json.toString());
         this.idReserva = json.optLong("idReserva", -1);
         this.estado = json.optString("estado", "");
         this.pagada = json.optBoolean("pagada", false);
@@ -55,7 +54,6 @@ public class Reserva implements Serializable {
                 }
             }
         } catch (JSONException e) {
-            Log.e("Reserva", "Error parsing hamacas array: " + e.getMessage());
         }
 
 
@@ -69,9 +67,7 @@ public class Reserva implements Serializable {
         if (usuarioJson != null) {
             this.creadaPor = new Usuario();
             this.creadaPor.fromJSON(usuarioJson);
-            Log.d("Reserva", "Usuario creado correctamente");
         } else {
-            Log.d("Reserva", "No se encontró el objeto 'creadoPor' en el JSON");
             this.creadaPor = null;
         }
 

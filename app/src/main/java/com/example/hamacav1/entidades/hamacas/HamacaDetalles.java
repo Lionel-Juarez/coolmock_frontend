@@ -39,7 +39,7 @@ public class HamacaDetalles  extends DialogFragment {
     public static HamacaDetalles newInstance(Hamaca hamaca) {
         HamacaDetalles fragment = new HamacaDetalles();
         Bundle args = new Bundle();
-        args.putParcelable(ARG_HAMACA, hamaca);  // Usamos putParcelable
+        args.putParcelable(ARG_HAMACA, hamaca);
         fragment.setArguments(args);
         return fragment;
     }
@@ -67,29 +67,6 @@ public class HamacaDetalles  extends DialogFragment {
                 btnOcupar.setVisibility(View.GONE);
                 btnLiberar.setVisibility(View.GONE);
                 btnVerReserva.setVisibility(View.VISIBLE);
-
-//                btnVerReserva.setOnClickListener(v -> {
-//                    Log.d("HamacaDetalles", "Botón Ver Reserva pulsado.");
-//                    if (hamaca.getReservaId() != null) {
-//                        Long reservaId = hamaca.getReservaId();  // Obtiene el ID de la reserva
-//                        Log.d("HamacaDetalles", "ID de Reserva recogido: " + reservaId);
-//
-//                        // Crea una nueva instancia de ReservaFragment y le pasa el ID de la reserva
-//                        ReservaFragment reservaFragment = new ReservaFragment();
-//                        Bundle args = new Bundle();
-//                        args.putLong(ReservaFragment.EXTRA_RESERVA_ID, reservaId);
-//                        reservaFragment.setArguments(args);
-//
-//                        // Realiza la transacción del fragmento
-//                        getActivity().getSupportFragmentManager().beginTransaction()
-//                                .replace(R.id.fragment_reservas, reservaFragment)
-//                                .addToBackStack(null)
-//                                .commit();
-//                    } else {
-//                        Log.d("HamacaDetalles", "No hay ID de Reserva asociado con esta hamaca.");
-//                        Toast.makeText(getActivity(), "Esta hamaca no tiene una reserva asociada.", Toast.LENGTH_LONG).show();
-//                    }
-//                });
 
                 btnVerReserva.setOnClickListener(v -> {
                     if (hamaca.getReservaId() != null) {
@@ -120,6 +97,7 @@ public class HamacaDetalles  extends DialogFragment {
                     dismiss();
                 });
 
+
                 btnOcupar.setOnClickListener(v -> {
                     hamaca.setOcupada(true);
                     hamaca.setReservada(false);
@@ -135,6 +113,7 @@ public class HamacaDetalles  extends DialogFragment {
                     hamaca.setReservada(false);
                     hamaca.setOcupada(false);
                     actualizarEstado(tvDetalleEstado, hamaca);
+                    updateHamacaOnServer(hamaca);
                     if (updateListener != null) {
                         updateListener.onHamacaUpdated(hamaca);
                     }
@@ -145,11 +124,6 @@ public class HamacaDetalles  extends DialogFragment {
 
         return view;
     }
-//    private void irReservas() {
-//        if (getActivity() instanceof MainActivity) {
-//            ((MainActivity) getActivity()).selectReservas();
-//        }
-//    }
 
 
     private void actualizarEstado(TextView tvDetalleEstado, Hamaca hamaca) {

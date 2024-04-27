@@ -134,8 +134,10 @@ public class ReservasViewModel extends ViewModel {
                 JSONObject jsonObject = jsonArray.getJSONObject(i);
                 Reserva reserva = new Reserva();
                 reserva.fromJSON(jsonObject);
+                Log.d("ViewModel", "Reserva procesada: " + reserva.toString()); // Asegúrate de que Reserva tiene un método toString adecuado
                 reservas.add(reserva);
             }
+
             this.reservas.postValue(reservas);
         } catch (JSONException e) {
             Log.e("ViewModel", "Error parsing reservations from JSON", e);
@@ -143,22 +145,60 @@ public class ReservasViewModel extends ViewModel {
         }
     }
 
-
-
     public void filterReservasByName(String name) {
-        List<Reserva> filteredList = reservas.getValue().stream()
-                .filter(reserva -> reserva.getCliente().getNombreCompleto().toLowerCase().contains(name.toLowerCase()))
-                .collect(Collectors.toList());
-        reservas.postValue(filteredList);
+        OkHttpClient client = new OkHttpClient();
+        HttpUrl url = HttpUrl.parse("http://10.0.2.2:8080/api/reservas/").newBuilder()
+                .addQueryParameter("nombre", name)
+                .build();
+
+        Request request = new Request.Builder().url(url).build();
+
+        client.newCall(request).enqueue(new Callback() {
+            @Override
+            public void onFailure(@NotNull Call call, @NotNull IOException e) {
+                Log.e("ReservasViewModel", "Error loading reservations by name", e);
+                errorMessages.postValue("Error al cargar las reservas por nombre: " + e.getMessage());
+            }
+
+            @Override
+            public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
+                if (response.isSuccessful() && response.body() != null) {
+                    String responseData = response.body().string();
+                    processResponseData(responseData);
+                } else {
+                    Log.e("ReservasViewModel", "Failed to fetch reservations by name");
+                    reservas.postValue(new ArrayList<>());
+                }
+            }
+        });
     }
+
 
     public void filterReservasByState(String state) {
-        List<Reserva> filteredList = reservas.getValue().stream()
-                .filter(reserva -> reserva.getEstado().equalsIgnoreCase(state))
-                .collect(Collectors.toList());
-        reservas.postValue(filteredList);
+        OkHttpClient client = new OkHttpClient();
+        HttpUrl url = HttpUrl.parse("http://10.0.2.2:8080/api/reservas/").newBuilder()
+                .addQueryParameter("estado", state)  // Asegúrate de que el nombre del parámetro coincide con el usado en el backend
+                .build();
+
+        Request request = new Request.Builder().url(url).build();
+
+        client.newCall(request).enqueue(new Callback() {
+            @Override
+            public void onFailure(@NotNull Call call, @NotNull IOException e) {
+                Log.e("ReservasViewModel", "Error loading reservations by state", e);
+                errorMessages.postValue("Error al cargar las reservas por estado: " + e.getMessage());
+            }
+
+            @Override
+            public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
+                if (response.isSuccessful() && response.body() != null) {
+                    String responseData = response.body().string();
+                    processResponseData(responseData);
+                } else {
+                    Log.e("ReservasViewModel", "Failed to fetch reservations by state");
+                    reservas.postValue(new ArrayList<>());
+                }
+            }
+        });
     }
-
-
-
 }

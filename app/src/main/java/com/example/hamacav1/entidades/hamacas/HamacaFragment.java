@@ -84,7 +84,7 @@ public class HamacaFragment extends Fragment implements HamacaDetalles.HamacaUpd
 
     private void setupRecyclerView(View view) {
         hamacasRecyclerView = view.findViewById(R.id.hamacasRecyclerView);
-        hamacasRecyclerView.setLayoutManager(new GridLayoutManager(getContext(), 7));
+        hamacasRecyclerView.setLayoutManager(new GridLayoutManager(getContext(), 9));
         hamacasAdapter = new HamacaAdapter(todasLasHamacas, getContext(), getChildFragmentManager());
         hamacasRecyclerView.setAdapter(hamacasAdapter);
     }
@@ -119,39 +119,43 @@ public class HamacaFragment extends Fragment implements HamacaDetalles.HamacaUpd
             @Override
             public void onFailure(@NotNull Call call, @NotNull IOException e) {
                 e.printStackTrace();
-                getActivity().runOnUiThread(() -> {
-                    Toast.makeText(getContext(), "Error al cargar hamacas", Toast.LENGTH_SHORT).show();
-                });
+                Activity activity = getActivity();
+                if (activity != null) {
+                    activity.runOnUiThread(() -> Toast.makeText(getContext(), "Error al cargar hamacas", Toast.LENGTH_SHORT).show());
+                }
             }
 
             @Override
             public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
                 if (response.isSuccessful()) {
                     final String responseBody = response.body().string();
-                    getActivity().runOnUiThread(() -> {
-                        if (todasLasHamacas != null) { // Check if list is not null
-                            todasLasHamacas.clear();
-                            try {
-                                JSONArray jsonArray = new JSONArray(responseBody);
-                                for (int i = 0; i < jsonArray.length(); i++) {
-                                    JSONObject jsonObject = jsonArray.getJSONObject(i);
-                                    Hamaca hamaca = new Hamaca(); // Assuming you have a constructor or method to parse
-                                    hamaca.fromJSON(jsonObject);
-                                    todasLasHamacas.add(hamaca);
+                    Activity activity = getActivity();
+                    if (activity != null) {
+                        activity.runOnUiThread(() -> {
+                            if (todasLasHamacas != null) { // Check if list is not null
+                                todasLasHamacas.clear();
+                                try {
+                                    JSONArray jsonArray = new JSONArray(responseBody);
+                                    for (int i = 0; i < jsonArray.length(); i++) {
+                                        JSONObject jsonObject = jsonArray.getJSONObject(i);
+                                        Hamaca hamaca = new Hamaca(); // Assuming you have a constructor or method to parse
+                                        hamaca.fromJSON(jsonObject);
+                                        todasLasHamacas.add(hamaca);
+                                    }
+                                    List<Hamaca> hamacasFiltradas = todasLasHamacas.stream()
+                                            .filter(h -> h.getPlanoId() == selectedPlano + 1)
+                                            .collect(Collectors.toList());
+                                    hamacasAdapter.setHamacas(hamacasFiltradas);
+                                    hamacasAdapter.notifyDataSetChanged();
+                                } catch (JSONException e) {
+                                    Toast.makeText(getContext(), "Error al procesar los datos", Toast.LENGTH_SHORT).show();
                                 }
-                                List<Hamaca> hamacasFiltradas = todasLasHamacas.stream()
-                                        .filter(h -> h.getPlanoId() == selectedPlano + 1)
-                                        .collect(Collectors.toList());
-                                hamacasAdapter.setHamacas(hamacasFiltradas);
-                                hamacasAdapter.notifyDataSetChanged();
-                            } catch (JSONException e) {
-                                Toast.makeText(getContext(), "Error al procesar los datos", Toast.LENGTH_SHORT).show();
+                            } else {
+                                // Optionally reinitialize the list or handle the case where it is null
+                                todasLasHamacas = new ArrayList<>();
                             }
-                        } else {
-                            // Optionally reinitialize the list or handle the case where it is null
-                            todasLasHamacas = new ArrayList<>();
-                        }
-                    });
+                        });
+                    }
                 } else {
                     getActivity().runOnUiThread(() -> Toast.makeText(getContext(), "Respuesta no exitosa del servidor", Toast.LENGTH_SHORT).show());
                 }
@@ -165,13 +169,4 @@ public class HamacaFragment extends Fragment implements HamacaDetalles.HamacaUpd
         cargarHamacasPorPlano(selectedPlano + 1);  // Recargar la lista de hamacas
     }
 
-
-    private int cantidadDeHamacasPorPlano(int planoId) {
-        switch (planoId) {
-            case 1: return 35;
-            case 2: return 30;
-            case 3: return 25;
-            default: return 0;
-        }
-    }
 }

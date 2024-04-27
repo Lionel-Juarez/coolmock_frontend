@@ -117,19 +117,6 @@ public class ReservaFragment extends Fragment implements ReservaAdapter.Reservas
             }
         });
 
-//        spinnerFiltro.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-//            @Override
-//            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-//                String seleccion = parent.getItemAtPosition(position).toString();
-//                viewModel.ordenarReservas(seleccion);
-//            }
-//
-//            @Override
-//            public void onNothingSelected(AdapterView<?> parent) {}
-//        });
-
-//        Button btnSelectDate = view.findViewById(R.id.btnSelectDate);
-//        btnSelectDate.setOnClickListener(v -> showDatePickerDialog());
         view.findViewById(R.id.fab_add_reserva).setOnClickListener(v -> irHamacas());
         setupFilterMenu(view);
         return view;
@@ -161,19 +148,6 @@ public class ReservaFragment extends Fragment implements ReservaAdapter.Reservas
         }
         return -1;
     }
-
-    private void showDatePickerDialog() {
-        Calendar c = Calendar.getInstance();
-        DatePickerDialog datePickerDialog = new DatePickerDialog(getContext(),
-                (view, year, month, dayOfMonth) -> {
-                    Calendar selectedDate = Calendar.getInstance();
-                    selectedDate.set(Calendar.YEAR, year);
-                    selectedDate.set(Calendar.MONTH, month);
-                    selectedDate.set(Calendar.DAY_OF_MONTH, dayOfMonth);
-                    viewModel.loadReservasByDate(selectedDate.getTime());
-                }, c.get(Calendar.YEAR), c.get(Calendar.MONTH), c.get(Calendar.DAY_OF_MONTH));
-        datePickerDialog.show();
-    }
     private void setupFilterMenu(View view) {
         ImageButton filterButton = view.findViewById(R.id.btnFilter);
         filterButton.setOnClickListener(v -> showFilterPopup(v));
@@ -201,36 +175,65 @@ public class ReservaFragment extends Fragment implements ReservaAdapter.Reservas
         popupMenu.show();
     }
 
+    private void showDatePickerDialog() {
+        Calendar c = Calendar.getInstance();
+        DatePickerDialog datePickerDialog = new DatePickerDialog(getContext(),
+                (view, year, month, dayOfMonth) -> {
+                    Calendar selectedDate = Calendar.getInstance();
+                    selectedDate.set(Calendar.YEAR, year);
+                    selectedDate.set(Calendar.MONTH, month);
+                    selectedDate.set(Calendar.DAY_OF_MONTH, dayOfMonth);
+                    viewModel.loadReservasByDate(selectedDate.getTime());
+                }, c.get(Calendar.YEAR), c.get(Calendar.MONTH), c.get(Calendar.DAY_OF_MONTH));
+        datePickerDialog.show();
+    }
     private void showNameSearchDialog() {
         AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
-        builder.setTitle("Buscar por nombre");
+        builder.setTitle("Filtrar por nombre");
 
         final EditText input = new EditText(getContext());
         input.setInputType(InputType.TYPE_CLASS_TEXT);
         builder.setView(input);
 
-        builder.setPositiveButton("OK", (dialog, which) -> {
-            String name = input.getText().toString();
-            viewModel.filterReservasByName(name);
+        builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                String name = input.getText().toString().trim();
+                if (!name.isEmpty()) {
+                    Log.d("DialogInterface", "Filtrando por nombre: " + name);
+                    viewModel.filterReservasByName(name);
+                } else {
+                    Log.d("DialogInterface", "Intento de filtrado sin nombre");
+                    Toast.makeText(getContext(), "Por favor, introduce un nombre.", Toast.LENGTH_SHORT).show();
+                }
+            }
         });
-        builder.setNegativeButton("Cancel", (dialog, which) -> dialog.cancel());
+
+        builder.setNegativeButton("Cancelar", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                Log.d("DialogInterface", "Filtrado por nombre cancelado");
+                dialog.cancel();
+            }
+        });
 
         builder.show();
     }
+
+
+
     private void showStateSelectionDialog() {
         AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
         builder.setTitle("Seleccionar Estado");
         String[] states = {"Pendiente", "Ha llegado", "Cancelada"};
         builder.setItems(states, (dialog, which) -> {
+            Log.d("DialogInterface", "Filtrando por nombre: " + states[which]);
             viewModel.filterReservasByState(states[which]);
         });
 
         AlertDialog dialog = builder.create();
         dialog.show();
     }
-
-
-
 
     @Override
     public void deletePressed(int position) {
