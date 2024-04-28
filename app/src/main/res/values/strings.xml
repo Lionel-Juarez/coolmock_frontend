@@ -81,6 +81,8 @@
     <string name="select_date">Selecciona fecha</string>
     <string name="filter_by_state">Filtrar por estado</string>
     <string name="cancel">Cancel</string>
+    <string name="show_all">Show all</string>
+    <string name="hamacas_reservadas">Hamacas Reservadas: %1$s</string>
 
 
     //Spinners

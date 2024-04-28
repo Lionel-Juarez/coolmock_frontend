@@ -22,7 +22,9 @@ public class Hamaca implements Parcelable {
     private boolean reservada;
     private boolean ocupada;
     private int planoId;
-    private Long reservaId;  // Cambio aquí para manejar el ID como Long
+    private Long reservaId;
+    private String numeroHamaca; // Añade este campo
+
 
     protected Hamaca(Parcel in) {
         idHamaca = in.readLong();
@@ -59,6 +61,7 @@ public class Hamaca implements Parcelable {
         parcel.writeByte((byte) (ocupada ? 1 : 0));
         parcel.writeInt(planoId);
         parcel.writeValue(reservaId);  // Cambio aquí para manejar el ID como Long
+        parcel.writeString(numeroHamaca); // Escribir el nuevo campo al parcel
     }
 
     public void fromJSON(JSONObject json) throws JSONException {
@@ -68,6 +71,8 @@ public class Hamaca implements Parcelable {
         ocupada = json.optBoolean("ocupada", false);
         planoId = json.optInt("planoId", 0);
         reservaId = json.optLong("reservaId", -1);  // Asume que esto es un número, no un objeto
+        numeroHamaca = json.optString("numeroHamaca", ""); // Añadir manejo para el nuevo campo
+
     }
 
 }

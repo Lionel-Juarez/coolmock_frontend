@@ -9,4 +9,7 @@
     <item
         android:id="@+id/action_select_date"
         android:title="@string/select_date"/>
+    <item
+        android:id="@+id/action_show_all"
+        android:title="@string/show_all"/>
 </menu>

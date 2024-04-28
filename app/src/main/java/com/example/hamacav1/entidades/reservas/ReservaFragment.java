@@ -55,6 +55,7 @@ import org.json.JSONObject;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -91,16 +92,16 @@ public class ReservaFragment extends Fragment implements ReservaAdapter.Reservas
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_reservas, container, false);
-//        Spinner spinnerFiltro = view.findViewById(R.id.spinnerFiltro);
         reservasRecyclerView = view.findViewById(R.id.reservasRecyclerView);
         tvNoReservas = view.findViewById(R.id.tvNoReservas);
         reservasRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
-
-        // Asegúrate de que 'this' y 'reservaId' estén en el orden correcto
         reservasAdapter = new ReservaAdapter(new ArrayList<>(), getContext(), this, reservaId);
-
         reservasRecyclerView.setAdapter(reservasAdapter);
+
+
         viewModel = new ViewModelProvider(this).get(ReservasViewModel.class);
+        Date today = Calendar.getInstance().getTime();
+        viewModel.loadReservasByDate(today);
         viewModel.getReservas().observe(getViewLifecycleOwner(), nuevasReservas -> {
             if (nuevasReservas == null || nuevasReservas.isEmpty()) {
                 tvNoReservas.setVisibility(View.VISIBLE);
@@ -108,7 +109,7 @@ public class ReservaFragment extends Fragment implements ReservaAdapter.Reservas
             } else {
                 tvNoReservas.setVisibility(View.GONE);
                 reservasRecyclerView.setVisibility(View.VISIBLE);
-                reservasList = nuevasReservas; // Actualiza reservasList aquí
+                reservasList = nuevasReservas;
                 reservasAdapter.setReservas(nuevasReservas);
                 reservasAdapter.notifyDataSetChanged();
                 if (reservaId != null) {
@@ -168,7 +169,10 @@ public class ReservaFragment extends Fragment implements ReservaAdapter.Reservas
             } else if (id == R.id.action_select_date) {
                 showDatePickerDialog();
                 return true;
-            } else {
+            } else if (id == R.id.action_show_all) {
+                viewModel.loadAllReservas();
+                return true;
+            }else {
                 return false;
             }
         });

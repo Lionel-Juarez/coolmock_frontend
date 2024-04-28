@@ -1,21 +1,11 @@
 package com.example.hamacav1.entidades.reservas;
 
-import android.content.Context;
-import android.net.ConnectivityManager;
-import android.net.Network;
-import android.net.NetworkCapabilities;
-import android.net.NetworkInfo;
-import android.os.Build;
 import android.util.Log;
 
-import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
-import com.example.hamacav1.R;
-
 import java.io.IOException;
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -23,7 +13,6 @@ import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
-import java.util.stream.Collectors;
 
 import okhttp3.Call;
 import okhttp3.Callback;
@@ -42,22 +31,16 @@ public class ReservasViewModel extends ViewModel {
     private MutableLiveData<List<Reserva>> reservas;
     private MutableLiveData<String> errorMessages = new MutableLiveData<>();
 
-    public LiveData<String> getErrorMessages() {
-        return errorMessages;
-    }
-
-
     public MutableLiveData<List<Reserva>> getReservas() {
         if (reservas == null) {
             reservas = new MutableLiveData<>();
-            loadReservas();
         }
         return reservas;
     }
 
-    public void loadReservas() {
+    public void loadAllReservas() {
         OkHttpClient client = new OkHttpClient();
-        String url = "http://10.0.2.2:8080/api/reservas/";  // Asegúrate de usar la URL correcta
+        String url = "http://10.0.2.2:8080/api/reservas/";
         Request request = new Request.Builder().url(url).build();
 
         client.newCall(request).enqueue(new Callback() {
@@ -67,7 +50,6 @@ public class ReservasViewModel extends ViewModel {
                 errorMessages.postValue("Error al cargar las reservas: " + e.getMessage());
                 reservas.postValue(new ArrayList<>()); // Post an empty list instead of null
             }
-
 
             @Override
             public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
@@ -82,6 +64,14 @@ public class ReservasViewModel extends ViewModel {
                             reserva.fromJSON(jsonObject);
                             listaReservas.add(reserva);
                         }
+                        // Ordena la lista por fecha
+                        Collections.sort(listaReservas, new Comparator<Reserva>() {
+                            @Override
+                            public int compare(Reserva r1, Reserva r2) {
+                                return r1.getFechaReserva().compareTo(r2.getFechaReserva());
+                            }
+                        });
+
                         reservas.postValue(listaReservas);
                     } catch (JSONException e) {
                         e.printStackTrace();
@@ -93,6 +83,7 @@ public class ReservasViewModel extends ViewModel {
             }
         });
     }
+
     public void loadReservasByDate(Date selectedDate) {
         SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy", Locale.getDefault());
         String formattedDate = sdf.format(selectedDate);

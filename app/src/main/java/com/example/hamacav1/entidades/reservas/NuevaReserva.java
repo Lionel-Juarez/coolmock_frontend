@@ -27,6 +27,7 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.example.hamacav1.MainActivity;
 import com.example.hamacav1.R;
 import com.example.hamacav1.entidades.clientes.Cliente;
 import com.example.hamacav1.entidades.hamacas.Hamaca;
@@ -125,7 +126,6 @@ public class NuevaReserva extends AppCompatActivity {
             return nwInfo != null && nwInfo.isConnected();
         }
     }
-
     public void addReserva(View view) {
         String fechaReserva = fechaReservaSeleccionada;
         String estado = spEstado.getSelectedItem().toString();

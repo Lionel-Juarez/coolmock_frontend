@@ -17,6 +17,7 @@ import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.hamacav1.R;
+import com.example.hamacav1.entidades.hamacas.Hamaca;
 
 import java.util.List;
 
@@ -89,6 +90,22 @@ public class ReservaAdapter extends RecyclerView.Adapter<ReservaAdapter.ReservaV
             holder.creadaPor.setText(context.getString(R.string.creado_por, "Información no disponible"));
         }
 
+        // Construir una cadena con todos los números de hamaca
+        StringBuilder numerosHamacasBuilder = new StringBuilder();
+        for (Hamaca hamaca : reserva.getHamacas()) {
+            if (numerosHamacasBuilder.length() <= 0){ //Añadir aqui el caso de null
+
+            }
+            if (numerosHamacasBuilder.length() > 0) {
+                numerosHamacasBuilder.append(", "); // Añade una coma si ya hay contenido en el StringBuilder
+            }
+            numerosHamacasBuilder.append(hamaca.getNumeroHamaca()); // Asume que este método o campo existe en tu clase Hamaca
+        }
+
+        String numerosHamacas = numerosHamacasBuilder.toString();
+        holder.hamacasReservadas.setText(context.getString(R.string.hamacas_reservadas, numerosHamacas));
+
+
         boolean isExpanded = expandedState.get(position, false); // Obtiene el estado actual
         holder.expandableView.setVisibility(isExpanded ? View.VISIBLE : View.GONE);
         holder.expandIcon.setImageResource(isExpanded ? R.drawable.baseline_arrow_drop_down_24 : R.drawable.baseline_expand_more_24);
@@ -144,7 +161,7 @@ public class ReservaAdapter extends RecyclerView.Adapter<ReservaAdapter.ReservaV
     }
 
     public static class ReservaViewHolder extends RecyclerView.ViewHolder {
-        TextView clienteNombre, fechaReserva, estado, metodoPago, pagada, fechaPago, creadaPor;
+        TextView clienteNombre, fechaReserva, estado, metodoPago, pagada, fechaPago, creadaPor, hamacasReservadas;
         ImageView delete, expandIcon;
         LinearLayout expandableView;
         CardView cardView;
@@ -163,6 +180,8 @@ public class ReservaAdapter extends RecyclerView.Adapter<ReservaAdapter.ReservaV
             expandIcon = itemView.findViewById(R.id.expand_icon);
             expandableView = itemView.findViewById(R.id.expandable_view);
             cardView = itemView.findViewById(R.id.reserva_card);
+            hamacasReservadas = itemView.findViewById(R.id.tvHamacas);
+
 
         }
     }
