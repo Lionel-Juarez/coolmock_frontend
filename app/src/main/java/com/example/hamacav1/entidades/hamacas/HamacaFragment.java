@@ -1,6 +1,7 @@
 package com.example.hamacav1.entidades.hamacas;
 
 import android.app.Activity;
+import android.app.DatePickerDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -17,25 +18,17 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
-import android.widget.Spinner;
+
+import android.widget.ImageView;
 import android.widget.Toast;
 
-import androidx.activity.result.ActivityResult;
-import androidx.activity.result.ActivityResultCallback;
-import androidx.activity.result.ActivityResultLauncher;
-import androidx.activity.result.contract.ActivityResultContracts;
-import androidx.appcompat.app.AlertDialog;
+
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.GridLayoutManager;
-import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.example.hamacav1.MainActivity;
 import com.example.hamacav1.R;
-import com.example.hamacav1.entidades.reservas.Reserva;
-import com.example.hamacav1.util.Internetop;
+
 
 import org.jetbrains.annotations.NotNull;
 import org.json.JSONArray;
@@ -43,14 +36,20 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
+
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.stream.Collectors;
+import java.util.Locale;
+
 
 import okhttp3.Call;
 import okhttp3.Callback;
+import okhttp3.HttpUrl;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
@@ -60,27 +59,32 @@ public class HamacaFragment extends Fragment implements HamacaDetalles.HamacaUpd
 
     private RecyclerView hamacasRecyclerView;
     private HamacaAdapter hamacasAdapter;
-    private List<Hamaca> todasLasHamacas = new ArrayList<>(); // Initialize directly
-    private Spinner spinnerPlanos;
-    private ArrayAdapter<CharSequence> adapter;
-    private int selectedPlano = 0;
-
-    @Override
-    public void onResume() {
-        super.onResume();
-        if (spinnerPlanos != null && adapter != null) {
-            spinnerPlanos.setSelection(selectedPlano);
-        }
-    }
+    private List<Hamaca> todasLasHamacas = new ArrayList<>();
+    private ImageView openDatePicker;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_hamaca, container, false);
         setupRecyclerView(view);
-        setupSpinner(view);
+        cargarHamacas(Calendar.getInstance().get(Calendar.YEAR), Calendar.getInstance().get(Calendar.MONTH), Calendar.getInstance().get(Calendar.DAY_OF_MONTH));
+        setupOpenDatePicker(view);
         return view;
     }
 
+    private void setupOpenDatePicker(View view) {
+        openDatePicker = view.findViewById(R.id.openDatePicker);
+        openDatePicker.setOnClickListener(v -> showDatePickerDialog());
+    }
+
+    private void showDatePickerDialog() {
+        Calendar c = Calendar.getInstance();
+        DatePickerDialog datePickerDialog = new DatePickerDialog(getContext(),
+                (view, year, month, dayOfMonth) -> {
+                    // Lógica para cargar las hamacas con la fecha seleccionada...
+                    cargarHamacas(year, month, dayOfMonth);
+                }, c.get(Calendar.YEAR), c.get(Calendar.MONTH), c.get(Calendar.DAY_OF_MONTH));
+        datePickerDialog.show();
+    }
 
     private void setupRecyclerView(View view) {
         hamacasRecyclerView = view.findViewById(R.id.hamacasRecyclerView);
@@ -88,85 +92,93 @@ public class HamacaFragment extends Fragment implements HamacaDetalles.HamacaUpd
         hamacasAdapter = new HamacaAdapter(todasLasHamacas, getContext(), getChildFragmentManager());
         hamacasRecyclerView.setAdapter(hamacasAdapter);
     }
+    private void cargarHamacas(int year, int month, int dayOfMonth) {
+        LocalDate today = LocalDate.of(year, month + 1, dayOfMonth);
+        Log.d("HamacaFragment", "Cargando hamacas para la fecha actual: " + today);
 
-    private void setupSpinner(View view) {
-        spinnerPlanos = view.findViewById(R.id.spinner_planos);
-        adapter = ArrayAdapter.createFromResource(getContext(), R.array.planos_array, android.R.layout.simple_spinner_item);
-        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        spinnerPlanos.setAdapter(adapter);
-        spinnerPlanos.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+        String url = getResources().getString(R.string.url_hamacas).concat("hamacas");
+        HttpUrl urlWithParams = HttpUrl.parse(url).newBuilder().build();
+        Request request = new Request.Builder().url(urlWithParams.toString()).get().build();
 
-            @Override
-            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                selectedPlano = position;
-                cargarHamacasPorPlano(position + 1);
-            }
-
-            @Override
-            public void onNothingSelected(AdapterView<?> parent) {}
-        });
-    }
-    private void cargarHamacasPorPlano(int planoId) {
-        String url =getResources().getString(R.string.url_hamacas) ; // Asegúrate de usar la URL correcta de tu API
-
-        OkHttpClient client = new OkHttpClient();
-        Request request = new Request.Builder()
-                .url(url)
-                .get()
-                .build();
-
-        client.newCall(request).enqueue(new Callback() {
+        new OkHttpClient().newCall(request).enqueue(new Callback() {
             @Override
             public void onFailure(@NotNull Call call, @NotNull IOException e) {
-                e.printStackTrace();
-                Activity activity = getActivity();
-                if (activity != null) {
-                    activity.runOnUiThread(() -> Toast.makeText(getContext(), "Error al cargar hamacas", Toast.LENGTH_SHORT).show());
-                }
+                Log.e("HamacaLoad", "Error al cargar hamacas: " + e.getMessage(), e);
+                getActivity().runOnUiThread(() -> Toast.makeText(getContext(), "Error al cargar hamacas", Toast.LENGTH_SHORT).show());
             }
 
             @Override
             public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
                 if (response.isSuccessful()) {
-                    final String responseBody = response.body().string();
-                    Activity activity = getActivity();
-                    if (activity != null) {
-                        activity.runOnUiThread(() -> {
-                            if (todasLasHamacas != null) { // Check if list is not null
-                                todasLasHamacas.clear();
-                                try {
-                                    JSONArray jsonArray = new JSONArray(responseBody);
-                                    for (int i = 0; i < jsonArray.length(); i++) {
-                                        JSONObject jsonObject = jsonArray.getJSONObject(i);
-                                        Hamaca hamaca = new Hamaca(); // Assuming you have a constructor or method to parse
-                                        hamaca.fromJSON(jsonObject);
-                                        todasLasHamacas.add(hamaca);
-                                    }
-                                    List<Hamaca> hamacasFiltradas = todasLasHamacas.stream()
-                                            .filter(h -> h.getPlanoId() == selectedPlano + 1)
-                                            .collect(Collectors.toList());
-                                    hamacasAdapter.setHamacas(hamacasFiltradas);
-                                    hamacasAdapter.notifyDataSetChanged();
-                                } catch (JSONException e) {
-                                    Toast.makeText(getContext(), "Error al procesar los datos", Toast.LENGTH_SHORT).show();
+                    String responseBody = response.body().string();
+                    getActivity().runOnUiThread(() -> {
+                        try {
+                            todasLasHamacas.clear();
+                            JSONArray jsonArray = new JSONArray(responseBody);
+                            Log.d("HamacaLoad", "Hamacas cargadas correctamente: " + responseBody);
+                            for (int i = 0; i < jsonArray.length(); i++) {
+                                JSONObject jsonObject = jsonArray.getJSONObject(i);
+                                Hamaca hamaca = Hamaca.fromJSON(jsonObject);
+                                JSONArray reservas = jsonObject.optJSONArray("reservas");
+                                if (reservas != null) {
+                                    Log.d("HamacaFragment", "Verificando reservas para hamaca ID: " + hamaca.getIdHamaca());
                                 }
-                            } else {
-                                // Optionally reinitialize the list or handle the case where it is null
-                                todasLasHamacas = new ArrayList<>();
+                                checkReservationsAndSetReserved(hamaca, reservas, today);
+                                todasLasHamacas.add(hamaca);
                             }
-                        });
-                    }
+                            hamacasAdapter.setHamacas(todasLasHamacas);
+                            hamacasAdapter.notifyDataSetChanged();
+                            Log.d("HamacaFragment", "Hamacas cargadas y actualizadas en el adaptador.");
+                        } catch (JSONException e) {
+                            Log.e("HamacaFragment", "Error al procesar los datos de hamacas", e);
+                            Toast.makeText(getContext(), "Error al procesar los datos", Toast.LENGTH_SHORT).show();
+                        }
+                    });
                 } else {
-                    getActivity().runOnUiThread(() -> Toast.makeText(getContext(), "Respuesta no exitosa del servidor", Toast.LENGTH_SHORT).show());
+                    Log.e("HamacaLoad", "Respuesta no exitosa del servidor: " + response.code());
+                    getActivity().runOnUiThread(() -> Toast.makeText(getContext(), "Respuesta no exitosa del servidor", Toast.LENGTH_SHORT). show());
                 }
             }
-
         });
     }
 
-    @Override
-    public void onHamacaUpdated(Hamaca hamaca) {
-        cargarHamacasPorPlano(selectedPlano + 1);  // Recargar la lista de hamacas
+    private void checkReservationsAndSetReserved(Hamaca hamaca, JSONArray reservas, LocalDate today) throws JSONException {
+        boolean isReserved = false;
+        if (reservas != null) {
+            for (int i = 0; i < reservas.length(); i++) {
+                JSONObject reservaObj = reservas.optJSONObject(i);
+                if (reservaObj == null) {
+                    Log.d("checkReservationsAndSetReserved", "Skip non-JSONObject entry at index: " + i);
+                    continue;
+                }
+                String fechaReservaStr = reservaObj.optString("fechaReserva");
+                if (!fechaReservaStr.isEmpty()) {
+                    try {
+                        LocalDateTime fechaReserva = LocalDateTime.parse(fechaReservaStr, DateTimeFormatter.ISO_LOCAL_DATE_TIME);
+                        if (fechaReserva.toLocalDate().isEqual(today)) {
+                            isReserved = true;
+                            break;
+                        }
+                    } catch (DateTimeParseException e) {
+                        Log.e("checkReservationsAndSetReserved", "Error parsing date: " + fechaReservaStr, e);
+                    }
+                }
+            }
+        }
+        hamaca.setReservada(isReserved);
     }
 
+
+
+
+
+    @Override
+    public void onHamacaUpdated(Hamaca updatedHamaca) {
+        int index = todasLasHamacas.indexOf(updatedHamaca);
+        if (index != -1) {
+            todasLasHamacas.set(index, updatedHamaca);
+            hamacasAdapter.notifyItemChanged(index);
+            Log.d("HamacaFragment", "Actualización de la vista de hamaca en el índice: " + index);
+        }
+    }
 }

@@ -24,7 +24,7 @@
         android:textAlignment="viewStart"
         android:text="@string/settings"
         android:padding="8dp"
-        android:textColor="@color/principalColor"
+        android:textColor="@color/black"
         android:layout_marginStart="12dp"
         android:layout_marginTop="5dp"
         android:textSize="25dp" />
@@ -57,7 +57,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/ajuste_clientes"
-            android:textColor="@color/principalColor"
+            android:textColor="@color/black"
             android:layout_marginLeft="30dp"
             android:textSize="16sp"/>
 
@@ -97,18 +97,18 @@
         android:paddingBottom="30dp">
 
 
-        <ImageView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:src="@drawable/ic_baseline_vibration_24"/>
+<!--        <ImageView-->
+<!--            android:layout_width="wrap_content"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:src="@drawable/ic_baseline_vibration_24"/>-->
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Go live"
-            android:textColor="@color/principalColor"
-            android:layout_marginLeft="30dp"
-            android:textSize="16sp"/>
+<!--        <TextView-->
+<!--            android:layout_width="wrap_content"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:text="Go live"-->
+<!--            android:textColor="@color/principalColor"-->
+<!--            android:layout_marginLeft="30dp"-->
+<!--            android:textSize="16sp"/>-->
 
     </LinearLayout>
 

@@ -4,7 +4,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/principalColor"
+    android:background="@color/lightBackgroundColor"
     tools:context=".entidades.reportes.ReportsFragment">
 
     <TextView
@@ -16,7 +16,7 @@
         android:layout_marginTop="30dp"
         android:layout_gravity="center_horizontal"
         android:textSize="30sp"
-        android:textColor="@color/white"
+        android:textColor="@color/black"
         android:layout_alignParentTop="true"
         android:layout_centerHorizontal="true"/>
 

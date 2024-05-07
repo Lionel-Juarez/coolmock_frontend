@@ -74,13 +74,20 @@ public class HamacaDetalles  extends DialogFragment {
                         args.putLong(ReservaFragment.EXTRA_RESERVA_ID, hamaca.getReservaId());
                         ReservaFragment fragment = new ReservaFragment();
                         fragment.setArguments(args);
-                        ((MainActivity) getActivity()).replaceFragment(fragment);  // Asegúrate de que este método esté correctamente definido en MainActivity
+
+                        MainActivity activity = (MainActivity) getActivity();
+                        if (activity != null) {
+                            activity.setSelectedItemId(R.id.home);
+                            activity.replaceFragment(fragment);
+                              // Asegúrate de que MainActivity tenga este método
+                        }
                         dismiss();  // Cierra el dialogo o fragmento actual
                     } else {
                         Log.d("HamacaDetalles", "Hamaca con id: " + hamaca.getIdHamaca() + " no tiene reservas asociadas");
                         Toast.makeText(getContext(), "No hay reserva asociada a esta hamaca", Toast.LENGTH_SHORT).show();
                     }
                 });
+
 
             } else {
                 btnReservar.setVisibility(View.VISIBLE);

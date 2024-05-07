@@ -40,6 +40,9 @@ import org.json.JSONObject;
 
 import java.io.IOException;
 import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
@@ -49,11 +52,13 @@ import java.util.concurrent.Executors;
 
 import okhttp3.Call;
 import okhttp3.Callback;
+import okhttp3.HttpUrl;
 import okhttp3.MediaType;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
+import okhttp3.ResponseBody;
 
 public class NuevaReserva extends AppCompatActivity {
     private CalendarView calendarViewReserva;
@@ -176,7 +181,7 @@ public class NuevaReserva extends AppCompatActivity {
             MediaType MEDIA_TYPE_JSON = MediaType.parse("application/json; charset=utf-8");
             JSONObject json = new JSONObject();
             try {
-                json.put("fechaReserva", fechaReserva);
+                json.put("fechaReserva", convertToIso8601(fechaReserva));  // Asegurarse de que la fecha está en formato ISO-8601
                 json.put("estado", estado);
                 json.put("pagada", pagada);
                 json.put("metodoPago", metodoPago);
@@ -185,7 +190,7 @@ public class NuevaReserva extends AppCompatActivity {
                 json.put("idHamacas", new JSONArray(idsHamacas));
 
                 if (pagada) {
-                    json.put("fechaPago", fechaReserva);
+                    json.put("fechaPago", convertToIso8601(fechaReserva));  // Usar la misma fecha de reserva para la fecha de pago
                 }
 
                 RequestBody body = RequestBody.create(json.toString(), MEDIA_TYPE_JSON);
@@ -196,32 +201,51 @@ public class NuevaReserva extends AppCompatActivity {
 
                 try (Response response = client.newCall(request).execute()) {
                     if (response.isSuccessful()) {
-                        String responseData = response.body().string();
-                        JSONObject responseObject = new JSONObject(responseData);
-                        long idReserva = responseObject.getLong("idReserva");
-                        // Asume que el ID de la reserva se devuelve con el nombre "id"
-                        Log.e("NuevaReserva", "Reserva con id: " + idReserva);
-                        updateHamacasAsReserved(idsHamacas, idReserva); // Pasar ID de reserva para actualizar la relación
+                        ResponseBody responseBody = response.body();
+                        if (responseBody != null) {
+                            String responseData = responseBody.string();
+                            JSONObject responseObject = new JSONObject(responseData);
+                            long idReserva = responseObject.getLong("idReserva");
+                            Log.d("NuevaReserva", "Reserva creada con éxito, ID: " + idReserva);
+                            updateHamacasAsReserved(idsHamacas, idReserva);
 
-                        handler.post(() -> {
-                            Toast.makeText(getApplicationContext(), "Reserva añadida con éxito", Toast.LENGTH_SHORT).show();
-                            setResult(Activity.RESULT_OK);
-                            finish();
-                        });
+                            handler.post(() -> {
+                                Toast.makeText(getApplicationContext(), "Reserva añadida con éxito", Toast.LENGTH_SHORT).show();
+                                setResult(Activity.RESULT_OK);
+                                finish();
+                            });
+                        } else {
+                            throw new IOException("El cuerpo de la respuesta está vacío");
+                        }
                     } else {
-                        String responseBody = response.body() != null ? response.body().string() : null;
-                        handler.post(() -> {
-                            Log.e("sendTask", "Error adding reservation: " + responseBody);
-                            showError("Error al añadir reserva: " + responseBody);
-                        });
+                        String errorMessage = response.body() != null ? response.body().string() : "Respuesta vacía";
+                        Log.e("sendTask", "Error al añadir reserva, respuesta del servidor: " + errorMessage);
+                        handler.post(() -> showError("Error al añadir reserva: " + errorMessage));
                     }
+                } catch (Exception e) {
+                    Log.e("sendTask", "Excepción al enviar datos de reserva: " + e.getMessage(), e);
+                    handler.post(() -> showError("Error de conexión al servidor: " + e.getMessage()));
                 }
             } catch (Exception e) {
-                Log.e("sendTask", "Exception in sending reservation data: " + e.getMessage(), e);
+                Log.e("sendTask", "Excepción al enviar datos de reserva: " + e.getMessage(), e);
                 handler.post(() -> showError("Error de conexión al servidor: " + e.getMessage()));
             }
         });
     }
+
+
+    // Función para convertir la fecha al formato ISO-8601
+    private String convertToIso8601(String dateTimeStr) {
+        try {
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm");
+            LocalDateTime dateTime = LocalDateTime.parse(dateTimeStr, formatter);
+            return dateTime.format(DateTimeFormatter.ISO_LOCAL_DATE_TIME);
+        } catch (DateTimeParseException e) {
+            Log.e("convertToIso8601", "Error parsing date: " + e.getMessage());
+            return null;
+        }
+    }
+
 
     private void updateClientsSpinner(List<Cliente> clientsList) {
         ArrayAdapter<Cliente> adapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, clientsList);
@@ -274,48 +298,38 @@ public class NuevaReserva extends AppCompatActivity {
             }
         });
     }
-
     private void updateHamacasAsReserved(List<Long> idsHamacas, long idReserva) {
         for (Long idHamaca : idsHamacas) {
-            String urlUpdate = getResources().getString(R.string.url_hamacas) + "updateHamaca/" + idHamaca;
+            // Cambiar a la nueva URL del endpoint que maneja la actualización de la reserva específicamente
+            String urlUpdate = getResources().getString(R.string.url_hamacas) + "updateReservaHamaca/" + idHamaca;
             OkHttpClient client = new OkHttpClient();
             MediaType JSON = MediaType.parse("application/json; charset=utf-8");
-            JSONObject jsonObject = new JSONObject();
+            HttpUrl.Builder urlBuilder = HttpUrl.parse(urlUpdate).newBuilder();
+            urlBuilder.addQueryParameter("idReserva", String.valueOf(idReserva)); // Agregar idReserva como parámetro de consulta
 
-            try {
-                jsonObject.put("reservada", true);
-                jsonObject.put("idReserva", idReserva);  // Assuming the backend can handle just an ID
-                Log.d("HamacaUpdate", "Assigning reservation ID " + idReserva + " to hamaca ID " + idHamaca);
+            Request request = new Request.Builder()
+                    .url(urlBuilder.build()) // Construir la URL con el parámetro
+                    .patch(RequestBody.create("", JSON)) // Usar método PATCH y enviar cuerpo vacío si el ID de reserva se pasa como parámetro de URL
+                    .build();
 
-                RequestBody body = RequestBody.create(jsonObject.toString(), JSON);
-                Request request = new Request.Builder()
-                        .url(urlUpdate)
-                        .put(body)
-                        .build();
+            client.newCall(request).enqueue(new Callback() {
+                @Override
+                public void onFailure(Call call, IOException e) {
+                    Log.e("HamacaUpdate", "Failed to update hamaca: " + e.getMessage(), e);
+                }
 
-                client.newCall(request).enqueue(new Callback() {
-                    @Override
-                    public void onFailure(Call call, IOException e) {
-                        Log.e("HamacaUpdate", "Failed to update hamaca: " + e.getMessage(), e);
+                @Override
+                public void onResponse(Call call, Response response) throws IOException {
+                    if (!response.isSuccessful()) {
+                        Log.e("HamacaUpdate", "Server response unsuccessful while updating hamaca: " + response.code());
+                    } else {
+                        Log.d("HamacaUpdate", "Successfully updated hamaca with ID: " + idHamaca);
+                        // Opcionalmente, activar actualizaciones de UI o acciones adicionales
                     }
-
-                    @Override
-                    public void onResponse(Call call, Response response) throws IOException {
-                        if (!response.isSuccessful()) {
-                            Log.e("HamacaUpdate", "Server response unsuccessful while updating hamaca: " + response.code());
-                        } else {
-                            Log.d("HamacaUpdate", "Successfully updated hamaca with ID: " + idHamaca);
-                            // Optionally, trigger any UI updates or further actions
-                        }
-                    }
-                });
-            } catch (JSONException e) {
-                Log.e("HamacaUpdate", "JSON creation error: " + e.getMessage(), e);
-            }
+                }
+            });
         }
     }
-
-
 
     private Usuario obtenerUsuarioCreador() {
         // Debes implementar la lógica para obtener el usuario que crea la reserva

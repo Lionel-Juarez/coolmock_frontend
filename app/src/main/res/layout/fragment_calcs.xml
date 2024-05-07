@@ -3,7 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/principalColor"
+    android:background="@color/lightBackgroundColor"
     tools:context=".entidades.reservas.NuevaReserva">
 
     <TextView
@@ -12,6 +12,6 @@
         android:text="@string/calcs"
         android:gravity="center"
         android:textSize="30sp"
-        android:textColor="@color/white" />
+        android:textColor="@color/black" />
 
 </FrameLayout>

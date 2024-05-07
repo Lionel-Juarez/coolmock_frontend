@@ -44,9 +44,9 @@ public class ReporteAdapter extends RecyclerView.Adapter<ReporteAdapter.ReportVi
 
         // Inicialmente mostrar solo 2 líneas del comentario.
         holder.fullComment.setMaxLines(2);
-        holder.state.setText(reporte.getEstado());
+        holder.state.setText("Type: " + reporte.getEstado());
         holder.creationDate.setText(reporte.getFechaCreacion());
-        holder.createdBy.setText("Creado por: " + reporte.getCreadoPor());
+        holder.createdBy.setText("Created by: " + reporte.getCreadoPor());
         // Evento de clic para expandir/colapsar el comentario y mostrar los detalles.
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override

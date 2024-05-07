@@ -1,20 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/reserva_card"
     android:layout_marginStart="6dp"
     android:layout_marginEnd="6dp"
-    android:layout_marginHorizontal="4dp"
     android:layout_marginVertical="4dp"
     app:cardCornerRadius="12dp"
-    app:cardElevation="20dp">
+    app:cardElevation="10dp">
 
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
+        <!-- Cliente y Fecha Reserva -->
         <TextView
             android:id="@+id/tvReservaCliente"
             android:layout_width="match_parent"
@@ -22,10 +22,9 @@
             android:text="Nombre del Cliente"
             android:textSize="18sp"
             android:textStyle="bold"
-            android:layout_marginLeft="20dp"
-            android:layout_marginBottom="10dp"
+            android:layout_marginStart="20dp"
             android:layout_marginTop="20dp"
-            android:layout_marginRight="20dp"/>
+            android:layout_marginEnd="20dp"/>
 
         <TextView
             android:id="@+id/tvFechaReserva"
@@ -34,21 +33,21 @@
             android:layout_below="@id/tvReservaCliente"
             android:layout_marginStart="20dp"
             android:text="Fecha de Reserva"
-            android:textSize="18sp"
-            android:textAlignment="textStart"
+            android:textSize="16sp"
             android:textColor="@color/black"/>
 
         <TextView
             android:id="@+id/tvEstado"
-            android:text="Estado de la Reserva"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:textColor="@color/black"
-            android:textSize="18sp"
             android:layout_below="@id/tvFechaReserva"
             android:layout_marginStart="20dp"
-            android:layout_marginEnd="20dp"/>
+            android:layout_marginTop="10dp"
+            android:text="Estado de la Reserva"
+            android:textSize="16sp"
+            android:textColor="@color/black"/>
 
+        <!-- Expandable View con detalles adicionales y botones -->
         <LinearLayout
             android:id="@+id/expandable_view"
             android:layout_width="match_parent"
@@ -57,11 +56,13 @@
             android:orientation="vertical"
             android:layout_below="@id/tvEstado"
             android:padding="16dp">
+
             <TextView
                 android:id="@+id/tvHamacas"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="Hamacas Reservadas: "/>
+
             <TextView
                 android:id="@+id/tvCreadoPor"
                 android:layout_width="match_parent"
@@ -78,8 +79,7 @@
                 android:id="@+id/tvMetodoPago"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="@string/metodo_pago"
-                android:layout_marginBottom="4dp"/>
+                android:text="@string/metodo_pago"/>
 
             <TextView
                 android:id="@+id/tvFechaPago"
@@ -87,8 +87,40 @@
                 android:layout_height="wrap_content"
                 android:text="@string/payment_date"/>
 
+            <!-- Botones de acción -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center"
+                android:layout_marginTop="10dp">
+
+                <Button
+                    android:id="@+id/btnPagar"
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:layout_marginRight="5dp"
+                    android:layout_height="wrap_content"
+                    android:text="@string/pagar"/>
+
+                <Button
+                    android:id="@+id/btnCambiarEstado"
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:layout_marginRight="5dp"
+                    android:layout_height="wrap_content"
+                    android:text="@string/mod_estado"/>
+
+                <Button
+                    android:id="@+id/btnModificar"
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:layout_height="wrap_content"
+                    android:text="@string/modificar"/>
+            </LinearLayout>
         </LinearLayout>
 
+        <!-- Icono de expansión -->
         <ImageView
             android:id="@+id/expand_icon"
             android:layout_width="30dp"

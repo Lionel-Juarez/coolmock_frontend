@@ -120,6 +120,11 @@ public class MainActivity extends AppCompatActivity {
     public void selectSunbed() {
         binding.bottomNavigationView.setSelectedItemId(R.id.sunbed); // Establece el elemento seleccionado programáticamente
     }
+    public void setSelectedItemId(int itemId) {
+        binding.bottomNavigationView.setSelectedItemId(itemId);
+    }
+
+
 
 
 

@@ -1,5 +1,6 @@
 package com.example.hamacav1.entidades.hamacas;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import android.os.Parcel;
@@ -7,6 +8,9 @@ import android.os.Parcelable;
 import android.util.Log;
 
 import com.example.hamacav1.entidades.reservas.Reserva;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -19,20 +23,20 @@ public class Hamaca implements Parcelable {
 
     private long idHamaca;
     private double precio;
-    private boolean reservada;
     private boolean ocupada;
     private int planoId;
-    private Long reservaId;
-    private String numeroHamaca; // Añade este campo
+    private String numeroHamaca;
+    private List<Long> reservaIds;  // Lista de IDs de reservas asociadas
 
 
     protected Hamaca(Parcel in) {
         idHamaca = in.readLong();
         precio = in.readDouble();
-        reservada = in.readByte() != 0;
         ocupada = in.readByte() != 0;
         planoId = in.readInt();
-        reservaId = (Long) in.readValue(Long.class.getClassLoader());
+        numeroHamaca = in.readString();
+        reservaIds = new ArrayList<>();
+        in.readList(reservaIds, Long.class.getClassLoader());
     }
 
     public static final Creator<Hamaca> CREATOR = new Creator<Hamaca>() {
@@ -47,7 +51,6 @@ public class Hamaca implements Parcelable {
         }
     };
 
-
     @Override
     public int describeContents() {
         return 0;
@@ -57,22 +60,69 @@ public class Hamaca implements Parcelable {
     public void writeToParcel(Parcel parcel, int flags) {
         parcel.writeLong(idHamaca);
         parcel.writeDouble(precio);
-        parcel.writeByte((byte) (reservada ? 1 : 0));
         parcel.writeByte((byte) (ocupada ? 1 : 0));
         parcel.writeInt(planoId);
-        parcel.writeValue(reservaId);  // Cambio aquí para manejar el ID como Long
-        parcel.writeString(numeroHamaca); // Escribir el nuevo campo al parcel
+        parcel.writeString(numeroHamaca);
+        parcel.writeList(reservaIds);
     }
 
-    public void fromJSON(JSONObject json) throws JSONException {
-        idHamaca = json.optLong("idHamaca", -1);
-        precio = json.optDouble("precio", 0.0);
-        reservada = json.optBoolean("reservada", false);
-        ocupada = json.optBoolean("ocupada", false);
-        planoId = json.optInt("planoId", 0);
-        reservaId = json.optLong("reservaId", -1);  // Asume que esto es un número, no un objeto
-        numeroHamaca = json.optString("numeroHamaca", ""); // Añadir manejo para el nuevo campo
+    public static Hamaca fromJSON(JSONObject jsonObject) throws JSONException {
+        Hamaca hamaca = new Hamaca();
+        hamaca.setIdHamaca(jsonObject.optLong("idHamaca"));
+        hamaca.setNumeroHamaca(jsonObject.optString("numeroHamaca"));
+        hamaca.setPrecio(jsonObject.optDouble("precio"));
+        hamaca.setOcupada(jsonObject.optBoolean("ocupada"));
+        hamaca.setPlanoId(jsonObject.optInt("planoId"));
 
+        JSONArray reservaArray = jsonObject.optJSONArray("reservaIds");
+        if (reservaArray != null) {
+            List<Long> reservaIds = new ArrayList<>();
+            for (int i = 0; i < reservaArray.length(); i++) {
+                try {
+                    // Asegúrate de que cada elemento del array es un objeto JSON antes de intentar convertirlo
+                    reservaIds.add(reservaArray.getLong(i)); // Cambiado para manejar directamente valores long en lugar de JSONObject
+                } catch (JSONException e) {
+                    Log.e("Hamaca", "Error al leer el ID de reserva en la posición " + i + ": " + e.getMessage());
+                }
+            }
+            hamaca.setReservaIds(reservaIds);
+        }
+
+        return hamaca;
     }
 
+
+
+
+    // Método para determinar si la hamaca está reservada
+    public boolean isReservada() {
+        return reservaIds != null && !reservaIds.isEmpty();
+    }
+
+    public Long getReservaId() {
+        if (!reservaIds.isEmpty()) {
+            return reservaIds.get(0); // Devuelve el primer ID de reserva si hay al menos una asociada
+        } else {
+            return null; // Devuelve null si no hay reservas asociadas
+        }
+    }
+
+    public void setReservada(boolean reservada) {
+        // Lógica para establecer el estado de reservada
+        if (reservada) {
+            // Si la hamaca está siendo marcada como reservada, se asume que no está ocupada
+            ocupada = false;
+            // Si no hay ninguna reserva asociada, se crea una lista vacía
+            if (reservaIds == null) {
+                reservaIds = new ArrayList<>();
+            }
+            // Se agrega una reserva ficticia a la lista de IDs de reserva
+            reservaIds.add(0L); // Se podría utilizar cualquier valor no nulo
+        } else {
+            // Si la hamaca está siendo marcada como no reservada, se limpia la lista de IDs de reserva
+            if (reservaIds != null) {
+                reservaIds.clear();
+            }
+        }
+    }
 }

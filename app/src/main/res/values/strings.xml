@@ -83,6 +83,9 @@
     <string name="cancel">Cancel</string>
     <string name="show_all">Show all</string>
     <string name="hamacas_reservadas">Hamacas Reservadas: %1$s</string>
+    <string name="pagar">Pagar</string>
+    <string name="mod_estado">Estado</string>
+    <string name="modificar">Editar</string>
 
 
     //Spinners
