@@ -1,7 +1,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
+    android:layout_height="match_parent"
     android:orientation="vertical"
     android:padding="24dp">
 
@@ -55,4 +55,37 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
         android:text="@string/btn_verReserva"/>
+
+
+
+    <LinearLayout
+        android:id="@+id/radioGroupLadoHamaca"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:paddingTop="10dp">
+
+
+        <RadioButton
+            android:id="@+id/radioLeft"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:text="@string/left_hamaca"
+            android:gravity="center"
+            android:layout_weight="1"
+            android:background="@drawable/selector_button_background"
+            android:layout_marginRight="20dp"
+            android:button="@android:color/transparent" />
+
+        <RadioButton
+            android:id="@+id/radioRight"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:text="@string/right_hamaca"
+            android:gravity="center"
+            android:layout_weight="1"
+            android:background="@drawable/selector_button_background"
+            android:button="@android:color/transparent" />
+
+    </LinearLayout>
 </LinearLayout>

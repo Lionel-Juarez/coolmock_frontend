@@ -26,7 +26,8 @@ public class Hamaca implements Parcelable {
     private boolean ocupada;
     private int planoId;
     private String numeroHamaca;
-    private List<Long> reservaIds;  // Lista de IDs de reservas asociadas
+    private List<Long> reservaIds;
+    private String lado;
 
 
     protected Hamaca(Parcel in) {
@@ -35,6 +36,7 @@ public class Hamaca implements Parcelable {
         ocupada = in.readByte() != 0;
         planoId = in.readInt();
         numeroHamaca = in.readString();
+        lado = in.readString();
         reservaIds = new ArrayList<>();
         in.readList(reservaIds, Long.class.getClassLoader());
     }
@@ -63,6 +65,7 @@ public class Hamaca implements Parcelable {
         parcel.writeByte((byte) (ocupada ? 1 : 0));
         parcel.writeInt(planoId);
         parcel.writeString(numeroHamaca);
+        parcel.writeString(lado);
         parcel.writeList(reservaIds);
     }
 
@@ -73,14 +76,14 @@ public class Hamaca implements Parcelable {
         hamaca.setPrecio(jsonObject.optDouble("precio"));
         hamaca.setOcupada(jsonObject.optBoolean("ocupada"));
         hamaca.setPlanoId(jsonObject.optInt("planoId"));
+        hamaca.setLado(jsonObject.optString("lado"));
 
         JSONArray reservaArray = jsonObject.optJSONArray("reservaIds");
         if (reservaArray != null) {
             List<Long> reservaIds = new ArrayList<>();
             for (int i = 0; i < reservaArray.length(); i++) {
                 try {
-                    // Asegúrate de que cada elemento del array es un objeto JSON antes de intentar convertirlo
-                    reservaIds.add(reservaArray.getLong(i)); // Cambiado para manejar directamente valores long en lugar de JSONObject
+                    reservaIds.add(reservaArray.getLong(i));
                 } catch (JSONException e) {
                     Log.e("Hamaca", "Error al leer el ID de reserva en la posición " + i + ": " + e.getMessage());
                 }
@@ -91,9 +94,6 @@ public class Hamaca implements Parcelable {
         return hamaca;
     }
 
-
-
-
     // Método para determinar si la hamaca está reservada
     public boolean isReservada() {
         return reservaIds != null && !reservaIds.isEmpty();
@@ -101,25 +101,20 @@ public class Hamaca implements Parcelable {
 
     public Long getReservaId() {
         if (!reservaIds.isEmpty()) {
-            return reservaIds.get(0); // Devuelve el primer ID de reserva si hay al menos una asociada
+            return reservaIds.get(0);
         } else {
-            return null; // Devuelve null si no hay reservas asociadas
+            return null;
         }
     }
 
     public void setReservada(boolean reservada) {
-        // Lógica para establecer el estado de reservada
         if (reservada) {
-            // Si la hamaca está siendo marcada como reservada, se asume que no está ocupada
             ocupada = false;
-            // Si no hay ninguna reserva asociada, se crea una lista vacía
             if (reservaIds == null) {
                 reservaIds = new ArrayList<>();
             }
-            // Se agrega una reserva ficticia a la lista de IDs de reserva
-            reservaIds.add(0L); // Se podría utilizar cualquier valor no nulo
+            reservaIds.add(0L);
         } else {
-            // Si la hamaca está siendo marcada como no reservada, se limpia la lista de IDs de reserva
             if (reservaIds != null) {
                 reservaIds.clear();
             }

@@ -6,15 +6,12 @@
     android:layout_height="match_parent"
     android:fillViewport="true"
     android:background="@color/lightBackgroundColor"
-
     tools:context=".entidades.reservas.ReservaFragment">
 
     <androidx.cardview.widget.CardView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        android:layout_marginStart="16dp"
-        android:layout_marginEnd="16dp"
+        android:layout_height="match_parent"
+        android:layout_margin="16dp"
         app:cardCornerRadius="16dp"
         app:cardElevation="10dp">
 
@@ -34,28 +31,68 @@
                 android:textStyle="bold"
                 android:padding="10dp" />
 
+            <Button
+                android:id="@+id/btnOpenCalendar"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/select_date"
+                android:drawableEnd="@drawable/baseline_calendar_month_24"
+                android:padding="10dp"
+                android:background="?attr/selectableItemBackground"
+                android:onClick="showDatePickerDialog"/>
+
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="@string/fecha_reserva"
-                android:paddingTop="10dp"
-                android:paddingBottom="10dp"
+                android:text="@string/select_sunbed"
+                android:paddingTop="20dp"
                 android:textSize="16sp" />
 
-            <!-- Implementing a simple calendar view -->
-            <CalendarView
-                android:id="@+id/calendarView"
+            <LinearLayout
+                android:id="@+id/radioGroupLadoHamaca"
                 android:layout_width="match_parent"
-                android:layout_height="300dp"
-                android:layout_marginTop="10dp"
-                android:dateTextAppearance="@style/CalendarDateStyle" />
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:paddingTop="10dp">
+
+
+                <RadioButton
+                    android:id="@+id/radioLeft"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:text="@string/left_hamaca"
+                    android:gravity="center"
+                    android:layout_weight="1"
+                    android:background="@drawable/selector_button_background"
+                    android:layout_marginRight="20dp"
+                    android:button="@android:color/transparent" />
+
+                <RadioButton
+                    android:id="@+id/radioRight"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:text="@string/right_hamaca"
+                    android:gravity="center"
+                    android:layout_weight="1"
+                    android:background="@drawable/selector_button_background"
+                    android:button="@android:color/transparent" />
+
+            </LinearLayout>
+
+            <Spinner
+                android:id="@+id/sp_cliente"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="@string/sp_clientes"
+                android:layout_marginTop="10dp" />
 
             <CheckBox
                 android:id="@+id/cb_reserva_pagada"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/pagada"
-                android:layout_marginTop="10dp" />
+                android:layout_marginTop="20dp" />
+
             <Spinner
                 android:id="@+id/sp_metodo_pago"
                 android:layout_width="match_parent"
@@ -64,21 +101,13 @@
                 android:entries="@array/payment_array"
                 android:layout_marginTop="10dp" />
 
-            <Spinner
-                android:id="@+id/sp_cliente"
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:prompt="@string/sp_clientes"
-                android:layout_marginTop="10dp" />
-
-
-            <Spinner
-                android:id="@+id/sp_estado"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:prompt="@string/estado_reserva"
-                android:entries="@array/estado_reserva_array"
-                android:layout_marginTop="10dp" />
+                android:orientation="horizontal"
+                android:paddingTop="20dp">
+                <!-- Buttons to save and cancel -->
+            </LinearLayout>
 
             <LinearLayout
                 android:layout_width="match_parent"

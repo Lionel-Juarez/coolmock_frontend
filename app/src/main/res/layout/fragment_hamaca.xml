@@ -7,20 +7,12 @@
     android:background="@color/lightBackgroundColor"
     tools:context=".entidades.hamacas.HamacaFragment">
 
-    <!-- Spinner para seleccionar planos -->
-    <Spinner
-        android:id="@+id/spinner_planos"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_gravity="top"
-        android:entries="@array/planos_array" />
-
     <!-- RecyclerView para mostrar las hamacas -->
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/hamacasRecyclerView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_marginTop="48dp"
+        android:layout_marginTop="60dp"
         android:padding="4dp" />
 
     <ImageView

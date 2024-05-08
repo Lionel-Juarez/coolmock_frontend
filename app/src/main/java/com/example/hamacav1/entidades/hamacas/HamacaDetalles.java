@@ -6,6 +6,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.RadioButton;
+import android.widget.RadioGroup;
 import android.widget.TextView;
 
 import androidx.fragment.app.DialogFragment;
@@ -35,6 +37,7 @@ import okhttp3.Response;
 
 public class HamacaDetalles  extends DialogFragment {
     private static final String ARG_HAMACA = "hamaca";
+    RadioButton radioLeft, radioRight;
 
     public static HamacaDetalles newInstance(Hamaca hamaca) {
         HamacaDetalles fragment = new HamacaDetalles();
@@ -56,6 +59,9 @@ public class HamacaDetalles  extends DialogFragment {
         Button btnLiberar = view.findViewById(R.id.btnLiberar);
         Button btnVerReserva = view.findViewById(R.id.btnVerReserva);
 
+        radioLeft = view.findViewById(R.id.radioLeft);
+        radioRight = view.findViewById(R.id.radioRight);
+
         Hamaca hamaca = getArguments() != null ? getArguments().getParcelable(ARG_HAMACA) : null;
         if (hamaca != null) {
             tvDetalleNumero.setText("Hamaca #" + hamaca.getIdHamaca());
@@ -63,6 +69,13 @@ public class HamacaDetalles  extends DialogFragment {
             actualizarEstado(tvDetalleEstado, hamaca);
 
             if (hamaca.isReservada()) {
+                radioLeft.setVisibility(View.VISIBLE);
+                radioRight.setVisibility(View.VISIBLE);
+                radioLeft.setClickable(false);
+                radioRight.setClickable(false);
+
+                checkLadoHamaca(hamaca);
+
                 btnReservar.setVisibility(View.GONE);
                 btnOcupar.setVisibility(View.GONE);
                 btnLiberar.setVisibility(View.GONE);
@@ -79,7 +92,6 @@ public class HamacaDetalles  extends DialogFragment {
                         if (activity != null) {
                             activity.setSelectedItemId(R.id.home);
                             activity.replaceFragment(fragment);
-                              // Asegúrate de que MainActivity tenga este método
                         }
                         dismiss();  // Cierra el dialogo o fragmento actual
                     } else {
@@ -89,13 +101,40 @@ public class HamacaDetalles  extends DialogFragment {
                 });
 
 
-            } else {
+            }else if(hamaca.isOcupada()){
+                radioLeft.setVisibility(View.VISIBLE);
+                radioRight.setVisibility(View.VISIBLE);
+                btnReservar.setVisibility(View.VISIBLE);
+                btnOcupar.setVisibility(View.GONE);
+                btnLiberar.setVisibility(View.VISIBLE);
+                btnVerReserva.setVisibility(View.GONE);
+
+                checkLadoHamaca(hamaca);
+
+                btnLiberar.setOnClickListener(v -> {
+                    hamaca.setReservada(false);
+                    hamaca.setOcupada(false);
+                    actualizarEstado(tvDetalleEstado, hamaca);
+                    updateHamacaOnServer(hamaca);
+                    radioLeft.setVisibility(View.GONE);
+                    radioRight.setVisibility(View.GONE);
+                    if (updateListener != null) {
+                        updateListener.onHamacaUpdated(hamaca);
+                    }
+                    dismiss();
+                });
+            }else {
                 btnReservar.setVisibility(View.VISIBLE);
                 btnOcupar.setVisibility(View.VISIBLE);
                 btnLiberar.setVisibility(View.VISIBLE);
                 btnVerReserva.setVisibility(View.GONE);
+                radioLeft.setVisibility(View.VISIBLE);
+                radioRight.setVisibility(View.VISIBLE);
+                radioLeft.setClickable(true);
+                radioRight.setClickable(true);
 
                 btnReservar.setOnClickListener(v -> {
+
                     Intent intent = new Intent(getActivity(), NuevaReserva.class);
                     ArrayList<Long> idsHamacas = new ArrayList<>();
                     idsHamacas.add(hamaca.getIdHamaca());
@@ -106,25 +145,18 @@ public class HamacaDetalles  extends DialogFragment {
 
 
                 btnOcupar.setOnClickListener(v -> {
-                    hamaca.setOcupada(true);
-                    hamaca.setReservada(false);
-                    actualizarEstado(tvDetalleEstado, hamaca);
-                    updateHamacaOnServer(hamaca);
-                    if (updateListener != null) {
-                        updateListener.onHamacaUpdated(hamaca);
+                    if (radioLeft.isChecked() || radioRight.isChecked()) {
+                        hamaca.setOcupada(true);
+                        hamaca.setReservada(false);
+                        actualizarEstado(tvDetalleEstado, hamaca);
+                        updateHamacaOnServer(hamaca);
+                        if (updateListener != null) {
+                            updateListener.onHamacaUpdated(hamaca);
+                        }
+                        dismiss();
+                    } else {
+                        Toast.makeText(getContext(), "Seleccione un lado para ocupar", Toast.LENGTH_SHORT).show();
                     }
-                    dismiss();
-                });
-
-                btnLiberar.setOnClickListener(v -> {
-                    hamaca.setReservada(false);
-                    hamaca.setOcupada(false);
-                    actualizarEstado(tvDetalleEstado, hamaca);
-                    updateHamacaOnServer(hamaca);
-                    if (updateListener != null) {
-                        updateListener.onHamacaUpdated(hamaca);
-                    }
-                    dismiss();
                 });
             }
         }
@@ -198,6 +230,17 @@ public class HamacaDetalles  extends DialogFragment {
         }
     }
 
+
+    public void checkLadoHamaca(Hamaca hamaca){
+        if ("izquierda".equals(hamaca.getLado())) {
+            radioLeft.setChecked(true);
+        } else if ("derecha".equals(hamaca.getLado())) {
+            radioRight.setChecked(true);
+        }else if ("ambos".equals(hamaca.getLado())){
+            radioLeft.setChecked(true);
+            radioRight.setChecked(true);
+        }
+    }
 
 
 }

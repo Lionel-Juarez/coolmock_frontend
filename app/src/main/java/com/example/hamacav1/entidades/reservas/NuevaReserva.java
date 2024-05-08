@@ -2,6 +2,7 @@ package com.example.hamacav1.entidades.reservas;
 
 
 import android.app.Activity;
+import android.app.DatePickerDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.Resources;
@@ -20,7 +21,10 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.CalendarView;
 import android.widget.CheckBox;
+import android.widget.DatePicker;
 import android.widget.EditText;
+import android.widget.RadioButton;
+import android.widget.RadioGroup;
 import android.widget.Spinner;
 import android.widget.Toast;
 
@@ -64,8 +68,9 @@ public class NuevaReserva extends AppCompatActivity {
     private CalendarView calendarViewReserva;
     private Spinner spCliente, spEstado, spMetodoPago;
     private CheckBox cbPagada;
-    private Button btnGuardarReserva;
+    private Button btnGuardarReserva, btnCancelarReserva;
     private String fechaReservaSeleccionada, fechaPago;
+    private RadioGroup rgHamacaSide;
     private List<Cliente> fullClientsList;
 
     private List<Long> idsHamacas;
@@ -83,31 +88,35 @@ public class NuevaReserva extends AppCompatActivity {
         }
         Log.d("NuevaReserva", "ID de la hamaca: " + idsHamacas);
 
-        calendarViewReserva = findViewById(R.id.calendarView);
-        spMetodoPago = findViewById(R.id.sp_metodo_pago);
+        Button btnOpenCalendar = findViewById(R.id.btnOpenCalendar);
+        btnOpenCalendar.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                showDatePickerDialog();
+            }
+        });        spMetodoPago = findViewById(R.id.sp_metodo_pago);
         spCliente = findViewById(R.id.sp_cliente);
         cbPagada = findViewById(R.id.cb_reserva_pagada);
         btnGuardarReserva = findViewById(R.id.btn_save_reserva);
-        spEstado = findViewById(R.id.sp_estado);
+        btnCancelarReserva = findViewById(R.id.btn_cancel_reserva);
         spCliente = findViewById(R.id.sp_cliente);
 
-        // Configura el listener del CalendarView para capturar la fecha seleccionada
-        calendarViewReserva.setOnDateChangeListener(new CalendarView.OnDateChangeListener() {
-            @Override
-            public void onSelectedDayChange(@NonNull CalendarView view, int year, int month, int dayOfMonth) {
-                // Guardar la fecha seleccionada en el formato "dd-MM-yyyy"
-                Calendar calendar = Calendar.getInstance();
-                calendar.set(year, month, dayOfMonth);
-                SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy HH:mm", Locale.getDefault());
-                fechaReservaSeleccionada = sdf.format(calendar.getTime());
-
-            }
-        });
+//        // Configura el listener del CalendarView para capturar la fecha seleccionada
+//        calendarViewReserva.setOnDateChangeListener(new CalendarView.OnDateChangeListener() {
+//            @Override
+//            public void onSelectedDayChange(@NonNull CalendarView view, int year, int month, int dayOfMonth) {
+//                // Guardar la fecha seleccionada en el formato "dd-MM-yyyy"
+//                Calendar calendar = Calendar.getInstance();
+//                calendar.set(year, month, dayOfMonth);
+//                SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy HH:mm", Locale.getDefault());
+//                fechaReservaSeleccionada = sdf.format(calendar.getTime());
+//
+//            }
+//        });
 
         // Cargar clientes en el spinner
         loadClientsFromBackend();
     }
-
 
     @Override
     public void onSaveInstanceState(Bundle outState) {
@@ -131,12 +140,16 @@ public class NuevaReserva extends AppCompatActivity {
             return nwInfo != null && nwInfo.isConnected();
         }
     }
+
     public void addReserva(View view) {
         String fechaReserva = fechaReservaSeleccionada;
-        String estado = spEstado.getSelectedItem().toString();
+//        String estado = spEstado.getSelectedItem().toString();
+        String estado = "Pendiente";
         String metodoPago = spMetodoPago.getSelectedItem().toString();
         boolean pagada = cbPagada.isChecked();
         Cliente cliente = (Cliente) spCliente.getSelectedItem();
+        String lado = getSelectedSide();
+
 
         if (cliente == null) {
             showError("No se ha seleccionado ningún cliente.");
@@ -152,12 +165,35 @@ public class NuevaReserva extends AppCompatActivity {
         if (validateInput(fechaReserva, cliente, idsHamacas)) {
             if (isNetworkAvailable()) {
                 String url = getResources().getString(R.string.url_reservas) + "nuevaReserva";
-                sendTask(url, fechaReserva, estado, pagada, metodoPago, cliente.getIdCliente(), idsHamacas, 1);  // Ajustar para enviar una lista de IDs de hamacas
+                sendTask(url, fechaReserva, estado, pagada, metodoPago, cliente.getIdCliente(), idsHamacas, 1, lado);
             } else {
                 showError("No hay conexión a Internet.");
             }
         }
+
     }
+
+    private String getSelectedSide() {
+        RadioButton radioLeft = findViewById(R.id.radioLeft);
+        RadioButton radioRight = findViewById(R.id.radioRight);
+
+        boolean leftSelected = radioLeft.isChecked();
+        boolean rightSelected = radioRight.isChecked();
+
+        String lado = "";
+
+        if (leftSelected && rightSelected) {
+            lado = "ambos";
+        } else if (leftSelected) {
+            lado = "izquierda";
+        } else if (rightSelected) {
+            lado = "derecha";
+        }
+
+        return lado;
+    }
+
+
 
     private boolean validateInput(String fechaReserva, Cliente cliente, List<Long> idsHamacas) {
         boolean isValid = true;
@@ -172,7 +208,7 @@ public class NuevaReserva extends AppCompatActivity {
         return isValid;
     }
 
-    private void sendTask(String url, String fechaReserva, String estado, boolean pagada, String metodoPago, long idCliente, List<Long> idsHamacas, long idUsuario) {
+    private void sendTask(String url, String fechaReserva, String estado, boolean pagada, String metodoPago, long idCliente, List<Long> idsHamacas, long idUsuario, String lado) {
         ExecutorService executor = Executors.newSingleThreadExecutor();
         Handler handler = new Handler(Looper.getMainLooper());
 
@@ -188,6 +224,7 @@ public class NuevaReserva extends AppCompatActivity {
                 json.put("idCliente", idCliente);
                 json.put("idUsuario", idUsuario);
                 json.put("idHamacas", new JSONArray(idsHamacas));
+                json.put("lado", lado); //
 
                 if (pagada) {
                     json.put("fechaPago", convertToIso8601(fechaReserva));  // Usar la misma fecha de reserva para la fecha de pago
@@ -207,7 +244,7 @@ public class NuevaReserva extends AppCompatActivity {
                             JSONObject responseObject = new JSONObject(responseData);
                             long idReserva = responseObject.getLong("idReserva");
                             Log.d("NuevaReserva", "Reserva creada con éxito, ID: " + idReserva);
-                            updateHamacasAsReserved(idsHamacas, idReserva);
+                            updateHamacasAsReserved(idsHamacas, idReserva, lado);
 
                             handler.post(() -> {
                                 Toast.makeText(getApplicationContext(), "Reserva añadida con éxito", Toast.LENGTH_SHORT).show();
@@ -298,7 +335,7 @@ public class NuevaReserva extends AppCompatActivity {
             }
         });
     }
-    private void updateHamacasAsReserved(List<Long> idsHamacas, long idReserva) {
+    private void updateHamacasAsReserved(List<Long> idsHamacas, long idReserva, String lado) {
         for (Long idHamaca : idsHamacas) {
             // Cambiar a la nueva URL del endpoint que maneja la actualización de la reserva específicamente
             String urlUpdate = getResources().getString(R.string.url_hamacas) + "updateReservaHamaca/" + idHamaca;
@@ -306,7 +343,7 @@ public class NuevaReserva extends AppCompatActivity {
             MediaType JSON = MediaType.parse("application/json; charset=utf-8");
             HttpUrl.Builder urlBuilder = HttpUrl.parse(urlUpdate).newBuilder();
             urlBuilder.addQueryParameter("idReserva", String.valueOf(idReserva)); // Agregar idReserva como parámetro de consulta
-
+            urlBuilder.addQueryParameter("lado", lado);
             Request request = new Request.Builder()
                     .url(urlBuilder.build()) // Construir la URL con el parámetro
                     .patch(RequestBody.create("", JSON)) // Usar método PATCH y enviar cuerpo vacío si el ID de reserva se pasa como parámetro de URL
@@ -330,12 +367,31 @@ public class NuevaReserva extends AppCompatActivity {
             });
         }
     }
-
+    private void showDatePickerDialog() {
+        Calendar c = Calendar.getInstance();
+        DatePickerDialog datePickerDialog = new DatePickerDialog(this,
+                (view, year, month, dayOfMonth) -> {
+                    Calendar selectedDate = Calendar.getInstance();
+                    selectedDate.set(year, month, dayOfMonth);
+                    SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy HH:mm", Locale.getDefault());
+                    fechaReservaSeleccionada = sdf.format(selectedDate.getTime());
+                }, c.get(Calendar.YEAR), c.get(Calendar.MONTH), c.get(Calendar.DAY_OF_MONTH));
+        datePickerDialog.show();
+    }
     private Usuario obtenerUsuarioCreador() {
         // Debes implementar la lógica para obtener el usuario que crea la reserva
         // Puede ser un usuario actualmente logueado o similar
         return new Usuario();  // Retorna un objeto usuario adecuado
     }
+
+    public void cancel(View view) {
+        // Simplemente termina la actividad actual
+        finish();
+
+        // Si necesitas navegar a otro fragmento o actividad al cancelar, necesitarás implementar la lógica aquí.
+        // Esto podría incluir comunicarse con el fragmento de reserva a través de un Intent o utilizando un ViewModel.
+    }
+
     private void showError(String message) {
         Toast.makeText(this, message, Toast.LENGTH_LONG).show();
     }

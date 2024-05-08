@@ -86,6 +86,10 @@
     <string name="pagar">Pagar</string>
     <string name="mod_estado">Estado</string>
     <string name="modificar">Editar</string>
+    <string name="left_hamaca">Left</string>
+    <string name="right_hamaca">Right</string>
+    <string name="both_hamacas">Both</string>
+    <string name="select_sunbed">Select sunbed</string>
 
 
     //Spinners
