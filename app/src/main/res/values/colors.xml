@@ -12,7 +12,7 @@
     <color name="lightBackgroundColor">#72B0DD</color>
     <color name="darkBackgroundColor">#01579B</color>
 
-    <!-- Colores para estados de las hamacas -->
+    <!-- Colores para estados de las sombrillas -->
     <color name="colorReservada">#0B710D</color>
     <color name="colorOcupada">#BA380F</color>
     <color name="colorDisponible">#1C1515</color>

@@ -1,8 +1,6 @@
 package com.example.hamacav1.entidades.reservas;
 
 import android.content.Context;
-import android.transition.AutoTransition;
-import android.transition.TransitionManager;
 import android.util.SparseBooleanArray;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -17,7 +15,7 @@ import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.hamacav1.R;
-import com.example.hamacav1.entidades.hamacas.Hamaca;
+import com.example.hamacav1.entidades.sombrillas.Sombrilla;
 
 import java.util.List;
 
@@ -90,20 +88,20 @@ public class ReservaAdapter extends RecyclerView.Adapter<ReservaAdapter.ReservaV
             holder.creadaPor.setText(context.getString(R.string.creado_por, "Información no disponible"));
         }
 
-        // Construir una cadena con todos los números de hamaca
-        StringBuilder numerosHamacasBuilder = new StringBuilder();
-        for (Hamaca hamaca : reserva.getHamacas()) {
-            if (numerosHamacasBuilder.length() <= 0){ //Añadir aqui el caso de null
+        // Construir una cadena con todos los números de sombrilla
+        StringBuilder numerosSombrillasBuilder = new StringBuilder();
+        for (Sombrilla sombrilla : reserva.getSombrillas()) {
+            if (numerosSombrillasBuilder.length() <= 0){ //Añadir aqui el caso de null
 
             }
-            if (numerosHamacasBuilder.length() > 0) {
-                numerosHamacasBuilder.append(", "); // Añade una coma si ya hay contenido en el StringBuilder
+            if (numerosSombrillasBuilder.length() > 0) {
+                numerosSombrillasBuilder.append(", "); // Añade una coma si ya hay contenido en el StringBuilder
             }
-            numerosHamacasBuilder.append(hamaca.getNumeroHamaca()); // Asume que este método o campo existe en tu clase Hamaca
+            numerosSombrillasBuilder.append(sombrilla.getNumeroSombrilla()); // Asume que este método o campo existe en tu clase Sombrilla
         }
 
-        String numerosHamacas = numerosHamacasBuilder.toString();
-        holder.hamacasReservadas.setText(context.getString(R.string.hamacas_reservadas, numerosHamacas));
+        String numerosSombrillas = numerosSombrillasBuilder.toString();
+        holder.sombrillasReservadas.setText(context.getString(R.string.sombrillas_reservadas, numerosSombrillas));
 
 
         boolean isExpanded = expandedState.get(position, false); // Obtiene el estado actual
@@ -161,7 +159,7 @@ public class ReservaAdapter extends RecyclerView.Adapter<ReservaAdapter.ReservaV
     }
 
     public static class ReservaViewHolder extends RecyclerView.ViewHolder {
-        TextView clienteNombre, fechaReserva, estado, metodoPago, pagada, fechaPago, creadaPor, hamacasReservadas;
+        TextView clienteNombre, fechaReserva, estado, metodoPago, pagada, fechaPago, creadaPor, sombrillasReservadas;
         ImageView delete, expandIcon;
         LinearLayout expandableView;
         CardView cardView;
@@ -180,7 +178,7 @@ public class ReservaAdapter extends RecyclerView.Adapter<ReservaAdapter.ReservaV
             expandIcon = itemView.findViewById(R.id.expand_icon);
             expandableView = itemView.findViewById(R.id.expandable_view);
             cardView = itemView.findViewById(R.id.reserva_card);
-            hamacasReservadas = itemView.findViewById(R.id.tvHamacas);
+            sombrillasReservadas = itemView.findViewById(R.id.tvSombrillas);
 
 
         }

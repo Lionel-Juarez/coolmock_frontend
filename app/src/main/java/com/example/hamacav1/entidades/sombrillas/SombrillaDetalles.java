@@ -1,4 +1,4 @@
-package com.example.hamacav1.entidades.hamacas;
+package com.example.hamacav1.entidades.sombrillas;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
@@ -7,7 +7,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.RadioButton;
-import android.widget.RadioGroup;
 import android.widget.TextView;
 
 import androidx.fragment.app.DialogFragment;
@@ -16,8 +15,8 @@ import android.app.Dialog;
 import android.widget.Toast;
 
 import com.example.hamacav1.MainActivity;
-import com.example.hamacav1.R;
 import com.example.hamacav1.entidades.reservas.NuevaReserva;
+import com.example.hamacav1.R;
 import com.example.hamacav1.entidades.reservas.ReservaFragment;
 
 import org.jetbrains.annotations.NotNull;
@@ -35,23 +34,23 @@ import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
 
-public class HamacaDetalles  extends DialogFragment {
-    private static final String ARG_HAMACA = "hamaca";
+public class SombrillaDetalles  extends DialogFragment {
+    private static final String ARG_HAMACA = "sombrilla";
     RadioButton radioLeft, radioRight;
 
-    public static HamacaDetalles newInstance(Hamaca hamaca) {
-        HamacaDetalles fragment = new HamacaDetalles();
+    public static SombrillaDetalles newInstance(Sombrilla sombrilla) {
+        SombrillaDetalles fragment = new SombrillaDetalles();
         Bundle args = new Bundle();
-        args.putParcelable(ARG_HAMACA, hamaca);
+        args.putParcelable(ARG_HAMACA, sombrilla);
         fragment.setArguments(args);
         return fragment;
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_hamaca_detalles, container, false);
+        View view = inflater.inflate(R.layout.fragment_sombrilla_detalles, container, false);
 
-        TextView tvDetalleNumero = view.findViewById(R.id.tvDetalleNumeroHamaca);
+        TextView tvDetalleNumero = view.findViewById(R.id.tvDetalleNumeroSombrilla);
         TextView tvDetallePrecio = view.findViewById(R.id.tvDetallePrecio);
         TextView tvDetalleEstado = view.findViewById(R.id.tvDetalleEstado);
         Button btnReservar = view.findViewById(R.id.btnReservar);
@@ -62,19 +61,19 @@ public class HamacaDetalles  extends DialogFragment {
         radioLeft = view.findViewById(R.id.radioLeft);
         radioRight = view.findViewById(R.id.radioRight);
 
-        Hamaca hamaca = getArguments() != null ? getArguments().getParcelable(ARG_HAMACA) : null;
-        if (hamaca != null) {
-            tvDetalleNumero.setText("Hamaca #" + hamaca.getIdHamaca());
-            tvDetallePrecio.setText("Precio: €" + hamaca.getPrecio());
-            actualizarEstado(tvDetalleEstado, hamaca);
+        Sombrilla sombrilla = getArguments() != null ? getArguments().getParcelable(ARG_HAMACA) : null;
+        if (sombrilla != null) {
+            tvDetalleNumero.setText("Sombrilla #" + sombrilla.getIdSombrilla());
+            tvDetallePrecio.setText("Precio: €" + sombrilla.getPrecio());
+            actualizarEstado(tvDetalleEstado, sombrilla);
 
-            if (hamaca.isReservada()) {
+            if (sombrilla.isReservada()) {
                 radioLeft.setVisibility(View.VISIBLE);
                 radioRight.setVisibility(View.VISIBLE);
                 radioLeft.setClickable(false);
                 radioRight.setClickable(false);
 
-                checkLadoHamaca(hamaca);
+                checkLadoSombrilla(sombrilla);
 
                 btnReservar.setVisibility(View.GONE);
                 btnOcupar.setVisibility(View.GONE);
@@ -82,9 +81,9 @@ public class HamacaDetalles  extends DialogFragment {
                 btnVerReserva.setVisibility(View.VISIBLE);
 
                 btnVerReserva.setOnClickListener(v -> {
-                    if (hamaca.getReservaId() != null) {
+                    if (sombrilla.getReservaId() != null) {
                         Bundle args = new Bundle();
-                        args.putLong(ReservaFragment.EXTRA_RESERVA_ID, hamaca.getReservaId());
+                        args.putLong(ReservaFragment.EXTRA_RESERVA_ID, sombrilla.getReservaId());
                         ReservaFragment fragment = new ReservaFragment();
                         fragment.setArguments(args);
 
@@ -95,13 +94,13 @@ public class HamacaDetalles  extends DialogFragment {
                         }
                         dismiss();  // Cierra el dialogo o fragmento actual
                     } else {
-                        Log.d("HamacaDetalles", "Hamaca con id: " + hamaca.getIdHamaca() + " no tiene reservas asociadas");
-                        Toast.makeText(getContext(), "No hay reserva asociada a esta hamaca", Toast.LENGTH_SHORT).show();
+                        Log.d("SombrillaDetalles", "Sombrilla con id: " + sombrilla.getIdSombrilla() + " no tiene reservas asociadas");
+                        Toast.makeText(getContext(), "No hay reserva asociada a esta sombrilla", Toast.LENGTH_SHORT).show();
                     }
                 });
 
 
-            }else if(hamaca.isOcupada()){
+            }else if(sombrilla.isOcupada()){
                 radioLeft.setVisibility(View.VISIBLE);
                 radioRight.setVisibility(View.VISIBLE);
                 btnReservar.setVisibility(View.VISIBLE);
@@ -109,17 +108,17 @@ public class HamacaDetalles  extends DialogFragment {
                 btnLiberar.setVisibility(View.VISIBLE);
                 btnVerReserva.setVisibility(View.GONE);
 
-                checkLadoHamaca(hamaca);
+                checkLadoSombrilla(sombrilla);
 
                 btnLiberar.setOnClickListener(v -> {
-                    hamaca.setReservada(false);
-                    hamaca.setOcupada(false);
-                    actualizarEstado(tvDetalleEstado, hamaca);
-                    updateHamacaOnServer(hamaca);
+                    sombrilla.setReservada(false);
+                    sombrilla.setOcupada(false);
+                    actualizarEstado(tvDetalleEstado, sombrilla);
+                    updateSombrillaOnServer(sombrilla);
                     radioLeft.setVisibility(View.GONE);
                     radioRight.setVisibility(View.GONE);
                     if (updateListener != null) {
-                        updateListener.onHamacaUpdated(hamaca);
+                        updateListener.onSombrillaUpdated(sombrilla);
                     }
                     dismiss();
                 });
@@ -136,9 +135,9 @@ public class HamacaDetalles  extends DialogFragment {
                 btnReservar.setOnClickListener(v -> {
 
                     Intent intent = new Intent(getActivity(), NuevaReserva.class);
-                    ArrayList<Long> idsHamacas = new ArrayList<>();
-                    idsHamacas.add(hamaca.getIdHamaca());
-                    intent.putExtra("idsHamacas", idsHamacas);
+                    ArrayList<Long> idsSombrillas = new ArrayList<>();
+                    idsSombrillas.add(sombrilla.getIdSombrilla());
+                    intent.putExtra("idsSombrillas", idsSombrillas);
                     startActivity(intent);
                     dismiss();
                 });
@@ -146,12 +145,12 @@ public class HamacaDetalles  extends DialogFragment {
 
                 btnOcupar.setOnClickListener(v -> {
                     if (radioLeft.isChecked() || radioRight.isChecked()) {
-                        hamaca.setOcupada(true);
-                        hamaca.setReservada(false);
-                        actualizarEstado(tvDetalleEstado, hamaca);
-                        updateHamacaOnServer(hamaca);
+                        sombrilla.setOcupada(true);
+                        sombrilla.setReservada(false);
+                        actualizarEstado(tvDetalleEstado, sombrilla);
+                        updateSombrillaOnServer(sombrilla);
                         if (updateListener != null) {
-                            updateListener.onHamacaUpdated(hamaca);
+                            updateListener.onSombrillaUpdated(sombrilla);
                         }
                         dismiss();
                     } else {
@@ -165,8 +164,8 @@ public class HamacaDetalles  extends DialogFragment {
     }
 
 
-    private void actualizarEstado(TextView tvDetalleEstado, Hamaca hamaca) {
-        String estado = hamaca.isReservada() ? "Reservada" : hamaca.isOcupada() ? "Ocupada" : "Disponible";
+    private void actualizarEstado(TextView tvDetalleEstado, Sombrilla sombrilla) {
+        String estado = sombrilla.isReservada() ? "Reservada" : sombrilla.isOcupada() ? "Ocupada" : "Disponible";
         tvDetalleEstado.setText("Estado: " + estado);
     }
 
@@ -177,31 +176,31 @@ public class HamacaDetalles  extends DialogFragment {
         return dialog;
     }
 
-    public interface HamacaUpdateListener {
-        void onHamacaUpdated(Hamaca hamaca);
+    public interface SombrillaUpdateListener {
+        void onSombrillaUpdated(Sombrilla sombrilla);
     }
 
-    private HamacaUpdateListener updateListener;
+    private SombrillaUpdateListener updateListener;
 
-    public static HamacaDetalles newInstance(Hamaca hamaca, HamacaUpdateListener listener) {
-        HamacaDetalles fragment = new HamacaDetalles();
+    public static SombrillaDetalles newInstance(Sombrilla sombrilla, SombrillaUpdateListener listener) {
+        SombrillaDetalles fragment = new SombrillaDetalles();
         fragment.updateListener = listener;
         Bundle args = new Bundle();
-        args.putParcelable(ARG_HAMACA, hamaca);
+        args.putParcelable(ARG_HAMACA, sombrilla);
         fragment.setArguments(args);
         return fragment;
     }
 
-    private void updateHamacaOnServer(Hamaca hamaca) {
-        String url = getResources().getString(R.string.url_hamacas) + "updateHamaca/" + hamaca.getIdHamaca();
-        Log.d("HamacaUpdate", "Actualizando hamaca con ID: " + hamaca.getIdHamaca() + " con URL: " + url);
+    private void updateSombrillaOnServer(Sombrilla sombrilla) {
+        String url = getResources().getString(R.string.url_sombrillas) + "updateSombrilla/" + sombrilla.getIdSombrilla();
+        Log.d("SombrillaUpdate", "Actualizando sombrilla con ID: " + sombrilla.getIdSombrilla() + " con URL: " + url);
         OkHttpClient client = new OkHttpClient();
         MediaType JSON = MediaType.parse("application/json; charset=utf-8");
         JSONObject jsonObject = new JSONObject();
         try {
-            jsonObject.put("idHamaca", hamaca.getIdHamaca());
-            jsonObject.put("reservada", hamaca.isReservada());
-            jsonObject.put("ocupada", hamaca.isOcupada());
+            jsonObject.put("idSombrilla", sombrilla.getIdSombrilla());
+            jsonObject.put("reservada", sombrilla.isReservada());
+            jsonObject.put("ocupada", sombrilla.isOcupada());
             RequestBody body = RequestBody.create(jsonObject.toString(), JSON);
 
             Request request = new Request.Builder()
@@ -212,31 +211,31 @@ public class HamacaDetalles  extends DialogFragment {
             client.newCall(request).enqueue(new Callback() {
                 @Override
                 public void onFailure(@NotNull Call call, @NotNull IOException e) {
-                    Log.e("HamacaUpdate", "Error al realizar la solicitud de actualización: " + e.getMessage(), e);
+                    Log.e("SombrillaUpdate", "Error al realizar la solicitud de actualización: " + e.getMessage(), e);
                 }
 
                 @Override
                 public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
                     if (!response.isSuccessful()) {
                         String responseBody = response.body().string(); // Leer la respuesta del servidor
-                        Log.e("HamacaUpdate", "Respuesta no exitosa del servidor al actualizar hamaca: HTTP " + response.code() + " - " + responseBody);
+                        Log.e("SombrillaUpdate", "Respuesta no exitosa del servidor al actualizar sombrilla: HTTP " + response.code() + " - " + responseBody);
                     } else {
-                        Log.d("HamacaUpdate", "Actualización exitosa de la hamaca con ID: " + hamaca.getIdHamaca());
+                        Log.d("SombrillaUpdate", "Actualización exitosa de la sombrilla con ID: " + sombrilla.getIdSombrilla());
                     }
                 }
             });
         } catch (JSONException e) {
-            Log.e("HamacaUpdate", "Error al crear JSON para actualizar la hamaca: " + e.getMessage(), e);
+            Log.e("SombrillaUpdate", "Error al crear JSON para actualizar la sombrilla: " + e.getMessage(), e);
         }
     }
 
 
-    public void checkLadoHamaca(Hamaca hamaca){
-        if ("izquierda".equals(hamaca.getLado())) {
+    public void checkLadoSombrilla(Sombrilla sombrilla){
+        if ("izquierda".equals(sombrilla.getLado())) {
             radioLeft.setChecked(true);
-        } else if ("derecha".equals(hamaca.getLado())) {
+        } else if ("derecha".equals(sombrilla.getLado())) {
             radioRight.setChecked(true);
-        }else if ("ambos".equals(hamaca.getLado())){
+        }else if ("ambos".equals(sombrilla.getLado())){
             radioLeft.setChecked(true);
             radioRight.setChecked(true);
         }

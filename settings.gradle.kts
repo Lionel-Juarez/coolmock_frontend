@@ -13,6 +13,6 @@ dependencyResolutionManagement {
     }
 }
 
-rootProject.name = "HamacaV1"
+rootProject.name = "SombrillaV1"
 include(":app")
  

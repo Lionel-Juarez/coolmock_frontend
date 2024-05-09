@@ -17,7 +17,7 @@
     <string name="description">Esta es la descripcion del reporte, como maximo, tendra 2 lineas...</string>
     <string name="delete_comment">Delete reporte</string>
     <string name="url_reportes">http://10.0.2.2:8080/api/reportes/</string>
-    <string name="url_hamacas">http://10.0.2.2:8080/api/hamacas/</string>
+    <string name="url_sombrillas">http://10.0.2.2:8080/api/sombrillas/</string>
     <string name="url_clientes">http://10.0.2.2:8080/api/clientes/</string>
     <string name="url_reservas">http://10.0.2.2:8080/api/reservas/</string>
     <string name="url_usuarios">http://10.0.2.2:8080/api/usuarios/</string>
@@ -54,8 +54,8 @@
     <string name="eliminar_cliente">Delete Customer</string>
     <string name="fab_add_cliente">Add customer</string>
     <string name="clientes">Customers</string>
-    <string name="numero_hamaca">#%d</string>
-    <string name="estado_hamaca">Sunbed state</string>
+    <string name="numero_sombrilla">#%d</string>
+    <string name="estado_sombrilla">Sunbed state</string>
     <string name="reserva">Books</string>
     <string name="create_new_reservation">Create a new reservation</string>
     <string name="pagada">Paid</string>
@@ -73,7 +73,7 @@
     <string name="creado_por">Created by: %s</string>
     <string name="reservations">Reservations</string>
     <string name="no_reservas">There are no reservations for today</string>
-    <string name="tvHamacas">Hamacas reservadas:</string>
+    <string name="tvSombrillas">Sombrillas reservadas:</string>
     <string name="payment_date">Payment date</string>
     <string name="btn_verReserva">See reservation</string>
     <string name="filter_by_name">Filtrar por nombre</string>
@@ -82,13 +82,13 @@
     <string name="filter_by_state">Filtrar por estado</string>
     <string name="cancel">Cancel</string>
     <string name="show_all">Show all</string>
-    <string name="hamacas_reservadas">Hamacas Reservadas: %1$s</string>
+    <string name="sombrillas_reservadas">Sombrillas Reservadas: %1$s</string>
     <string name="pagar">Pagar</string>
     <string name="mod_estado">Estado</string>
     <string name="modificar">Editar</string>
-    <string name="left_hamaca">Left</string>
-    <string name="right_hamaca">Right</string>
-    <string name="both_hamacas">Both</string>
+    <string name="left_sombrilla">Left</string>
+    <string name="right_sombrilla">Right</string>
+    <string name="both_sombrillas">Both</string>
     <string name="select_sunbed">Select sunbed</string>
 
 

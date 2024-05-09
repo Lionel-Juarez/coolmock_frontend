@@ -6,19 +6,19 @@
     android:padding="24dp">
 
     <TextView
-        android:id="@+id/tvDetalleNumeroHamaca"
+        android:id="@+id/tvDetalleNumeroSombrilla"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:textSize="18sp"
         android:textStyle="bold"
-        android:text="Número de Hamaca"/>
+        android:text="Número de Sombrilla"/>
 
     <TextView
         android:id="@+id/tvDetallePrecio"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
-        android:text="Precio de Hamaca"/>
+        android:text="Precio de Sombrilla"/>
 
     <TextView
         android:id="@+id/tvDetalleEstado"
@@ -27,7 +27,7 @@
         android:layout_marginTop="16dp"
         android:text="Estado Actual"/>
 
-    <!-- Botones para cambiar el estado de la hamaca -->
+    <!-- Botones para cambiar el estado de la sombrilla -->
     <Button
         android:id="@+id/btnReservar"
         android:layout_width="match_parent"
@@ -59,7 +59,7 @@
 
 
     <LinearLayout
-        android:id="@+id/radioGroupLadoHamaca"
+        android:id="@+id/radioGroupLadoSombrilla"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
@@ -70,7 +70,7 @@
             android:id="@+id/radioLeft"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:text="@string/left_hamaca"
+            android:text="@string/left_sombrilla"
             android:gravity="center"
             android:layout_weight="1"
             android:background="@drawable/selector_button_background"
@@ -81,7 +81,7 @@
             android:id="@+id/radioRight"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:text="@string/right_hamaca"
+            android:text="@string/right_sombrilla"
             android:gravity="center"
             android:layout_weight="1"
             android:background="@drawable/selector_button_background"

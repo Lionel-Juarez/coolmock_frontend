@@ -6,7 +6,7 @@ import android.util.Log;
 import androidx.annotation.RequiresApi;
 
 import com.example.hamacav1.entidades.clientes.Cliente;
-import com.example.hamacav1.entidades.hamacas.Hamaca;
+import com.example.hamacav1.entidades.sombrillas.Sombrilla;
 import com.example.hamacav1.entidades.usuarios.Usuario;
 
 import org.json.JSONArray;
@@ -29,7 +29,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class Reserva implements Serializable {
     private Long idReserva;
-    private List<Hamaca> hamacas;
+    private List<Sombrilla> sombrillas;
     private Cliente cliente;
     private Usuario creadaPor;
     private String estado;
@@ -48,13 +48,13 @@ public class Reserva implements Serializable {
         this.fechaReserva = parseDateTime(json.optString("fechaReserva"));
         this.lado = json.optString("lado");
 
-        JSONArray hamacasJson = json.optJSONArray("hamacas");
-        if (hamacasJson != null) {
-            this.hamacas = new ArrayList<>();
-            for (int i = 0; i < hamacasJson.length(); i++) {
-                JSONObject hamacaObj = hamacasJson.getJSONObject(i);
-                Hamaca hamaca = Hamaca.fromJSON(hamacaObj);
-                this.hamacas.add(hamaca);
+        JSONArray sombrillasJson = json.optJSONArray("sombrillas");
+        if (sombrillasJson != null) {
+            this.sombrillas = new ArrayList<>();
+            for (int i = 0; i < sombrillasJson.length(); i++) {
+                JSONObject sombrillaObj = sombrillasJson.getJSONObject(i);
+                Sombrilla sombrilla = Sombrilla.fromJSON(sombrillaObj);
+                this.sombrillas.add(sombrilla);
             }
         }
 

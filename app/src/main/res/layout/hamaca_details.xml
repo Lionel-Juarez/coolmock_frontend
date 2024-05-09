@@ -8,7 +8,7 @@
     android:padding="16dp">
 
     <TextView
-        android:id="@+id/tvHamacaDetalleNumero"
+        android:id="@+id/tvSombrillaDetalleNumero"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:textSize="24sp"
@@ -16,14 +16,14 @@
         android:text=""/>
 
     <TextView
-        android:id="@+id/tvHamacaDetalleEstado"
+        android:id="@+id/tvSombrillaDetalleEstado"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:textSize="18sp"
         android:layout_marginTop="8dp"/>
 
     <TextView
-        android:id="@+id/tvHamacaDetallePrecio"
+        android:id="@+id/tvSombrillaDetallePrecio"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:textSize="18sp"

@@ -1,70 +1,34 @@
 package com.example.hamacav1.entidades.reservas;
 
-import android.app.Activity;
 import android.app.DatePickerDialog;
-import android.content.Context;
 import android.content.DialogInterface;
-import android.content.Intent;
-import android.content.res.Resources;
-import android.net.ConnectivityManager;
-import android.net.Network;
-import android.net.NetworkCapabilities;
-import android.net.NetworkInfo;
-import android.os.Build;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.Looper;
 import android.text.InputType;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
-import android.widget.ImageView;
 import android.widget.PopupMenu;
-import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import androidx.activity.result.ActivityResult;
-import androidx.activity.result.ActivityResultCallback;
-import androidx.activity.result.ActivityResultLauncher;
-import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentManager;
-import androidx.fragment.app.FragmentTransaction;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.hamacav1.MainActivity;
-import com.example.hamacav1.entidades.hamacas.HamacaFragment;
-import com.example.hamacav1.util.Internetop;
 import com.example.hamacav1.R;
 
-import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-
-import okhttp3.Call;
-import okhttp3.Callback;
-import okhttp3.OkHttpClient;
-import okhttp3.Request;
-import okhttp3.Response;
 
 public class ReservaFragment extends Fragment implements ReservaAdapter.ReservasAdapterCallback {
     public static final String EXTRA_RESERVA_ID = "EXTRA_RESERVA_ID";
@@ -118,12 +82,12 @@ public class ReservaFragment extends Fragment implements ReservaAdapter.Reservas
             }
         });
 
-        view.findViewById(R.id.fab_add_reserva).setOnClickListener(v -> irHamacas());
+        view.findViewById(R.id.fab_add_reserva).setOnClickListener(v -> irSombrillas());
         setupFilterMenu(view);
         return view;
     }
 
-    private void irHamacas() {
+    private void irSombrillas() {
         if (getActivity() instanceof MainActivity) {
             ((MainActivity) getActivity()).selectSunbed();
         }

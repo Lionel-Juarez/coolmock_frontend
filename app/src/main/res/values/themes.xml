@@ -1,6 +1,6 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
     <!-- Base application theme. -->
-    <style name="Theme.HamacaV1" parent="Theme.MaterialComponents.DayNight.NoActionBar">
+    <style name="Theme.SombrillaV1" parent="Theme.MaterialComponents.DayNight.NoActionBar">
         <!-- Primary brand color. -->
         <item name="colorPrimary">@color/principalColor</item>
         <item name="colorPrimaryVariant">@color/principalColor</item>

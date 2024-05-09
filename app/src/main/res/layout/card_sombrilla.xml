@@ -9,11 +9,11 @@
     android:layout_margin="2dp">
 
     <ImageView
-        android:id="@+id/ivEstadoHamaca"
+        android:id="@+id/ivEstadoSombrilla"
         android:layout_width="48dp"
         android:layout_height="48dp"
         android:src="@drawable/baseline_beach_access_24"
-        android:contentDescription="@string/estado_hamaca"
+        android:contentDescription="@string/estado_sombrilla"
         android:layout_gravity="center"/>
 
 </androidx.cardview.widget.CardView>

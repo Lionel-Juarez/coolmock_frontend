@@ -5,11 +5,11 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/lightBackgroundColor"
-    tools:context=".entidades.hamacas.HamacaFragment">
+    tools:context=".entidades.sombrillas.SombrillaFragment">
 
-    <!-- RecyclerView para mostrar las hamacas -->
+    <!-- RecyclerView para mostrar las sombrillas -->
     <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/hamacasRecyclerView"
+        android:id="@+id/sombrillasRecyclerView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_marginTop="60dp"

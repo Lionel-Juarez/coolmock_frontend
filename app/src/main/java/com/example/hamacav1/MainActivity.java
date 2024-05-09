@@ -19,7 +19,7 @@ import android.widget.LinearLayout;
 
 import com.example.hamacav1.entidades.calculos.CalcsFragment;
 import com.example.hamacav1.entidades.clientes.ClienteFragment;
-import com.example.hamacav1.entidades.hamacas.HamacaFragment;
+import com.example.hamacav1.entidades.sombrillas.SombrillaFragment;
 import com.example.hamacav1.entidades.reportes.ReportsFragment;
 import com.example.hamacav1.databinding.ActivityMainBinding;
 import com.example.hamacav1.entidades.reservas.ReservaFragment;
@@ -45,7 +45,7 @@ public class MainActivity extends AppCompatActivity {
                 replaceFragment(new ReservaFragment());
             } else if (itemId == R.id.sunbed) {
                 Log.d("Main", "El boton sunbed se ha pulsado");
-                replaceFragment(new HamacaFragment());
+                replaceFragment(new SombrillaFragment());
             } else if (itemId == R.id.reportes) {
                 replaceFragment(new ReportsFragment());
             } else if (itemId == R.id.calcs) {

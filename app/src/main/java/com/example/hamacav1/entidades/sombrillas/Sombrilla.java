@@ -1,4 +1,4 @@
-package com.example.hamacav1.entidades.hamacas;
+package com.example.hamacav1.entidades.sombrillas;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -6,8 +6,6 @@ import org.json.JSONObject;
 import android.os.Parcel;
 import android.os.Parcelable;
 import android.util.Log;
-
-import com.example.hamacav1.entidades.reservas.Reserva;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -19,37 +17,37 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class Hamaca implements Parcelable {
+public class Sombrilla implements Parcelable {
 
-    private long idHamaca;
+    private long idSombrilla;
     private double precio;
     private boolean ocupada;
     private int planoId;
-    private String numeroHamaca;
+    private String numeroSombrilla;
     private List<Long> reservaIds;
     private String lado;
 
 
-    protected Hamaca(Parcel in) {
-        idHamaca = in.readLong();
+    protected Sombrilla(Parcel in) {
+        idSombrilla = in.readLong();
         precio = in.readDouble();
         ocupada = in.readByte() != 0;
         planoId = in.readInt();
-        numeroHamaca = in.readString();
+        numeroSombrilla = in.readString();
         lado = in.readString();
         reservaIds = new ArrayList<>();
         in.readList(reservaIds, Long.class.getClassLoader());
     }
 
-    public static final Creator<Hamaca> CREATOR = new Creator<Hamaca>() {
+    public static final Creator<Sombrilla> CREATOR = new Creator<Sombrilla>() {
         @Override
-        public Hamaca createFromParcel(Parcel in) {
-            return new Hamaca(in);
+        public Sombrilla createFromParcel(Parcel in) {
+            return new Sombrilla(in);
         }
 
         @Override
-        public Hamaca[] newArray(int size) {
-            return new Hamaca[size];
+        public Sombrilla[] newArray(int size) {
+            return new Sombrilla[size];
         }
     };
 
@@ -60,23 +58,23 @@ public class Hamaca implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel parcel, int flags) {
-        parcel.writeLong(idHamaca);
+        parcel.writeLong(idSombrilla);
         parcel.writeDouble(precio);
         parcel.writeByte((byte) (ocupada ? 1 : 0));
         parcel.writeInt(planoId);
-        parcel.writeString(numeroHamaca);
+        parcel.writeString(numeroSombrilla);
         parcel.writeString(lado);
         parcel.writeList(reservaIds);
     }
 
-    public static Hamaca fromJSON(JSONObject jsonObject) throws JSONException {
-        Hamaca hamaca = new Hamaca();
-        hamaca.setIdHamaca(jsonObject.optLong("idHamaca"));
-        hamaca.setNumeroHamaca(jsonObject.optString("numeroHamaca"));
-        hamaca.setPrecio(jsonObject.optDouble("precio"));
-        hamaca.setOcupada(jsonObject.optBoolean("ocupada"));
-        hamaca.setPlanoId(jsonObject.optInt("planoId"));
-        hamaca.setLado(jsonObject.optString("lado"));
+    public static Sombrilla fromJSON(JSONObject jsonObject) throws JSONException {
+        Sombrilla sombrilla = new Sombrilla();
+        sombrilla.setIdSombrilla(jsonObject.optLong("idSombrilla"));
+        sombrilla.setNumeroSombrilla(jsonObject.optString("numeroSombrilla"));
+        sombrilla.setPrecio(jsonObject.optDouble("precio"));
+        sombrilla.setOcupada(jsonObject.optBoolean("ocupada"));
+        sombrilla.setPlanoId(jsonObject.optInt("planoId"));
+        sombrilla.setLado(jsonObject.optString("lado"));
 
         JSONArray reservaArray = jsonObject.optJSONArray("reservaIds");
         if (reservaArray != null) {
@@ -85,16 +83,16 @@ public class Hamaca implements Parcelable {
                 try {
                     reservaIds.add(reservaArray.getLong(i));
                 } catch (JSONException e) {
-                    Log.e("Hamaca", "Error al leer el ID de reserva en la posición " + i + ": " + e.getMessage());
+                    Log.e("Sombrilla", "Error al leer el ID de reserva en la posición " + i + ": " + e.getMessage());
                 }
             }
-            hamaca.setReservaIds(reservaIds);
+            sombrilla.setReservaIds(reservaIds);
         }
 
-        return hamaca;
+        return sombrilla;
     }
 
-    // Método para determinar si la hamaca está reservada
+    // Método para determinar si la sombrilla está reservada
     public boolean isReservada() {
         return reservaIds != null && !reservaIds.isEmpty();
     }

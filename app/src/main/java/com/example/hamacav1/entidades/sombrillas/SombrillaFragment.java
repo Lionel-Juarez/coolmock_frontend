@@ -1,19 +1,7 @@
-package com.example.hamacav1.entidades.hamacas;
+package com.example.hamacav1.entidades.sombrillas;
 
-import android.app.Activity;
 import android.app.DatePickerDialog;
-import android.content.Context;
-import android.content.DialogInterface;
-import android.content.Intent;
-import android.content.res.Resources;
-import android.net.ConnectivityManager;
-import android.net.Network;
-import android.net.NetworkCapabilities;
-import android.net.NetworkInfo;
-import android.os.Build;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.Looper;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -44,7 +32,6 @@ import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
-import java.util.Locale;
 
 
 import okhttp3.Call;
@@ -55,18 +42,18 @@ import okhttp3.Request;
 import okhttp3.Response;
 
 
-public class HamacaFragment extends Fragment implements HamacaDetalles.HamacaUpdateListener {
+public class SombrillaFragment extends Fragment implements SombrillaDetalles.SombrillaUpdateListener {
 
-    private RecyclerView hamacasRecyclerView;
-    private HamacaAdapter hamacasAdapter;
-    private List<Hamaca> todasLasHamacas = new ArrayList<>();
+    private RecyclerView sombrillasRecyclerView;
+    private SombrillaAdapter sombrillasAdapter;
+    private List<Sombrilla> todasLasSombrillas = new ArrayList<>();
     private ImageView openDatePicker;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_hamaca, container, false);
+        View view = inflater.inflate(R.layout.fragment_sombrilla, container, false);
         setupRecyclerView(view);
-        cargarHamacas(Calendar.getInstance().get(Calendar.YEAR), Calendar.getInstance().get(Calendar.MONTH), Calendar.getInstance().get(Calendar.DAY_OF_MONTH));
+        cargarSombrillas(Calendar.getInstance().get(Calendar.YEAR), Calendar.getInstance().get(Calendar.MONTH), Calendar.getInstance().get(Calendar.DAY_OF_MONTH));
         setupOpenDatePicker(view);
         return view;
     }
@@ -80,31 +67,31 @@ public class HamacaFragment extends Fragment implements HamacaDetalles.HamacaUpd
         Calendar c = Calendar.getInstance();
         DatePickerDialog datePickerDialog = new DatePickerDialog(getContext(),
                 (view, year, month, dayOfMonth) -> {
-                    // Lógica para cargar las hamacas con la fecha seleccionada...
-                    cargarHamacas(year, month, dayOfMonth);
+                    // Lógica para cargar las sombrillas con la fecha seleccionada...
+                    cargarSombrillas(year, month, dayOfMonth);
                 }, c.get(Calendar.YEAR), c.get(Calendar.MONTH), c.get(Calendar.DAY_OF_MONTH));
         datePickerDialog.show();
     }
 
     private void setupRecyclerView(View view) {
-        hamacasRecyclerView = view.findViewById(R.id.hamacasRecyclerView);
-        hamacasRecyclerView.setLayoutManager(new GridLayoutManager(getContext(), 9));
-        hamacasAdapter = new HamacaAdapter(todasLasHamacas, getContext(), getChildFragmentManager());
-        hamacasRecyclerView.setAdapter(hamacasAdapter);
+        sombrillasRecyclerView = view.findViewById(R.id.sombrillasRecyclerView);
+        sombrillasRecyclerView.setLayoutManager(new GridLayoutManager(getContext(), 9));
+        sombrillasAdapter = new SombrillaAdapter(todasLasSombrillas, getContext(), getChildFragmentManager());
+        sombrillasRecyclerView.setAdapter(sombrillasAdapter);
     }
-    private void cargarHamacas(int year, int month, int dayOfMonth) {
+    private void cargarSombrillas(int year, int month, int dayOfMonth) {
         LocalDate today = LocalDate.of(year, month + 1, dayOfMonth);
-        Log.d("HamacaFragment", "Cargando hamacas para la fecha actual: " + today);
+        Log.d("SombrillaFragment", "Cargando sombrillas para la fecha actual: " + today);
 
-        String url = getResources().getString(R.string.url_hamacas).concat("hamacas");
+        String url = getResources().getString(R.string.url_sombrillas).concat("sombrillas");
         HttpUrl urlWithParams = HttpUrl.parse(url).newBuilder().build();
         Request request = new Request.Builder().url(urlWithParams.toString()).get().build();
 
         new OkHttpClient().newCall(request).enqueue(new Callback() {
             @Override
             public void onFailure(@NotNull Call call, @NotNull IOException e) {
-                Log.e("HamacaLoad", "Error al cargar hamacas: " + e.getMessage(), e);
-                getActivity().runOnUiThread(() -> Toast.makeText(getContext(), "Error al cargar hamacas", Toast.LENGTH_SHORT).show());
+                Log.e("SombrillaLoad", "Error al cargar sombrillas: " + e.getMessage(), e);
+                getActivity().runOnUiThread(() -> Toast.makeText(getContext(), "Error al cargar sombrillas", Toast.LENGTH_SHORT).show());
             }
 
             @Override
@@ -113,36 +100,36 @@ public class HamacaFragment extends Fragment implements HamacaDetalles.HamacaUpd
                     String responseBody = response.body().string();
                     getActivity().runOnUiThread(() -> {
                         try {
-                            todasLasHamacas.clear();
+                            todasLasSombrillas.clear();
                             JSONArray jsonArray = new JSONArray(responseBody);
-                            Log.d("HamacaLoad", "Hamacas cargadas correctamente: " + responseBody);
+                            Log.d("SombrillaLoad", "Sombrillas cargadas correctamente: " + responseBody);
                             for (int i = 0; i < jsonArray.length(); i++) {
                                 JSONObject jsonObject = jsonArray.getJSONObject(i);
-                                Hamaca hamaca = Hamaca.fromJSON(jsonObject);
+                                Sombrilla sombrilla = Sombrilla.fromJSON(jsonObject);
                                 JSONArray reservas = jsonObject.optJSONArray("reservas");
                                 if (reservas != null) {
-                                    Log.d("HamacaFragment", "Verificando reservas para hamaca ID: " + hamaca.getIdHamaca());
+                                    Log.d("SombrillaFragment", "Verificando reservas para sombrilla ID: " + sombrilla.getIdSombrilla());
                                 }
-                                checkReservationsAndSetReserved(hamaca, reservas, today);
-                                todasLasHamacas.add(hamaca);
+                                checkReservationsAndSetReserved(sombrilla, reservas, today);
+                                todasLasSombrillas.add(sombrilla);
                             }
-                            hamacasAdapter.setHamacas(todasLasHamacas);
-                            hamacasAdapter.notifyDataSetChanged();
-                            Log.d("HamacaFragment", "Hamacas cargadas y actualizadas en el adaptador.");
+                            sombrillasAdapter.setSombrillas(todasLasSombrillas);
+                            sombrillasAdapter.notifyDataSetChanged();
+                            Log.d("SombrillaFragment", "Sombrillas cargadas y actualizadas en el adaptador.");
                         } catch (JSONException e) {
-                            Log.e("HamacaFragment", "Error al procesar los datos de hamacas", e);
+                            Log.e("SombrillaFragment", "Error al procesar los datos de sombrillas", e);
                             Toast.makeText(getContext(), "Error al procesar los datos", Toast.LENGTH_SHORT).show();
                         }
                     });
                 } else {
-                    Log.e("HamacaLoad", "Respuesta no exitosa del servidor: " + response.code());
+                    Log.e("SombrillaLoad", "Respuesta no exitosa del servidor: " + response.code());
                     getActivity().runOnUiThread(() -> Toast.makeText(getContext(), "Respuesta no exitosa del servidor", Toast.LENGTH_SHORT). show());
                 }
             }
         });
     }
 
-    private void checkReservationsAndSetReserved(Hamaca hamaca, JSONArray reservas, LocalDate today) throws JSONException {
+    private void checkReservationsAndSetReserved(Sombrilla sombrilla, JSONArray reservas, LocalDate today) throws JSONException {
         boolean isReserved = false;
         if (reservas != null) {
             for (int i = 0; i < reservas.length(); i++) {
@@ -165,7 +152,7 @@ public class HamacaFragment extends Fragment implements HamacaDetalles.HamacaUpd
                 }
             }
         }
-        hamaca.setReservada(isReserved);
+        sombrilla.setReservada(isReserved);
     }
 
 
@@ -173,12 +160,12 @@ public class HamacaFragment extends Fragment implements HamacaDetalles.HamacaUpd
 
 
     @Override
-    public void onHamacaUpdated(Hamaca updatedHamaca) {
-        int index = todasLasHamacas.indexOf(updatedHamaca);
+    public void onSombrillaUpdated(Sombrilla updatedSombrilla) {
+        int index = todasLasSombrillas.indexOf(updatedSombrilla);
         if (index != -1) {
-            todasLasHamacas.set(index, updatedHamaca);
-            hamacasAdapter.notifyItemChanged(index);
-            Log.d("HamacaFragment", "Actualización de la vista de hamaca en el índice: " + index);
+            todasLasSombrillas.set(index, updatedSombrilla);
+            sombrillasAdapter.notifyItemChanged(index);
+            Log.d("SombrillaFragment", "Actualización de la vista de sombrilla en el índice: " + index);
         }
     }
 }

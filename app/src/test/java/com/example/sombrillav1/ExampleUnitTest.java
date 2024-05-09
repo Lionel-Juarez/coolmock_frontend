@@ -1,4 +1,4 @@
-package com.example.hamacav1;
+package com.example.sombrillav1;
 
 import org.junit.Test;
 

@@ -58,10 +58,10 @@
             android:padding="16dp">
 
             <TextView
-                android:id="@+id/tvHamacas"
+                android:id="@+id/tvSombrillas"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Hamacas Reservadas: "/>
+                android:text="Sombrillas Reservadas: "/>
 
             <TextView
                 android:id="@+id/tvCreadoPor"

@@ -14,7 +14,7 @@
         android:layout_gravity="bottom|end"
         android:layout_margin="16dp"
         android:contentDescription="@string/fab_add_reserva"
-        android:onClick="navigateToHamacaFragment"
+        android:onClick="navigateToSombrillaFragment"
         android:src="@drawable/ic_add_white"
         app:backgroundTint="@color/white"
         app:elevation="6dp"
