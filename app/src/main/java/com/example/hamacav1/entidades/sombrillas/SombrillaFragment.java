@@ -156,9 +156,6 @@ public class SombrillaFragment extends Fragment implements SombrillaDetalles.Som
     }
 
 
-
-
-
     @Override
     public void onSombrillaUpdated(Sombrilla updatedSombrilla) {
         int index = todasLasSombrillas.indexOf(updatedSombrilla);

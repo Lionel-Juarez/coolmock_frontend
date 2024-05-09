@@ -46,7 +46,6 @@ public class Reserva implements Serializable {
         this.metodoPago = json.optString("metodoPago");
         this.fechaPago = parseDateTime(json.optString("fechaPago"));
         this.fechaReserva = parseDateTime(json.optString("fechaReserva"));
-        this.lado = json.optString("lado");
 
         JSONArray sombrillasJson = json.optJSONArray("sombrillas");
         if (sombrillasJson != null) {
@@ -71,7 +70,6 @@ public class Reserva implements Serializable {
         }
     }
 
-    @RequiresApi(api = Build.VERSION_CODES.O)
     private LocalDateTime parseDateTime(String dateTimeStr) {
         try {
             if (dateTimeStr != null && !dateTimeStr.isEmpty() && !dateTimeStr.equals("null")) {

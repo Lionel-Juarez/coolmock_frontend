@@ -17,10 +17,8 @@ import android.util.Log;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
-import android.widget.CalendarView;
 import android.widget.CheckBox;
 import android.widget.RadioButton;
-import android.widget.RadioGroup;
 import android.widget.Spinner;
 import android.widget.Toast;
 
@@ -60,7 +58,6 @@ import okhttp3.ResponseBody;
 public class NuevaReserva extends AppCompatActivity {
     private Spinner spCliente, spMetodoPago;
     private CheckBox cbPagada;
-    private Button btnGuardarReserva, btnCancelarReserva;
     private String fechaReservaSeleccionada;
     private List<Long> idsSombrillas;
 
@@ -86,8 +83,8 @@ public class NuevaReserva extends AppCompatActivity {
         });        spMetodoPago = findViewById(R.id.sp_metodo_pago);
         spCliente = findViewById(R.id.sp_cliente);
         cbPagada = findViewById(R.id.cb_reserva_pagada);
-        btnGuardarReserva = findViewById(R.id.btn_save_reserva);
-        btnCancelarReserva = findViewById(R.id.btn_cancel_reserva);
+//        btnGuardarReserva = findViewById(R.id.btn_save_reserva);
+//        btnCancelarReserva = findViewById(R.id.btn_cancel_reserva);
         spCliente = findViewById(R.id.sp_cliente);
 
         loadClientsFromBackend();
@@ -199,8 +196,6 @@ public class NuevaReserva extends AppCompatActivity {
                 json.put("idCliente", idCliente);
                 json.put("idUsuario", idUsuario);
                 json.put("idSombrillas", new JSONArray(idsSombrillas));
-                json.put("lado", lado); //
-
                 if (pagada) {
                     json.put("fechaPago", convertToIso8601(fechaReserva));  // Usar la misma fecha de reserva para la fecha de pago
                 }
@@ -246,15 +241,38 @@ public class NuevaReserva extends AppCompatActivity {
     }
 
 
-    // Función para convertir la fecha al formato ISO-8601
-    private String convertToIso8601(String dateTimeStr) {
-        try {
-            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm");
-            LocalDateTime dateTime = LocalDateTime.parse(dateTimeStr, formatter);
-            return dateTime.format(DateTimeFormatter.ISO_LOCAL_DATE_TIME);
-        } catch (DateTimeParseException e) {
-            Log.e("convertToIso8601", "Error parsing date: " + e.getMessage());
-            return null;
+    private void updateSombrillasAsReserved(List<Long> idsSombrillas, long idReserva, String lado) {
+        Log.e("UpdateSombrilla", "dentro de la funcion updateSombrillas");
+
+        OkHttpClient client = new OkHttpClient();
+        for (Long idSombrilla : idsSombrillas) {
+            String url = getResources().getString(R.string.url_sombrillas) + "updateReservaSombrilla/" + idSombrilla;
+            HttpUrl.Builder urlBuilder = HttpUrl.parse(url).newBuilder();
+            urlBuilder.addQueryParameter("idReserva", String.valueOf(idReserva));
+            urlBuilder.addQueryParameter("lado", lado);
+
+            Request request = new Request.Builder()
+                    .url(urlBuilder.build().toString())
+                    .patch(RequestBody.create("", null)) // Aquí, se puede enviar un cuerpo vacío o la información necesaria si el servidor lo requiere
+                    .build();
+
+            client.newCall(request).enqueue(new Callback() {
+                @Override
+                public void onFailure(@NotNull Call call, @NotNull IOException e) {
+                    Log.e("updateSombrilla", "Error al actualizar sombrilla ID " + idSombrilla + ": " + e.getMessage());
+                    // Opcional: Manejar la falla en la UI thread si es necesario
+                }
+
+                @Override
+                public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
+                    if (!response.isSuccessful()) {
+                        Log.e("updateSombrilla", "Error al actualizar sombrilla ID " + idSombrilla + ", respuesta del servidor: " + response.body().string());
+                        // Opcional: Manejar el error en la UI thread si es necesario
+                    } else {
+                        Log.d("updateSombrilla", "Sombrilla ID " + idSombrilla + " actualizada correctamente.");
+                    }
+                }
+            });
         }
     }
 
@@ -310,38 +328,7 @@ public class NuevaReserva extends AppCompatActivity {
             }
         });
     }
-    private void updateSombrillasAsReserved(List<Long> idsSombrillas, long idReserva, String lado) {
-        for (Long idSombrilla : idsSombrillas) {
-            // Cambiar a la nueva URL del endpoint que maneja la actualización de la reserva específicamente
-            String urlUpdate = getResources().getString(R.string.url_sombrillas) + "updateReservaSombrilla/" + idSombrilla;
-            OkHttpClient client = new OkHttpClient();
-            MediaType JSON = MediaType.parse("application/json; charset=utf-8");
-            HttpUrl.Builder urlBuilder = HttpUrl.parse(urlUpdate).newBuilder();
-            urlBuilder.addQueryParameter("idReserva", String.valueOf(idReserva)); // Agregar idReserva como parámetro de consulta
-            urlBuilder.addQueryParameter("lado", lado);
-            Request request = new Request.Builder()
-                    .url(urlBuilder.build()) // Construir la URL con el parámetro
-                    .patch(RequestBody.create("", JSON)) // Usar método PATCH y enviar cuerpo vacío si el ID de reserva se pasa como parámetro de URL
-                    .build();
 
-            client.newCall(request).enqueue(new Callback() {
-                @Override
-                public void onFailure(Call call, IOException e) {
-                    Log.e("SombrillaUpdate", "Failed to update sombrilla: " + e.getMessage(), e);
-                }
-
-                @Override
-                public void onResponse(Call call, Response response) throws IOException {
-                    if (!response.isSuccessful()) {
-                        Log.e("SombrillaUpdate", "Server response unsuccessful while updating sombrilla: " + response.code());
-                    } else {
-                        Log.d("SombrillaUpdate", "Successfully updated sombrilla with ID: " + idSombrilla);
-                        // Opcionalmente, activar actualizaciones de UI o acciones adicionales
-                    }
-                }
-            });
-        }
-    }
     private void showDatePickerDialog() {
         Calendar c = Calendar.getInstance();
         DatePickerDialog datePickerDialog = new DatePickerDialog(this,
@@ -353,11 +340,11 @@ public class NuevaReserva extends AppCompatActivity {
                 }, c.get(Calendar.YEAR), c.get(Calendar.MONTH), c.get(Calendar.DAY_OF_MONTH));
         datePickerDialog.show();
     }
-    private Usuario obtenerUsuarioCreador() {
-        // Debes implementar la lógica para obtener el usuario que crea la reserva
-        // Puede ser un usuario actualmente logueado o similar
-        return new Usuario();  // Retorna un objeto usuario adecuado
-    }
+//    private Usuario obtenerUsuarioCreador() {
+//        // Debes implementar la lógica para obtener el usuario que crea la reserva
+//        // Puede ser un usuario actualmente logueado o similar
+//        return new Usuario();  // Retorna un objeto usuario adecuado
+//    }
 
     public void cancel(View view) {
         // Simplemente termina la actividad actual
@@ -366,6 +353,18 @@ public class NuevaReserva extends AppCompatActivity {
         // Si necesitas navegar a otro fragmento o actividad al cancelar, necesitarás implementar la lógica aquí.
         // Esto podría incluir comunicarse con el fragmento de reserva a través de un Intent o utilizando un ViewModel.
     }
+    // Función para convertir la fecha al formato ISO-8601
+    private String convertToIso8601(String dateTimeStr) {
+        try {
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm");
+            LocalDateTime dateTime = LocalDateTime.parse(dateTimeStr, formatter);
+            return dateTime.format(DateTimeFormatter.ISO_LOCAL_DATE_TIME);
+        } catch (DateTimeParseException e) {
+            Log.e("convertToIso8601", "Error parsing date: " + e.getMessage());
+            return null;
+        }
+    }
+
 
     private void showError(String message) {
         Toast.makeText(this, message, Toast.LENGTH_LONG).show();

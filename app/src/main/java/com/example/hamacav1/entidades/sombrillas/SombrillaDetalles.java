@@ -38,14 +38,6 @@ public class SombrillaDetalles  extends DialogFragment {
     private static final String ARG_HAMACA = "sombrilla";
     RadioButton radioLeft, radioRight;
 
-    public static SombrillaDetalles newInstance(Sombrilla sombrilla) {
-        SombrillaDetalles fragment = new SombrillaDetalles();
-        Bundle args = new Bundle();
-        args.putParcelable(ARG_HAMACA, sombrilla);
-        fragment.setArguments(args);
-        return fragment;
-    }
-
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_sombrilla_detalles, container, false);
