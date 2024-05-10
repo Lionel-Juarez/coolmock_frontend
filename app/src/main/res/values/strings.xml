@@ -1,62 +1,62 @@
 <resources>
     <string name="app_name">HamacaV1</string>
     <string name="hello_blank_fragment">Hello blank fragment</string>
-    <string name="singup">Sing up!!</string>
+    <string name="singup">Sign up!!</string>
     <string name="sunbed">Sunbed</string>
     <string name="reportes">Reports</string>
     <string name="calcs">Daily calculations</string>
     <string name="user">User</string>
     <string name="logout">Log out</string>
     <string name="reportsTitle">REPORTS</string>
-    <string name="fab_add_report">Añade un reporte</string>
+    <string name="fab_add_report">Add a report</string>
     <string name="nuevo_libro">New Report</string>
     <string name="insert_name">Insert title</string>
-    <string name="write_here">Write here</string>º
+    <string name="write_here">Write here</string>
     <string name="accept">Accept</string>
     <string name="full_comment_hint">Full comment hint</string>
-    <string name="description">Esta es la descripcion del reporte, como maximo, tendra 2 lineas...</string>
-    <string name="delete_comment">Delete reporte</string>
+    <string name="description">This is the description of the report, it will have a maximum of 2 lines...</string>
+    <string name="delete_comment">Delete report</string>
     <string name="url_reportes">http://10.0.2.2:8080/api/reportes/</string>
     <string name="url_sombrillas">http://10.0.2.2:8080/api/sombrillas/</string>
     <string name="url_clientes">http://10.0.2.2:8080/api/clientes/</string>
     <string name="url_reservas">http://10.0.2.2:8080/api/reservas/</string>
     <string name="url_usuarios">http://10.0.2.2:8080/api/usuarios/</string>
-    <string name="url_calculos">http://10.0.2.2:8080/api/calculos</string>
-    <string name="eliminar_reporte">Delete reporte</string>
+    <string name="url_calculos">http://10.0.2.2:8080/api/calculos/</string>
+    <string name="eliminar_reporte">Delete report</string>
     <string name="are_you_sure">Are you sure?</string>
     <string name="yes">Yes</string>
     <string name="no">No</string>
-    <string name="error_connection">Conecction error</string>
+    <string name="error_connection">Connection error</string>
     <string name="error_undelivered">Undelivered error</string>
     <string name="error_unknown">Unknown error</string>
     <string name="campo_obligatorio">Compulsory field</string>
-    <string name="usuarios">Usuarios</string>
-    <string name="fab_add_usuario">add user</string>
+    <string name="usuarios">Users</string>
+    <string name="fab_add_usuario">Add user</string>
     <string name="eliminar_Usuario">Delete user</string>
-    <string name="esAdministrador">Rol del trabajador:</string>
+    <string name="esAdministrador">Worker role:</string>
     <string name="settings">Settings</string>
     <string name="ajuste_clientes">Customer settings</string>
     <string name="ajustes_usuarios">User settings</string>
     <string name="nuevo_usuario">New User</string>
-    <string name="rol">Select rol</string>
-    <string name="error_nombre_largo">El nombre no puede superar los 50 caracteres.</string>
-    <string name="error_apellidos_largo">Los apellidos no pueden superar los 50 caracteres.</string>
-    <string name="error_password_corto">La contraseña debe tener al menos 8 caracteres.</string>
-    <string name="error_password_largo">La contraseña no puede superar los 20 caracteres.</string>
-    <string name="desc_imagen_usuario">User img</string>
-    <string name="rol_card">Rol:</string>
+    <string name="rol">Select role</string>
+    <string name="error_nombre_largo">The name cannot exceed 50 characters.</string>
+    <string name="error_apellidos_largo">The surnames cannot exceed 50 characters.</string>
+    <string name="error_password_corto">The password must be at least 8 characters long.</string>
+    <string name="error_password_largo">The password cannot exceed 20 characters.</string>
+    <string name="desc_imagen_usuario">User image</string>
+    <string name="rol_card">Role:</string>
     <string name="user_name_hint">Full name</string>
     <string name="password_hint">Password</string>
-    <string name="desc_imagen_telefono">Phone img</string>
+    <string name="desc_imagen_telefono">Phone image</string>   
     <string name="nuevo_cliente">New Customer</string>
     <string name="telefono_hint">Phone number</string>
-    <string name="error_telefono_formato">Phone number fotmat error</string>
+    <string name="error_telefono_formato">Phone number format error</string>  Corrected 
     <string name="eliminar_cliente">Delete Customer</string>
     <string name="fab_add_cliente">Add customer</string>
     <string name="clientes">Customers</string>
     <string name="numero_sombrilla">#%d</string>
     <string name="estado_sombrilla">Sunbed state</string>
-    <string name="reserva">Books</string>
+    <string name="reserva">Reservations</string>  Better context 
     <string name="create_new_reservation">Create a new reservation</string>
     <string name="pagada">Paid</string>
     <string name="sp_clientes">Select a customer</string>
@@ -73,26 +73,41 @@
     <string name="creado_por">Created by: %s</string>
     <string name="reservations">Reservations</string>
     <string name="no_reservas">There are no reservations for today</string>
-    <string name="tvSombrillas">Sombrillas reservadas:</string>
+    <string name="tvSombrillas">Reserved Sunbeds:</string>   
     <string name="payment_date">Payment date</string>
     <string name="btn_verReserva">See reservation</string>
-    <string name="filter_by_name">Filtrar por nombre</string>
-    <string name="filter_by_date">Filtrar por fecha</string>
-    <string name="select_date">Selecciona fecha</string>
-    <string name="filter_by_state">Filtrar por estado</string>
+    <string name="filter_by_name">Filter by name</string>   
+    <string name="filter_by_date">Filter by date</string>   
+    <string name="select_date">Select date</string>   
+    <string name="filter_by_state">Filter by state</string>   
     <string name="cancel">Cancel</string>
     <string name="show_all">Show all</string>
-    <string name="sombrillas_reservadas">Sombrillas Reservadas: %1$s</string>
-    <string name="pagar">Pagar</string>
-    <string name="mod_estado">Estado</string>
-    <string name="modificar">Editar</string>
+    <string name="sombrillas_reservadas">Reserved Sunbeds: %1$s</string>   
+    <string name="pagar">Pay</string>   
+    <string name="mod_estado">State</string>   
+    <string name="modificar">Edit</string>   
     <string name="left_sombrilla">Left</string>
     <string name="right_sombrilla">Right</string>
     <string name="both_sombrillas">Both</string>
-    <string name="select_sunbed">Select sunbed</string>
-
+    <string name="select_sunbed">Select sunbed amount</string>
+    <string name="select_time">Select a time</string>
+    <string name="select_hour">Select arrival time</string>
 
     //Spinners
+    <string-array name="hour_array">
+        <item>08:00 AM</item>
+        <item>09:00 AM</item>
+        <item>10:00 AM</item>
+        <item>11:00 AM</item>
+        <item>12:00 PM</item>
+        <item>01:00 PM</item>
+        <item>02:00 PM</item>
+        <item>03:00 PM</item>
+        <item>04:00 PM</item>
+        <item>05:00 PM</item>
+        <item>06:00 PM</item>
+        <item>07:00 PM</item>
+    </string-array>
     <string-array name="rol">
         <item>Admin</item>
         <item>Worker</item>
@@ -104,23 +119,23 @@
         <item>Information</item>
     </string-array>
     <string-array name="planos_array">
-        <item>Plano 1</item>
-        <item>Plano 2</item>
-        <item>Plano 3</item>
+        <item>Plan 1</item>
+        <item>Plan 2</item>
+        <item>Plan 3</item>
     </string-array>
     <string-array name="payment_array">
         <item>Cash</item>
         <item>Credit Card</item>
     </string-array>
     <string-array name="estado_reserva_array">
-        <item>Pendiente</item>
-        <item>Ha llegado</item>
-        <item>Cancelada</item>
+        <item>Pending</item>
+        <item>Has Arrived</item>
+        <item>Canceled</item>
     </string-array>
     <string-array name="filtro_options">
-        <item>Ordenar por nombre</item>
-        <item>Ordenar por fecha</item>
-        <item>Ordenar por tipo</item>
+        <item>Sort by name</item>
+        <item>Sort by date</item>
+        <item>Sort by type</item>
     </string-array>
 
 

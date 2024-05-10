@@ -67,7 +67,7 @@
 
 
         <RadioButton
-            android:id="@+id/radioLeft"
+            android:id="@+id/radioOne"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:text="@string/left_sombrilla"
@@ -78,7 +78,7 @@
             android:button="@android:color/transparent" />
 
         <RadioButton
-            android:id="@+id/radioRight"
+            android:id="@+id/radioTwo"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:text="@string/right_sombrilla"

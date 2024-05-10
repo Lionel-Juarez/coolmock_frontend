@@ -1,0 +1,140 @@
+<resources>
+    <string name="app_name">HamacaV1</string>
+    <string name="hello_blank_fragment">Hola fragmento en blanco</string>
+    <string name="singup">¡Regístrate!</string>
+    <string name="sunbed">Tumbona</string>
+    <string name="reportes">Informes</string>
+    <string name="calcs">Cálculos diarios</string>
+    <string name="user">Usuario</string>
+    <string name="logout">Cerrar sesión</string>
+    <string name="reportsTitle">INFORMES</string>
+    <string name="fab_add_report">Agregar un informe</string>
+    <string name="nuevo_libro">Nuevo Informe</string>
+    <string name="insert_name">Insertar título</string>
+    <string name="write_here">Escribe aquí</string>
+    <string name="accept">Aceptar</string>
+    <string name="full_comment_hint">Sugerencia de comentario completo</string>
+    <string name="description">Esta es la descripción del informe, tendrá un máximo de 2 líneas...</string>
+    <string name="delete_comment">Eliminar informe</string>
+    <string name="url_reportes">http://10.0.2.2:8080/api/reportes/</string>
+    <string name="url_sombrillas">http://10.0.2.2:8080/api/sombrillas/</string>
+    <string name="url_clientes">http://10.0.2.2:8080/api/clientes/</string>
+    <string name="url_reservas">http://10.0.2.2:8080/api/reservas/</string>
+    <string name="url_usuarios">http://10.0.2.2:8080/api/usuarios/</string>
+    <string name="url_calculos">http://10.0.2.2:8080/api/calculos/</string>
+    <string name="eliminar_reporte">Eliminar informe</string>
+    <string name="are_you_sure">¿Estás seguro?</string>
+    <string name="yes">Sí</string>
+    <string name="no">No</string>
+    <string name="error_connection">Error de conexión</string>
+    <string name="error_undelivered">Error no entregado</string>
+    <string name="error_unknown">Error desconocido</string>
+    <string name="campo_obligatorio">Campo obligatorio</string>
+    <string name="usuarios">Usuarios</string>
+    <string name="fab_add_usuario">Agregar usuario</string>
+    <string name="eliminar_Usuario">Eliminar usuario</string>
+    <string name="esAdministrador">Rol del trabajador</string>
+    <string name="settings">Ajustes</string>
+    <string name="ajuste_clientes">Ajustes de clientes</string>
+    <string name="ajustes_usuarios">Ajustes de usuarios</string>
+    <string name="nuevo_usuario">Nuevo usuario</string>
+    <string name="rol">Seleccionar rol</string>
+    <string name="error_nombre_largo">El nombre no puede superar los 50 caracteres.</string>
+    <string name="error_apellidos_largo">Los apellidos no pueden superar los 50 caracteres.</string>
+    <string name="error_password_corto">La contraseña debe tener al menos 8 caracteres.</string>
+    <string name="error_password_largo">La contraseña no puede superar los 20 caracteres.</string>
+    <string name="desc_imagen_usuario">Imagen de usuario</string>
+    <string name="rol_card">Rol:</string>
+    <string name="user_name_hint">Nombre completo</string>
+    <string name="password_hint">Contraseña</string>
+    <string name="desc_imagen_telefono">Imagen de teléfono</string>
+    <string name="nuevo_cliente">Nuevo cliente</string>
+    <string name="telefono_hint">Número de teléfono</string>
+    <string name="error_telefono_formato">Error de formato de teléfono</string>
+    <string name="eliminar_cliente">Eliminar cliente</string>
+    <string name="fab_add_cliente">Agregar cliente</string>
+    <string name="clientes">Clientes</string>
+    <string name="numero_sombrilla">#%d</string>
+    <string name="estado_sombrilla">Estado de la tumbona</string>
+    <string name="reserva">Reservas</string>
+    <string name="create_new_reservation">Crear una nueva reserva</string>
+    <string name="pagada">Pagado</string>
+    <string name="sp_clientes">Seleccionar un cliente</string>
+    <string name="save">Guardar</string>
+    <string name="eliminar_reserva">Eliminar reserva</string>
+    <string name="toggle_details">Detalles</string>
+    <string name="reservas">Reservas</string>
+    <string name="fab_add_reserva">Hacer una reserva</string>
+    <string name="fecha_reserva">Fecha: %s</string>
+    <string name="estado_reserva">Estado: %s</string>
+    <string name="metodo_pago">Método de pago: %s</string>
+    <string name="reserva_pagada">¿Pagado?: %s</string>
+    <string name="fecha_pago">Fecha de pago: %s</string>
+    <string name="creado_por">Creado por: %s</string>
+    <string name="reservations">Reservas</string>
+    <string name="no_reservas">No hay reservas para hoy</string>
+    <string name="tvSombrillas">Tumbonas reservadas:</string>
+    <string name="payment_date">Fecha de pago</string>
+    <string name="btn_verReserva">Ver reserva</string>
+    <string name="filter_by_name">Filtrar por nombre</string>
+    <string name="filter_by_date">Filtrar por fecha</string>
+    <string name="select_date">Seleccionar fecha</string>
+    <string name="filter_by_state">Filtrar por estado</string>
+    <string name="cancel">Cancelar</string>
+    <string name="show_all">Mostrar todo</string>
+    <string name="sombrillas_reservadas">Tumbonas reservadas: %1$s</string>
+    <string name="pagar">Pagar</string>
+    <string name="mod_estado">Estado</string>
+    <string name="modificar">Editar</string>
+    <string name="left_sombrilla">Izquierda</string>
+    <string name="right_sombrilla">Derecha</string>
+    <string name="both_sombrillas">Ambas</string>
+    <string name="select_sunbed">Seleccionar cantidad de tumbonas</string>
+    <string name="select_time">Selecciona una hora</string>
+    <string name="select_hour">Selecciona una hora</string>
+
+    <!-- Spinners -->
+    <string-array name="rol">
+        <item>Admin</item>
+        <item>Trabajador</item>
+    </string-array>
+    <string-array name="state">
+        <item>Error</item>
+        <item>Cancelado</item>
+        <item>Advertencia</item>
+        <item>Información</item>
+    </string-array>
+    <string-array name="planos_array">
+        <item>Plano 1</item>
+        <item>Plano 2</item>
+        <item>Plano 3</item>
+    </string-array>
+    <string-array name="payment_array">
+        <item>Efectivo</item>
+        <item>Tarjeta de crédito</item>
+    </string-array>
+    <string-array name="estado_reserva_array">
+        <item>Pendiente</item>
+        <item>Ha llegado</item>
+        <item>Cancelada</item>
+    </string-array>
+    <string-array name="filtro_options">
+        <item>Ordenar por nombre</item>
+        <item>Ordenar por fecha</item>
+        <item>Ordenar por tipo</item>
+    </string-array>
+    <string-array name="hour_array">
+        <item>08:00 AM</item>
+        <item>09:00 AM</item>
+        <item>10:00 AM</item>
+        <item>11:00 AM</item>
+        <item>12:00 PM</item>
+        <item>01:00 PM</item>
+        <item>02:00 PM</item>
+        <item>03:00 PM</item>
+        <item>04:00 PM</item>
+        <item>05:00 PM</item>
+        <item>06:00 PM</item>
+        <item>07:00 PM</item>
+    </string-array>
+</resources>

@@ -3,14 +3,14 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
+    android:layout_height="wrap_content"
     android:fillViewport="true"
-    android:background="@color/lightBackgroundColor"
+    android:layout_gravity="center"
     tools:context=".entidades.reservas.ReservaFragment">
 
     <androidx.cardview.widget.CardView
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="200dp"
         android:layout_margin="16dp"
         app:cardCornerRadius="16dp"
         app:cardElevation="10dp">
@@ -18,34 +18,53 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:background="@drawable/ic_add_white"
             android:orientation="vertical"
-            android:padding="20dp"
-            android:background="@drawable/ic_add_white">
+            android:padding="20dp">
 
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:padding="10dp"
                 android:text="@string/create_new_reservation"
                 android:textAlignment="center"
                 android:textSize="24sp"
-                android:textStyle="bold"
-                android:padding="10dp" />
+                android:textStyle="bold" />
 
             <Button
                 android:id="@+id/btnOpenCalendar"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="@string/select_date"
-                android:drawableEnd="@drawable/baseline_calendar_month_24"
-                android:padding="10dp"
                 android:background="?attr/selectableItemBackground"
-                android:onClick="showDatePickerDialog"/>
+                android:drawableEnd="@drawable/baseline_calendar_month_24"
+                android:onClick="showDatePickerDialog"
+                android:padding="10dp"
+                android:textColor="@color/black"
+                android:textAlignment="center"
+                android:layout_marginLeft="20dp"
+                android:text="@string/select_date" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="40dp"
+                android:text="@string/select_hour"
+                android:textAlignment="center"
+                android:textSize="18sp"
+                android:textStyle="bold" />
+
+            <NumberPicker
+                android:id="@+id/numberPickerHora"
+                android:layout_width="match_parent"
+                android:layout_height="100dp"
+                android:descendantFocusability="blocksDescendants" />
 
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="@string/select_sunbed"
                 android:paddingTop="20dp"
+                android:text="@string/select_sunbed"
+                android:textColor="@color/black"
+                android:textAlignment="center"
                 android:textSize="16sp" />
 
             <LinearLayout
@@ -56,26 +75,35 @@
                 android:paddingTop="10dp">
 
 
-                <RadioButton
-                    android:id="@+id/radioLeft"
-                    android:layout_width="0dp"
+                <RadioGroup
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="@string/left_sombrilla"
                     android:gravity="center"
-                    android:layout_weight="1"
-                    android:background="@drawable/selector_button_background"
-                    android:layout_marginRight="20dp"
-                    android:button="@android:color/transparent" />
+                    android:orientation="horizontal">
 
-                <RadioButton
-                    android:id="@+id/radioRight"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:text="@string/right_sombrilla"
-                    android:gravity="center"
-                    android:layout_weight="1"
-                    android:background="@drawable/selector_button_background"
-                    android:button="@android:color/transparent" />
+                    <RadioButton
+                        android:id="@+id/radioOne"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginRight="20dp"
+                        android:layout_weight="1"
+                        android:background="@drawable/selector_button_background"
+                        android:button="@android:color/transparent"
+                        android:gravity="center"
+                        android:text="1" />
+
+                    <RadioButton
+                        android:id="@+id/radioTwo"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:background="@drawable/selector_button_background"
+                        android:button="@android:color/transparent"
+                        android:gravity="center"
+                        android:text="2" />
+
+                </RadioGroup>
+
 
             </LinearLayout>
 
@@ -83,23 +111,23 @@
                 android:id="@+id/sp_cliente"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="@string/sp_clientes"
-                android:layout_marginTop="10dp" />
+                android:layout_marginTop="10dp"
+                android:hint="@string/sp_clientes" />
 
             <CheckBox
                 android:id="@+id/cb_reserva_pagada"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/pagada"
-                android:layout_marginTop="20dp" />
+                android:layout_marginTop="20dp"
+                android:text="@string/pagada" />
 
             <Spinner
                 android:id="@+id/sp_metodo_pago"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="@string/metodo_pago"
+                android:layout_marginTop="10dp"
                 android:entries="@array/payment_array"
-                android:layout_marginTop="10dp" />
+                android:hint="@string/metodo_pago" />
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -119,8 +147,8 @@
                     android:id="@+id/btn_save_reserva"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_weight="1"
                     android:layout_marginRight="15dp"
+                    android:layout_weight="1"
                     android:onClick="addReserva"
                     android:text="@string/save"
                     app:cornerRadius="10dp" />
