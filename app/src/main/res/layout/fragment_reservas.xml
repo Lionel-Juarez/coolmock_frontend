@@ -8,6 +8,7 @@
     android:id="@+id/fragment_reservas"
     tools:context=".entidades.reservas.ReservaFragment">
 
+
     <!-- Título de la pantalla -->
     <TextView
         android:id="@+id/tvTitleReservas"

@@ -35,17 +35,22 @@ public class Reserva implements Serializable {
     private String estado;
     private boolean pagada;
     private String metodoPago;
+    private String horaLlegada;
     private LocalDateTime fechaPago;
     private LocalDateTime fechaReserva;
-    private String lado;
+    private LocalDateTime fechaReservaRealizada;
+    private String cantidadHamacas;
 
     public void fromJSON(JSONObject json) throws JSONException {
         this.idReserva = json.optLong("idReserva");
         this.estado = json.optString("estado");
         this.pagada = json.optBoolean("pagada");
         this.metodoPago = json.optString("metodoPago");
+        this.horaLlegada = json.optString("horaLlegada");
+        this.cantidadHamacas = json.optString("cantidadHamacas");
         this.fechaPago = parseDateTime(json.optString("fechaPago"));
         this.fechaReserva = parseDateTime(json.optString("fechaReserva"));
+        this.fechaReservaRealizada = parseDateTime(json.optString("fechaReservaRealizada"));
 
         JSONArray sombrillasJson = json.optJSONArray("sombrillas");
         if (sombrillasJson != null) {

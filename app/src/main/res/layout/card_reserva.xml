@@ -19,7 +19,7 @@
             android:id="@+id/tvReservaCliente"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Nombre del Cliente"
+            android:text="@string/cliente"
             android:textSize="18sp"
             android:textStyle="bold"
             android:layout_marginStart="20dp"
@@ -32,20 +32,31 @@
             android:layout_height="wrap_content"
             android:layout_below="@id/tvReservaCliente"
             android:layout_marginStart="20dp"
-            android:text="Fecha de Reserva"
-            android:textSize="16sp"
+            android:text="@string/fecha_reserva"
+            android:textSize="18sp"
             android:textColor="@color/black"/>
+
+        <TextView
+            android:id="@+id/tvHoraLlegada"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/tvFechaReserva"
+            android:text="@string/horaLlegada"
+            android:layout_marginStart="20dp"
+            android:textSize="18sp"
+            android:textColor="@color/black"/>
+
 
         <TextView
             android:id="@+id/tvEstado"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_below="@id/tvFechaReserva"
+            android:layout_below="@id/tvHoraLlegada"
             android:layout_marginStart="20dp"
-            android:layout_marginTop="10dp"
             android:text="Estado de la Reserva"
-            android:textSize="16sp"
+            android:textSize="18sp"
             android:textColor="@color/black"/>
+
 
         <!-- Expandable View con detalles adicionales y botones -->
         <LinearLayout
@@ -127,7 +138,6 @@
             android:layout_height="30dp"
             android:layout_alignParentEnd="true"
             android:layout_below="@id/tvEstado"
-            android:layout_marginTop="10dp"
             android:layout_marginEnd="16dp"
             android:contentDescription="@string/toggle_details"
             android:src="@drawable/baseline_expand_more_24"

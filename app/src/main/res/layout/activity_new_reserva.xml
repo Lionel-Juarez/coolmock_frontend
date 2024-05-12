@@ -53,10 +53,13 @@
                 android:textStyle="bold" />
 
             <NumberPicker
-                android:id="@+id/numberPickerHora"
-                android:layout_width="match_parent"
+                android:id="@+id/numberPickerHoraLlegada"
+                android:layout_width="wrap_content"
+
                 android:layout_height="100dp"
-                android:descendantFocusability="blocksDescendants" />
+                android:layout_marginTop="16dp"
+                android:layout_gravity="center_horizontal" />
+
 
             <TextView
                 android:layout_width="match_parent"
@@ -65,7 +68,7 @@
                 android:text="@string/select_sunbed"
                 android:textColor="@color/black"
                 android:textAlignment="center"
-                android:textSize="16sp" />
+                android:textSize="18sp" />
 
             <LinearLayout
                 android:id="@+id/radioGroupLadoSombrilla"

@@ -18,6 +18,7 @@ import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.CheckBox;
+import android.widget.NumberPicker;
 import android.widget.RadioButton;
 import android.widget.Spinner;
 import android.widget.Toast;
@@ -60,42 +61,22 @@ public class NuevaReserva extends AppCompatActivity {
     private CheckBox cbPagada;
     private String fechaReservaSeleccionada;
     private List<Long> idsSombrillas;
-
+    private RadioButton radioOne, radioTwo;
+    private NumberPicker numberPickerHoraLlegada;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_new_reserva);
 
-        // Obtener el ID de la sombrilla desde el Intent
-        Intent intent = getIntent();
-        if (intent != null && intent.hasExtra("idsSombrillas")) {
-            idsSombrillas = (ArrayList<Long>) intent.getSerializableExtra("idsSombrillas"); // Recibiendo una lista
-        }
-        Log.d("NuevaReserva", "ID de la sombrilla: " + idsSombrillas);
-
-        Button btnOpenCalendar = findViewById(R.id.btnOpenCalendar);
-        btnOpenCalendar.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                showDatePickerDialog();
-            }
-        });        spMetodoPago = findViewById(R.id.sp_metodo_pago);
-        spCliente = findViewById(R.id.sp_cliente);
-        cbPagada = findViewById(R.id.cb_reserva_pagada);
-//        btnGuardarReserva = findViewById(R.id.btn_save_reserva);
-//        btnCancelarReserva = findViewById(R.id.btn_cancel_reserva);
-        spCliente = findViewById(R.id.sp_cliente);
-
-        loadClientsFromBackend();
+        initializeUIComponents();
+        loadData();
     }
-
     @Override
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
     }
     private Boolean isNetworkAvailable() {
-
         ConnectivityManager connectivityManager = (ConnectivityManager)
                 getSystemService(Context.CONNECTIVITY_SERVICE);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
@@ -113,74 +94,72 @@ public class NuevaReserva extends AppCompatActivity {
         }
     }
 
+    private void initializeUIComponents() {
+        Button btnOpenCalendar = findViewById(R.id.btnOpenCalendar);
+        spMetodoPago = findViewById(R.id.sp_metodo_pago);
+        spCliente = findViewById(R.id.sp_cliente);
+        cbPagada = findViewById(R.id.cb_reserva_pagada);
+        radioOne = findViewById(R.id.radioOne);
+        radioTwo = findViewById(R.id.radioTwo);
+        numberPickerHoraLlegada = findViewById(R.id.numberPickerHoraLlegada);
+
+        // Configurar NumberPicker con el array de horas
+        String[] hours = getResources().getStringArray(R.array.hour_array);
+        numberPickerHoraLlegada.setMinValue(0);
+        numberPickerHoraLlegada.setMaxValue(hours.length - 1);
+        numberPickerHoraLlegada.setDisplayedValues(hours);
+        numberPickerHoraLlegada.setValue(0);  // Establece el valor inicial a "08:00 AM"
+
+        btnOpenCalendar.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                showDatePickerDialog();
+            }
+        });
+
+        radioOne.setChecked(true);
+        // Comentar o descomentar según sean necesarios:
+        // btnGuardarReserva = findViewById(R.id.btn_save_reserva);
+        // btnCancelarReserva = findViewById(R.id.btn_cancel_reserva);
+    }
+
+    private void loadData() {
+        Intent intent = getIntent();
+        if (intent != null && intent.hasExtra("idsSombrillas")) {
+            idsSombrillas = (ArrayList<Long>) intent.getSerializableExtra("idsSombrillas");
+        }
+        Log.d("NuevaReserva", "ID de la sombrilla: " + idsSombrillas);
+
+        loadClientsFromBackend();
+    }
+
     public void addReserva(View view) {
         String fechaReserva = fechaReservaSeleccionada;
-//        String estado = spEstado.getSelectedItem().toString();
         String estado = "Pendiente";
         String metodoPago = spMetodoPago.getSelectedItem().toString();
         boolean pagada = cbPagada.isChecked();
         Cliente cliente = (Cliente) spCliente.getSelectedItem();
-        String lado = getSelectedSide();
+        String cantidadHamacas = getSelectedSide();
 
+        Calendar calendarNow = Calendar.getInstance();
+        SimpleDateFormat sdfNow = new SimpleDateFormat("dd-MM-yyyy HH:mm", Locale.getDefault());
+        String fechaReservaRealizada = sdfNow.format(calendarNow.getTime());
 
-        if (cliente == null) {
-            showError("No se ha seleccionado ningún cliente.");
-            return;
-        }
+        // Obtener la hora de llegada desde el NumberPicker
+        String[] hours = getResources().getStringArray(R.array.hour_array);
+        String horaLlegada = hours[numberPickerHoraLlegada.getValue()];
 
-        long idCliente = cliente.getIdCliente();
-        if (idCliente <= 0) {
-            showError("El ID del cliente no es válido.");
-            return;
-        }
-
-        if (validateInput(fechaReserva, cliente, idsSombrillas)) {
+        if (validateInput(fechaReserva, cliente, idsSombrillas, fechaReservaRealizada, horaLlegada, cantidadHamacas)) {
             if (isNetworkAvailable()) {
                 String url = getResources().getString(R.string.url_reservas) + "nuevaReserva";
-                sendTask(url, fechaReserva, estado, pagada, metodoPago, cliente.getIdCliente(), idsSombrillas, 1, lado);
+                sendTask(url, fechaReserva, fechaReservaRealizada, estado, pagada, metodoPago, cliente.getIdCliente(), idsSombrillas, 1, cantidadHamacas, horaLlegada);
             } else {
                 showError("No hay conexión a Internet.");
             }
         }
-
     }
 
-    private String getSelectedSide() {
-        RadioButton radioLeft = findViewById(R.id.radioLeft);
-        RadioButton radioRight = findViewById(R.id.radioRight);
-
-        boolean leftSelected = radioLeft.isChecked();
-        boolean rightSelected = radioRight.isChecked();
-
-        String lado = "";
-
-        if (leftSelected && rightSelected) {
-            lado = "ambos";
-        } else if (leftSelected) {
-            lado = "izquierda";
-        } else if (rightSelected) {
-            lado = "derecha";
-        }
-
-        return lado;
-    }
-
-
-
-    private boolean validateInput(String fechaReserva, Cliente cliente, List<Long> idsSombrillas) {
-        boolean isValid = true;
-        if (fechaReserva == null || fechaReserva.isEmpty()) {
-            showError("Fecha de reserva no seleccionada.");
-            isValid = false;
-        }
-        if (cliente == null || cliente.getIdCliente() <= 0 || idsSombrillas == null || idsSombrillas.isEmpty()) {
-            showError("Información crítica de la reserva está incompleta o incorrecta.");
-            isValid = false;
-        }
-        return isValid;
-    }
-
-    private void sendTask(String url, String fechaReserva, String estado, boolean pagada, String metodoPago, long idCliente, List<Long> idsSombrillas, long idUsuario, String lado) {
+    private void sendTask(String url, String fechaReserva, String fechaReservaRealizada, String estado, boolean pagada, String metodoPago, long idCliente, List<Long> idsSombrillas, long idUsuario, String cantidadHamacas, String horaLlegada) {
         ExecutorService executor = Executors.newSingleThreadExecutor();
         Handler handler = new Handler(Looper.getMainLooper());
 
@@ -190,9 +169,12 @@ public class NuevaReserva extends AppCompatActivity {
             JSONObject json = new JSONObject();
             try {
                 json.put("fechaReserva", convertToIso8601(fechaReserva));  // Asegurarse de que la fecha está en formato ISO-8601
+                json.put("fechaReservaRealizada", convertToIso8601(fechaReservaRealizada));  // Asegurarse de que la fecha está en formato ISO-8601
                 json.put("estado", estado);
                 json.put("pagada", pagada);
                 json.put("metodoPago", metodoPago);
+                json.put("cantidadHamacas", cantidadHamacas);
+                json.put("horaLlegada", horaLlegada);
                 json.put("idCliente", idCliente);
                 json.put("idUsuario", idUsuario);
                 json.put("idSombrillas", new JSONArray(idsSombrillas));
@@ -214,7 +196,7 @@ public class NuevaReserva extends AppCompatActivity {
                             JSONObject responseObject = new JSONObject(responseData);
                             long idReserva = responseObject.getLong("idReserva");
                             Log.d("NuevaReserva", "Reserva creada con éxito, ID: " + idReserva);
-                            updateSombrillasAsReserved(idsSombrillas, idReserva, lado);
+                            updateSombrillasAsReserved(idsSombrillas, idReserva);
 
                             handler.post(() -> {
                                 Toast.makeText(getApplicationContext(), "Reserva añadida con éxito", Toast.LENGTH_SHORT).show();
@@ -241,7 +223,7 @@ public class NuevaReserva extends AppCompatActivity {
     }
 
 
-    private void updateSombrillasAsReserved(List<Long> idsSombrillas, long idReserva, String lado) {
+    private void updateSombrillasAsReserved(List<Long> idsSombrillas, long idReserva) {
         Log.e("UpdateSombrilla", "dentro de la funcion updateSombrillas");
 
         OkHttpClient client = new OkHttpClient();
@@ -249,7 +231,6 @@ public class NuevaReserva extends AppCompatActivity {
             String url = getResources().getString(R.string.url_sombrillas) + "updateReservaSombrilla/" + idSombrilla;
             HttpUrl.Builder urlBuilder = HttpUrl.parse(url).newBuilder();
             urlBuilder.addQueryParameter("idReserva", String.valueOf(idReserva));
-            urlBuilder.addQueryParameter("lado", lado);
 
             Request request = new Request.Builder()
                     .url(urlBuilder.build().toString())
@@ -329,6 +310,41 @@ public class NuevaReserva extends AppCompatActivity {
         });
     }
 
+    private String getSelectedSide() {
+        radioOne = findViewById(R.id.radioOne);
+        radioTwo = findViewById(R.id.radioTwo);
+
+        if (radioOne.isChecked()) {
+            return "1";
+        } else if (radioTwo.isChecked()) {
+            return "2";
+        } else {
+            radioOne.setChecked(true);
+            return "1";
+        }
+    }
+
+    private boolean validateInput(String fechaReserva, Cliente cliente, List<Long> idsSombrillas, String fechaReservaSeleccionada, String horaLlegada, String cantidadHamacas) {
+        boolean isValid = true;
+        if (fechaReserva == null || fechaReserva.isEmpty() || fechaReservaSeleccionada == null || fechaReservaSeleccionada.isEmpty()) {
+            showError("Fecha de reserva no seleccionada.");
+            isValid = false;
+        }
+        if (cliente == null || cliente.getIdCliente() <= 0 || idsSombrillas == null || idsSombrillas.isEmpty()) {
+            showError("Información crítica de la reserva está incompleta o incorrecta.");
+            isValid = false;
+        }
+
+        if(horaLlegada == null) {
+            showError("Hora de llegada no seleccionada.");
+            isValid = false;
+        }
+        if(cantidadHamacas == null) {
+            showError("Cantidad de hamacas no seleccionada.");
+            isValid = false;
+        }
+        return isValid;
+    }
     private void showDatePickerDialog() {
         Calendar c = Calendar.getInstance();
         DatePickerDialog datePickerDialog = new DatePickerDialog(this,
@@ -346,12 +362,10 @@ public class NuevaReserva extends AppCompatActivity {
 //        return new Usuario();  // Retorna un objeto usuario adecuado
 //    }
 
-    public void cancel(View view) {
-        // Simplemente termina la actividad actual
-        finish();
 
-        // Si necesitas navegar a otro fragmento o actividad al cancelar, necesitarás implementar la lógica aquí.
-        // Esto podría incluir comunicarse con el fragmento de reserva a través de un Intent o utilizando un ViewModel.
+    //Funciones extra
+    public void cancel(View view) {
+        finish();
     }
     // Función para convertir la fecha al formato ISO-8601
     private String convertToIso8601(String dateTimeStr) {
@@ -364,7 +378,6 @@ public class NuevaReserva extends AppCompatActivity {
             return null;
         }
     }
-
 
     private void showError(String message) {
         Toast.makeText(this, message, Toast.LENGTH_LONG).show();

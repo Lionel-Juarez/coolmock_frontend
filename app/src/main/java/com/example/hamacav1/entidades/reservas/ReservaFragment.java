@@ -180,7 +180,7 @@ public class ReservaFragment extends Fragment implements ReservaAdapter.Reservas
         builder.setNegativeButton("Cancelar", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                Log.d("DialogInterface", "Filtrado por nombre cancelado");
+                Log.d("DialogInterface", "Filtrado por nombre cancecantidadHamacas");
                 dialog.cancel();
             }
         });

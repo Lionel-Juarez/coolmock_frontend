@@ -5,6 +5,7 @@ import org.json.JSONObject;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 import okhttp3.MediaType;
 import okhttp3.OkHttpClient;
@@ -14,14 +15,21 @@ import okhttp3.Response;
 
 public class Internetop {
 
+    private static final MediaType JSON = MediaType.parse("application/json; charset=utf-8");
+    private OkHttpClient client;
     private static Internetop me=null;
-    private Internetop(){
-
+    private Internetop() {
+        client = new OkHttpClient.Builder()
+                .connectTimeout(30, TimeUnit.SECONDS)
+                .readTimeout(30, TimeUnit.SECONDS)
+                .writeTimeout(30, TimeUnit.SECONDS)
+                .retryOnConnectionFailure(true)
+                .build();
     }
     public static Internetop getInstance(){
         if (me == null) {
             synchronized(Internetop.class){
-                if(me==null){
+                if(me == null){
                     me = new Internetop();
                 }
             }
@@ -29,9 +37,8 @@ public class Internetop {
         return me;
     }
 
-    public String postText(String urlo, List<Parametro> params){//Usaremos POST para insertar nueva información
-        int cont=0;/*Como puede haber muchos errores a la hora de realizar la conexión a Internet, conviene
-        intentar establecer la conexión al menos un par de veces*/
+    public String postText(String urlo, List<Parametro> params){
+        int cont=0;
         String res=okPostText(urlo, params);
         while((cont<5)&&(res.equals("error.PIPE"))){
             ++cont;
@@ -42,26 +49,24 @@ public class Internetop {
 
     private String okPostText(String urlo, List<Parametro> params){
         try {
-            OkHttpClient client = new OkHttpClient();//Creamos el cliente OKHttp
-            JSONObject jsonObject=new JSONObject();/*La información será enviada en formato JSON por lo que
-            la lista de parámetros que el método tiene como argumento se transforma en objetos JSON*/
+            OkHttpClient client = new OkHttpClient();
+            JSONObject jsonObject=new JSONObject();
             for (Parametro pair : params) {
                 jsonObject.put(pair.getLlave(),pair.getValor());
             }
             RequestBody body = RequestBody.create(jsonObject.toString(),
-                    MediaType.parse("application/json"));//Creamos un requestBody de tipo JSON
+                    MediaType.parse("application/json"));
             Request request = new Request.Builder()
                     .url(urlo)
                     .post(body)
-                    .build();/*Construimos el requestBody con la url y la información en formato JSON que
-                    queremos enviar*/
-            Response response = client.newCall(request).execute();//Ejecutamos la conexión con nuestro request
-            if (!response.isSuccessful()) {//Si la conexión ha tenido problemas enviamos un error de vuelta
+                    .build();
+            Response response = client.newCall(request).execute();
+            if (!response.isSuccessful()) {
                 return "error.OKHttp";
-            } else {//En caso contrario enviamos la información devuelta en el cuerpo de la petición
+            } else {
                 return response.body().string();
             }
-        } catch (IOException e) {//Manejo de otras posibles excepciones
+        } catch (IOException e) {
             e.printStackTrace();
             return "error.PIPE";
         } catch (JSONException e) {
@@ -70,7 +75,7 @@ public class Internetop {
         }
     }
 
-    public String putText(String urlo, List<Parametro> params){//Usaremos PUT para actualizar la información
+    public String putText(String urlo, List<Parametro> params){
         int cont=0;
         String res=okPutText(urlo, params);
         while((cont<5)&&(res.equals("error.PIPE"))){
@@ -91,7 +96,7 @@ public class Internetop {
                     MediaType.parse("application/json"));
             Request request = new Request.Builder()
                     .url(urlo)
-                    .put(body)//En lugar de POST, usamos PUT
+                    .put(body)
                     .build();
             Response response = client.newCall(request).execute();
             if (!response.isSuccessful()) {
@@ -108,7 +113,7 @@ public class Internetop {
         }
     }
 
-    public String getString(String myurl){//Los usaremos para obtener información desde el servidor
+    public String getString(String myurl){
         int cont=0;
         String res=okGetString(myurl);
         while((cont<5)&&(res.equals("error.IOException"))){
@@ -120,25 +125,25 @@ public class Internetop {
 
     public String okGetString(String myurl){
         try {
-            OkHttpClient client = new OkHttpClient();//Creamos el cliente OKHttp
+            OkHttpClient client = new OkHttpClient();
             Request request = new Request.Builder()
                     .url(myurl)
-                    .build();//La petición sólo tendrá la url con algunos parámetros
-            Response response = client.newCall(request).execute();//Ejecutamos la conexión
-            if (!response.isSuccessful()){//Si la conexión tiene fallos devolvemos un error
+                    .build();
+            Response response = client.newCall(request).execute();
+            if (!response.isSuccessful()){
                 return "error.OKHttp";
             }
-            else{//Si la conexión es exitosa devolvemos el cuerpo de la respuesta
+            else{
                 return response.body().string();
             }
         }
-        catch(IOException e){//Manejo de excepciones
+        catch(IOException e){
             e.printStackTrace();
             return "error.IOException";
         }
     }
 
-    public String deleteTask(String myurl){//Usaremos delete para eliminar información del servidor
+    public String deleteTask(String myurl){
         int cont=0;
         String res=okDeleteTask(myurl);
         while((cont<5)&&(res.equals("error.IOException"))){
@@ -154,17 +159,16 @@ public class Internetop {
             Request request = new Request.Builder()
                     .delete()
                     .url(myurl)
-                    .build();/*En la petición indicamos que la operación que se va a ejecutar es un delete.
-                    No habrá cuerpo en la petición, únicamente la url con algunos parámetros*/
+                    .build();
             Response response = client.newCall(request).execute();
-            if (!response.isSuccessful()){//Manejo de la respuesta
+            if (!response.isSuccessful()){
                 return "error.OKHttp";
             }
             else{
                 return response.body().string();
             }
         }
-        catch(IOException e){//Manejo de excepciones
+        catch(IOException e){
             e.printStackTrace();
             return "error.IOException";
         }

@@ -17,6 +17,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.hamacav1.R;
 import com.example.hamacav1.entidades.sombrillas.Sombrilla;
 
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 public class ReservaAdapter extends RecyclerView.Adapter<ReservaAdapter.ReservaViewHolder> {
@@ -44,7 +45,6 @@ public class ReservaAdapter extends RecyclerView.Adapter<ReservaAdapter.ReservaV
         this.targetReservaId = targetReservaId; // Guardar el ID de la reserva objetivo
     }
 
-    // Método para actualizar la lista de reservas
     public void setReservas(List<Reserva> newReservas) {
         this.reservaList = newReservas;
         notifyDataSetChanged();  // Notifica al adaptador que los datos han cambiado
@@ -67,7 +67,14 @@ public class ReservaAdapter extends RecyclerView.Adapter<ReservaAdapter.ReservaV
             holder.clienteNombre.setText("Cliente desconocido");
         }
 
-        holder.fechaReserva.setText(context.getString(R.string.fecha_reserva, reserva.getFechaReserva()));
+        if (reserva.getFechaReserva() != null) {
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM");
+            String formattedDate = reserva.getFechaReserva().format(formatter);
+            holder.fechaReserva.setText(context.getString(R.string.fecha_reserva, formattedDate));
+        } else {
+            holder.fechaReserva.setText(context.getString(R.string.fecha_reserva, "Fecha no disponible"));
+        }
+        holder.horaLlegada.setText(context.getString(R.string.horaLlegada, reserva.getHoraLlegada()));
         holder.estado.setText(context.getString(R.string.estado_reserva, reserva.getEstado()));
         holder.pagada.setText(context.getString(R.string.reserva_pagada, reserva.isPagada() ? "Sí" : "No"));
 
@@ -159,7 +166,7 @@ public class ReservaAdapter extends RecyclerView.Adapter<ReservaAdapter.ReservaV
     }
 
     public static class ReservaViewHolder extends RecyclerView.ViewHolder {
-        TextView clienteNombre, fechaReserva, estado, metodoPago, pagada, fechaPago, creadaPor, sombrillasReservadas;
+        TextView clienteNombre, fechaReserva, estado, metodoPago, pagada, fechaPago, creadaPor, sombrillasReservadas, horaLlegada;
         ImageView delete, expandIcon;
         LinearLayout expandableView;
         CardView cardView;
@@ -169,6 +176,7 @@ public class ReservaAdapter extends RecyclerView.Adapter<ReservaAdapter.ReservaV
             super(itemView);
             clienteNombre = itemView.findViewById(R.id.tvReservaCliente);
             fechaReserva = itemView.findViewById(R.id.tvFechaReserva);
+            horaLlegada = itemView.findViewById(R.id.tvHoraLlegada);
             estado = itemView.findViewById(R.id.tvEstado);
             metodoPago = itemView.findViewById(R.id.tvMetodoPago);
             pagada = itemView.findViewById(R.id.tvPagada);

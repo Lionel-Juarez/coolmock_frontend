@@ -122,19 +122,25 @@ public class ReservasViewModel extends ViewModel {
             SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy HH:mm", Locale.getDefault());
 
             for (int i = 0; i < jsonArray.length(); i++) {
-                JSONObject jsonObject = jsonArray.getJSONObject(i);
-                Reserva reserva = new Reserva();
-                reserva.fromJSON(jsonObject);
-                Log.d("ViewModel", "Reserva procesada: " + reserva.toString()); // Asegúrate de que Reserva tiene un método toString adecuado
-                reservas.add(reserva);
+                // Añade una comprobación para asegurarte de que el elemento es un JSONObject antes de procesarlo
+                if (jsonArray.get(i) instanceof JSONObject) {
+                    JSONObject jsonObject = jsonArray.getJSONObject(i);
+                    Reserva reserva = new Reserva();
+                    reserva.fromJSON(jsonObject);
+                    Log.d("ViewModel", "Reserva procesada: " + reserva.toString());
+                    reservas.add(reserva);
+                } else {
+                    // Manejo de tipos no JSONObject, si necesario
+                    Log.d("ViewModel", "Elemento no es un JSONObject, es de tipo: " + jsonArray.get(i).getClass().getSimpleName());
+                }
             }
-
             this.reservas.postValue(reservas);
         } catch (JSONException e) {
             Log.e("ViewModel", "Error parsing reservations from JSON", e);
             this.reservas.postValue(new ArrayList<>()); // Publicar una lista vacía en caso de error
         }
     }
+
 
     public void filterReservasByName(String name) {
         OkHttpClient client = new OkHttpClient();

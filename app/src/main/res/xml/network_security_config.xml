@@ -3,7 +3,7 @@
     <!-- Configuración base para toda la aplicación -->
     <base-config cleartextTrafficPermitted="false">
         <trust-anchors>
-            <!-- Confía en los certificados preinstalados en el dispositivo -->
+            <!-- Confía en los certificados preinstacantidadHamacass en el dispositivo -->
             <certificates src="system" />
         </trust-anchors>
     </base-config>

@@ -92,6 +92,8 @@
     <string name="select_sunbed">Seleccionar cantidad de tumbonas</string>
     <string name="select_time">Selecciona una hora</string>
     <string name="select_hour">Selecciona una hora</string>
+    <string name="cliente">Customer:</string>
+    <string name="horaLlegada">Hora llegada: %s</string>
 
     <!-- Spinners -->
     <string-array name="rol">
@@ -100,7 +102,7 @@
     </string-array>
     <string-array name="state">
         <item>Error</item>
-        <item>Cancelado</item>
+        <item>CancecantidadHamacas</item>
         <item>Advertencia</item>
         <item>Información</item>
     </string-array>

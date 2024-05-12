@@ -36,7 +36,7 @@ import okhttp3.Response;
 
 public class SombrillaDetalles  extends DialogFragment {
     private static final String ARG_HAMACA = "sombrilla";
-    RadioButton radioLeft, radioRight;
+    RadioButton radioOne, radioTwo;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -50,8 +50,8 @@ public class SombrillaDetalles  extends DialogFragment {
         Button btnLiberar = view.findViewById(R.id.btnLiberar);
         Button btnVerReserva = view.findViewById(R.id.btnVerReserva);
 
-        radioLeft = view.findViewById(R.id.radioLeft);
-        radioRight = view.findViewById(R.id.radioRight);
+        radioOne = view.findViewById(R.id.radioOne);
+        radioTwo = view.findViewById(R.id.radioTwo);
 
         Sombrilla sombrilla = getArguments() != null ? getArguments().getParcelable(ARG_HAMACA) : null;
         if (sombrilla != null) {
@@ -60,12 +60,12 @@ public class SombrillaDetalles  extends DialogFragment {
             actualizarEstado(tvDetalleEstado, sombrilla);
 
             if (sombrilla.isReservada()) {
-                radioLeft.setVisibility(View.VISIBLE);
-                radioRight.setVisibility(View.VISIBLE);
-                radioLeft.setClickable(false);
-                radioRight.setClickable(false);
+                radioOne.setVisibility(View.VISIBLE);
+                radioTwo.setVisibility(View.VISIBLE);
+                radioOne.setClickable(false);
+                radioTwo.setClickable(false);
 
-                checkLadoSombrilla(sombrilla);
+//                checkLadoSombrilla(sombrilla);
 
                 btnReservar.setVisibility(View.GONE);
                 btnOcupar.setVisibility(View.GONE);
@@ -93,22 +93,22 @@ public class SombrillaDetalles  extends DialogFragment {
 
 
             }else if(sombrilla.isOcupada()){
-                radioLeft.setVisibility(View.VISIBLE);
-                radioRight.setVisibility(View.VISIBLE);
+                radioOne.setVisibility(View.VISIBLE);
+                radioTwo.setVisibility(View.VISIBLE);
                 btnReservar.setVisibility(View.VISIBLE);
                 btnOcupar.setVisibility(View.GONE);
                 btnLiberar.setVisibility(View.VISIBLE);
                 btnVerReserva.setVisibility(View.GONE);
 
-                checkLadoSombrilla(sombrilla);
+//                checkLadoSombrilla(sombrilla);
 
                 btnLiberar.setOnClickListener(v -> {
                     sombrilla.setReservada(false);
                     sombrilla.setOcupada(false);
                     actualizarEstado(tvDetalleEstado, sombrilla);
                     updateSombrillaOnServer(sombrilla);
-                    radioLeft.setVisibility(View.GONE);
-                    radioRight.setVisibility(View.GONE);
+                    radioOne.setVisibility(View.GONE);
+                    radioTwo.setVisibility(View.GONE);
                     if (updateListener != null) {
                         updateListener.onSombrillaUpdated(sombrilla);
                     }
@@ -119,10 +119,10 @@ public class SombrillaDetalles  extends DialogFragment {
                 btnOcupar.setVisibility(View.VISIBLE);
                 btnLiberar.setVisibility(View.VISIBLE);
                 btnVerReserva.setVisibility(View.GONE);
-                radioLeft.setVisibility(View.VISIBLE);
-                radioRight.setVisibility(View.VISIBLE);
-                radioLeft.setClickable(true);
-                radioRight.setClickable(true);
+                radioOne.setVisibility(View.VISIBLE);
+                radioTwo.setVisibility(View.VISIBLE);
+                radioOne.setClickable(true);
+                radioTwo.setClickable(true);
 
                 btnReservar.setOnClickListener(v -> {
 
@@ -136,7 +136,7 @@ public class SombrillaDetalles  extends DialogFragment {
 
 
                 btnOcupar.setOnClickListener(v -> {
-                    if (radioLeft.isChecked() || radioRight.isChecked()) {
+                    if (radioOne.isChecked() || radioTwo.isChecked()) {
                         sombrilla.setOcupada(true);
                         sombrilla.setReservada(false);
                         actualizarEstado(tvDetalleEstado, sombrilla);
@@ -146,7 +146,7 @@ public class SombrillaDetalles  extends DialogFragment {
                         }
                         dismiss();
                     } else {
-                        Toast.makeText(getContext(), "Seleccione un lado para ocupar", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(getContext(), "Seleccione un cantidadHamacas para ocupar", Toast.LENGTH_SHORT).show();
                     }
                 });
             }
@@ -222,16 +222,16 @@ public class SombrillaDetalles  extends DialogFragment {
     }
 
 
-    public void checkLadoSombrilla(Sombrilla sombrilla){
-        if ("izquierda".equals(sombrilla.getLado())) {
-            radioLeft.setChecked(true);
-        } else if ("derecha".equals(sombrilla.getLado())) {
-            radioRight.setChecked(true);
-        }else if ("ambos".equals(sombrilla.getLado())){
-            radioLeft.setChecked(true);
-            radioRight.setChecked(true);
-        }
-    }
+//    public void checkLadoSombrilla(Sombrilla sombrilla){
+//        if ("izquierda".equals(sombrilla.getLado())) {
+//            radioOne.setChecked(true);
+//        } else if ("derecha".equals(sombrilla.getLado())) {
+//            radioTwo.setChecked(true);
+//        }else if ("ambos".equals(sombrilla.getLado())){
+//            radioOne.setChecked(true);
+//            radioTwo.setChecked(true);
+//        }
+//    }
 
 
 }
