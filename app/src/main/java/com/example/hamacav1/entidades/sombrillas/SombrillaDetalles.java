@@ -7,6 +7,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.RadioButton;
+import android.widget.RadioGroup;
 import android.widget.TextView;
 
 import androidx.fragment.app.DialogFragment;
@@ -17,6 +18,7 @@ import android.widget.Toast;
 import com.example.hamacav1.MainActivity;
 import com.example.hamacav1.entidades.reservas.NuevaReserva;
 import com.example.hamacav1.R;
+import com.example.hamacav1.entidades.reservas.Reserva;
 import com.example.hamacav1.entidades.reservas.ReservaFragment;
 
 import org.jetbrains.annotations.NotNull;
@@ -37,6 +39,7 @@ import okhttp3.Response;
 public class SombrillaDetalles  extends DialogFragment {
     private static final String ARG_HAMACA = "sombrilla";
     RadioButton radioOne, radioTwo;
+    RadioGroup radioGroupHamacas;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -52,6 +55,7 @@ public class SombrillaDetalles  extends DialogFragment {
 
         radioOne = view.findViewById(R.id.radioOne);
         radioTwo = view.findViewById(R.id.radioTwo);
+        radioGroupHamacas = view.findViewById(R.id.radioGroupHamacas);
 
         Sombrilla sombrilla = getArguments() != null ? getArguments().getParcelable(ARG_HAMACA) : null;
         if (sombrilla != null) {
@@ -60,12 +64,8 @@ public class SombrillaDetalles  extends DialogFragment {
             actualizarEstado(tvDetalleEstado, sombrilla);
 
             if (sombrilla.isReservada()) {
-                radioOne.setVisibility(View.VISIBLE);
-                radioTwo.setVisibility(View.VISIBLE);
-                radioOne.setClickable(false);
-                radioTwo.setClickable(false);
+                checkCantidadHamacas(sombrilla);
 
-//                checkLadoSombrilla(sombrilla);
 
                 btnReservar.setVisibility(View.GONE);
                 btnOcupar.setVisibility(View.GONE);
@@ -100,7 +100,7 @@ public class SombrillaDetalles  extends DialogFragment {
                 btnLiberar.setVisibility(View.VISIBLE);
                 btnVerReserva.setVisibility(View.GONE);
 
-//                checkLadoSombrilla(sombrilla);
+                checkCantidadHamacas(sombrilla);
 
                 btnLiberar.setOnClickListener(v -> {
                     sombrilla.setReservada(false);
@@ -136,9 +136,12 @@ public class SombrillaDetalles  extends DialogFragment {
 
 
                 btnOcupar.setOnClickListener(v -> {
-                    if (radioOne.isChecked() || radioTwo.isChecked()) {
+                    if (radioGroupHamacas.getCheckedRadioButtonId() != -1) {
                         sombrilla.setOcupada(true);
                         sombrilla.setReservada(false);
+                        String cantidadHamacas = radioOne.isChecked() ? "1" : "2";
+                        sombrilla.setCantidadHamacas(cantidadHamacas);
+
                         actualizarEstado(tvDetalleEstado, sombrilla);
                         updateSombrillaOnServer(sombrilla);
                         if (updateListener != null) {
@@ -146,9 +149,11 @@ public class SombrillaDetalles  extends DialogFragment {
                         }
                         dismiss();
                     } else {
-                        Toast.makeText(getContext(), "Seleccione un cantidadHamacas para ocupar", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(getContext(), "Seleccione una cantidad de hamacas para ocupar", Toast.LENGTH_SHORT).show();
                     }
                 });
+
+
             }
         }
 
@@ -193,6 +198,7 @@ public class SombrillaDetalles  extends DialogFragment {
             jsonObject.put("idSombrilla", sombrilla.getIdSombrilla());
             jsonObject.put("reservada", sombrilla.isReservada());
             jsonObject.put("ocupada", sombrilla.isOcupada());
+            jsonObject.put("cantidadHamacas", sombrilla.getCantidadHamacas());
             RequestBody body = RequestBody.create(jsonObject.toString(), JSON);
 
             Request request = new Request.Builder()
@@ -222,17 +228,31 @@ public class SombrillaDetalles  extends DialogFragment {
     }
 
 
-//    public void checkLadoSombrilla(Sombrilla sombrilla){
-//        if ("izquierda".equals(sombrilla.getLado())) {
-//            radioOne.setChecked(true);
-//        } else if ("derecha".equals(sombrilla.getLado())) {
-//            radioTwo.setChecked(true);
-//        }else if ("ambos".equals(sombrilla.getLado())){
-//            radioOne.setChecked(true);
-//            radioTwo.setChecked(true);
-//        }
-//    }
+    private void checkCantidadHamacas(Sombrilla sombrilla) {
+        String cantidadHamacas = sombrilla.getCantidadHamacas();
 
+        radioOne.setVisibility(View.VISIBLE);
+        radioTwo.setVisibility(View.VISIBLE);
+        radioOne.setClickable(!sombrilla.isReservada());
+        radioTwo.setClickable(!sombrilla.isReservada());
+
+        if (cantidadHamacas != null) {
+            switch (cantidadHamacas) {
+                case "1":
+                    radioOne.setChecked(true);
+                    break;
+                case "2":
+                    radioTwo.setChecked(true);
+                    break;
+                default:
+                    radioGroupHamacas.clearCheck(); // Ningún botón seleccionado
+                    break;
+            }
+        } else {
+            // Si no hay cantidad especificada, no seleccionar ninguno
+            radioGroupHamacas.clearCheck();
+        }
+    }
 
 }
 

@@ -5,7 +5,6 @@ import org.json.JSONObject;
 
 import java.io.IOException;
 import java.util.List;
-import java.util.concurrent.TimeUnit;
 
 import okhttp3.MediaType;
 import okhttp3.OkHttpClient;
@@ -15,21 +14,14 @@ import okhttp3.Response;
 
 public class Internetop {
 
-    private static final MediaType JSON = MediaType.parse("application/json; charset=utf-8");
-    private OkHttpClient client;
     private static Internetop me=null;
-    private Internetop() {
-        client = new OkHttpClient.Builder()
-                .connectTimeout(30, TimeUnit.SECONDS)
-                .readTimeout(30, TimeUnit.SECONDS)
-                .writeTimeout(30, TimeUnit.SECONDS)
-                .retryOnConnectionFailure(true)
-                .build();
+    private Internetop(){
+
     }
     public static Internetop getInstance(){
         if (me == null) {
             synchronized(Internetop.class){
-                if(me == null){
+                if(me==null){
                     me = new Internetop();
                 }
             }

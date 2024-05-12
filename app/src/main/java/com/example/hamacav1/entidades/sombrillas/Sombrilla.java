@@ -24,6 +24,7 @@ public class Sombrilla implements Parcelable {
     private boolean ocupada;
     private String numeroSombrilla;
     private List<Long> reservaIds;
+    private String cantidadHamacas;
 
 
     protected Sombrilla(Parcel in) {
@@ -31,6 +32,7 @@ public class Sombrilla implements Parcelable {
         precio = in.readDouble();
         ocupada = in.readByte() != 0;
         numeroSombrilla = in.readString();
+        cantidadHamacas = in.readString();
         reservaIds = new ArrayList<>();
         in.readList(reservaIds, Long.class.getClassLoader());
     }
@@ -58,6 +60,7 @@ public class Sombrilla implements Parcelable {
         parcel.writeDouble(precio);
         parcel.writeByte((byte) (ocupada ? 1 : 0));
         parcel.writeString(numeroSombrilla);
+        parcel.writeString(cantidadHamacas);
         parcel.writeList(reservaIds);
     }
 
@@ -65,6 +68,7 @@ public class Sombrilla implements Parcelable {
         Sombrilla sombrilla = new Sombrilla();
         sombrilla.setIdSombrilla(jsonObject.optLong("idSombrilla"));
         sombrilla.setNumeroSombrilla(jsonObject.optString("numeroSombrilla"));
+        sombrilla.setCantidadHamacas(jsonObject.optString("cantidadHamacas"));
         sombrilla.setPrecio(jsonObject.optDouble("precio"));
         sombrilla.setOcupada(jsonObject.optBoolean("ocupada"));
 

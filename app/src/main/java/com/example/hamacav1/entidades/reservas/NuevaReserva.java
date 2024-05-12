@@ -173,7 +173,6 @@ public class NuevaReserva extends AppCompatActivity {
                 json.put("estado", estado);
                 json.put("pagada", pagada);
                 json.put("metodoPago", metodoPago);
-                json.put("cantidadHamacas", cantidadHamacas);
                 json.put("horaLlegada", horaLlegada);
                 json.put("idCliente", idCliente);
                 json.put("idUsuario", idUsuario);
@@ -196,7 +195,7 @@ public class NuevaReserva extends AppCompatActivity {
                             JSONObject responseObject = new JSONObject(responseData);
                             long idReserva = responseObject.getLong("idReserva");
                             Log.d("NuevaReserva", "Reserva creada con éxito, ID: " + idReserva);
-                            updateSombrillasAsReserved(idsSombrillas, idReserva);
+                            updateSombrillasAsReserved(idsSombrillas, idReserva, cantidadHamacas);
 
                             handler.post(() -> {
                                 Toast.makeText(getApplicationContext(), "Reserva añadida con éxito", Toast.LENGTH_SHORT).show();
@@ -223,7 +222,7 @@ public class NuevaReserva extends AppCompatActivity {
     }
 
 
-    private void updateSombrillasAsReserved(List<Long> idsSombrillas, long idReserva) {
+    private void updateSombrillasAsReserved(List<Long> idsSombrillas, long idReserva, String cantidadHamacas) {
         Log.e("UpdateSombrilla", "dentro de la funcion updateSombrillas");
 
         OkHttpClient client = new OkHttpClient();
@@ -231,6 +230,7 @@ public class NuevaReserva extends AppCompatActivity {
             String url = getResources().getString(R.string.url_sombrillas) + "updateReservaSombrilla/" + idSombrilla;
             HttpUrl.Builder urlBuilder = HttpUrl.parse(url).newBuilder();
             urlBuilder.addQueryParameter("idReserva", String.valueOf(idReserva));
+            urlBuilder.addQueryParameter("cantidadHamacas", cantidadHamacas);
 
             Request request = new Request.Builder()
                     .url(urlBuilder.build().toString())
