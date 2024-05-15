@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.res.Resources;
 import android.net.ConnectivityManager;
 import android.net.Network;
@@ -99,9 +100,18 @@ public class ClienteFragment extends Fragment implements ClienteAdapter.ClienteA
     }
 
     private void loadClientesFromBackend() {
-        String url = getResources().getString(R.string.url_clientes) ;
+        String url = getResources().getString(R.string.url_clientes);
         OkHttpClient client = new OkHttpClient();
-        Request request = new Request.Builder().url(url).build();
+
+        // Obtener el token de SharedPreferences
+        SharedPreferences sharedPreferences = getActivity().getSharedPreferences("MyAppPrefs", Context.MODE_PRIVATE);
+        String idToken = sharedPreferences.getString("idToken", null);
+
+        // Añadir el token en la cabecera de la solicitud
+        Request request = new Request.Builder()
+                .url(url)
+                .addHeader("Authorization", "Bearer " + idToken) // Añadir el token aquí
+                .build();
 
         Log.d("ClientesFragment", "Iniciando carga de Clientes desde el backend: " + url);
 
@@ -144,6 +154,7 @@ public class ClienteFragment extends Fragment implements ClienteAdapter.ClienteA
             }
         });
     }
+
 
 
     @Override
@@ -220,8 +231,8 @@ public class ClienteFragment extends Fragment implements ClienteAdapter.ClienteA
             public void run() {
                 /*Aquí ejecutamos el código en segundo plano, que consiste en obtener del servidor
                  * la lista de alumnos*/
-                Internetop interopera= Internetop.getInstance();
-                String result = interopera.deleteTask(url);
+                Internetop internetop = Internetop.getInstance(getContext());
+                String result = internetop.deleteTask(url);
                 handler.post(new Runnable() {/*Una vez handler recoge el resultado de la tarea en
                 segundo plano, hacemos los cambios pertinentes en la interfaz de cliente en función
                 del resultado obtenido*/
@@ -272,8 +283,8 @@ public class ClienteFragment extends Fragment implements ClienteAdapter.ClienteA
         executor.execute(new Runnable() {
             @Override
             public void run() {
-                Internetop interopera= Internetop.getInstance();
-                String result = interopera.getString(url);
+                Internetop internetop = Internetop.getInstance(getContext());
+                String result = internetop.getString(url);
                 handler.post(new Runnable() {
                     @Override
                     public void run() {

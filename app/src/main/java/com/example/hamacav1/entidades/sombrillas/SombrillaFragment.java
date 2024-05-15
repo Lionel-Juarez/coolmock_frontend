@@ -1,6 +1,8 @@
 package com.example.hamacav1.entidades.sombrillas;
 
 import android.app.DatePickerDialog;
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -16,6 +18,7 @@ import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.hamacav1.R;
+import com.example.hamacav1.util.OkHttpProvider;
 
 
 import org.jetbrains.annotations.NotNull;
@@ -87,7 +90,8 @@ public class SombrillaFragment extends Fragment implements SombrillaDetalles.Som
         HttpUrl urlWithParams = HttpUrl.parse(url).newBuilder().build();
         Request request = new Request.Builder().url(urlWithParams.toString()).get().build();
 
-        new OkHttpClient().newCall(request).enqueue(new Callback() {
+        OkHttpClient client = OkHttpProvider.getInstance(getContext());
+        client.newCall(request).enqueue(new Callback() {
             @Override
             public void onFailure(@NotNull Call call, @NotNull IOException e) {
                 Log.e("SombrillaLoad", "Error al cargar sombrillas: " + e.getMessage(), e);
@@ -123,11 +127,14 @@ public class SombrillaFragment extends Fragment implements SombrillaDetalles.Som
                     });
                 } else {
                     Log.e("SombrillaLoad", "Respuesta no exitosa del servidor: " + response.code());
-                    getActivity().runOnUiThread(() -> Toast.makeText(getContext(), "Respuesta no exitosa del servidor", Toast.LENGTH_SHORT). show());
+                    getActivity().runOnUiThread(() -> Toast.makeText(getContext(), "Respuesta no exitosa del servidor", Toast.LENGTH_SHORT).show());
                 }
             }
         });
     }
+
+
+
 
     private void checkReservationsAndSetReserved(Sombrilla sombrilla, JSONArray reservas, LocalDate today) throws JSONException {
         boolean isReserved = false;

@@ -220,8 +220,8 @@ public class UsuarioFragment extends Fragment implements UsuarioAdapter.UsuarioA
             public void run() {
                 /*Aquí ejecutamos el código en segundo plano, que consiste en obtener del servidor
                  * la lista de alumnos*/
-                Internetop interopera= Internetop.getInstance();
-                String result = interopera.deleteTask(url);
+                Internetop internetop = Internetop.getInstance(getContext());
+                String result = internetop.deleteTask(url);
                 handler.post(new Runnable() {/*Una vez handler recoge el resultado de la tarea en
                 segundo plano, hacemos los cambios pertinentes en la interfaz de usuario en función
                 del resultado obtenido*/
@@ -272,8 +272,8 @@ public class UsuarioFragment extends Fragment implements UsuarioAdapter.UsuarioA
         executor.execute(new Runnable() {
             @Override
             public void run() {
-                Internetop interopera= Internetop.getInstance();
-                String result = interopera.getString(url);
+                Internetop internetop = Internetop.getInstance(getContext());
+                String result = internetop.getString(url);
                 handler.post(new Runnable() {
                     @Override
                     public void run() {

@@ -3,6 +3,7 @@ package com.example.hamacav1.entidades.clientes;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.content.res.Resources;
 import android.net.ConnectivityManager;
 import android.net.Network;
@@ -114,26 +115,36 @@ public class NuevoCliente extends AppCompatActivity {
                 OkHttpClient client = new OkHttpClient();
                 MediaType MEDIA_TYPE_JSON = MediaType.parse("application/json; charset=utf-8");
 
+                // Obtener el token de SharedPreferences
+                SharedPreferences sharedPreferences = getSharedPreferences("MyAppPrefs", Context.MODE_PRIVATE);
+                String idToken = sharedPreferences.getString("idToken", null);
+
                 JSONObject json = new JSONObject();
-                json.put("nombreCompleto",nombreCompleto);
+                json.put("nombreCompleto", nombreCompleto);
                 json.put("numeroTelefono", numeroTelefono);
 
                 RequestBody body = RequestBody.create(json.toString(), MEDIA_TYPE_JSON);
-                Request request = new Request.Builder().url(url).post(body).build();
+
+                // Añadir el token en la cabecera de la solicitud
+                Request request = new Request.Builder()
+                        .url(url)
+                        .post(body)
+                        .addHeader("Authorization", "Bearer " + idToken) // Añadir el token aquí
+                        .build();
 
                 try (Response response = client.newCall(request).execute()) {
                     String result = response.body().string();
                     handler.post(() -> {
                         Log.d("Newcliente", "Respuesta del servidor: " + result);
                         if (response.isSuccessful()) {
-                            Log.d("Newcliente", "clientee añadido con éxito.");
-                            Toast.makeText(getApplicationContext(), "clientee añadido con éxito", Toast.LENGTH_SHORT).show();
-                            // Actualizar lista de clientees
+                            Log.d("Newcliente", "Cliente añadido con éxito.");
+                            Toast.makeText(getApplicationContext(), "Cliente añadido con éxito", Toast.LENGTH_SHORT).show();
+                            // Actualizar lista de clientes
                             setResult(Activity.RESULT_OK);
                             finish();
                         } else {
-                            Log.e("Newcliente", "Error al añadir clientee: " + result);
-                            showError("Error desconocido al añadir clientee.");
+                            Log.e("Newcliente", "Error al añadir cliente: " + result);
+                            showError("Error desconocido al añadir cliente.");
                         }
                     });
                 }
@@ -143,6 +154,7 @@ public class NuevoCliente extends AppCompatActivity {
             }
         });
     }
+
 
     private void showError(String error) {
         String message;
@@ -158,7 +170,6 @@ public class NuevoCliente extends AppCompatActivity {
         }
         Context context = this.getApplicationContext();
         Toast toast = Toast.makeText(context, message, duration);
-        toast.setGravity(Gravity.CENTER, 0, 0);
         toast.show();
     }
 }

@@ -6,6 +6,9 @@ import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
 import android.app.Dialog;
+import android.content.Context;
+import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
@@ -24,15 +27,25 @@ import com.example.hamacav1.entidades.reportes.ReportsFragment;
 import com.example.hamacav1.databinding.ActivityMainBinding;
 import com.example.hamacav1.entidades.reservas.ReservaFragment;
 import com.example.hamacav1.entidades.usuarios.UsuarioFragment;
+import com.example.hamacav1.initialmenus.LoginActivity;
+import com.google.firebase.auth.FirebaseAuth;
 
 public class MainActivity extends AppCompatActivity {
-
     ActivityMainBinding binding;
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        // Verificar sesión
+        SharedPreferences sharedPreferences = getSharedPreferences("MyAppPrefs", MODE_PRIVATE);
+        String userId = sharedPreferences.getString("userId", null);
+
+        if (userId == null || FirebaseAuth.getInstance().getCurrentUser() == null) {
+            // No hay sesión activa, redirigir a la pantalla de login
+            startActivity(new Intent(MainActivity.this, LoginActivity.class));
+            finish();
+            return; // Salir del método para evitar ejecutar el resto del código
+        }
         binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
         replaceFragment(new ReservaFragment());
@@ -70,22 +83,19 @@ public class MainActivity extends AppCompatActivity {
         fragmentTransaction.commit();
     }
 
-
     private void showBottomDialog() {
-
         final Dialog dialog = new Dialog(this);
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
         dialog.setContentView(R.layout.bottomsheetlayout);
 
         LinearLayout usuarioLayout = dialog.findViewById(R.id.layoutUsuario);
         LinearLayout clienteLayout = dialog.findViewById(R.id.layoutCliente);
-        LinearLayout liveLayout = dialog.findViewById(R.id.layoutLive);
+        LinearLayout logoutLayout = dialog.findViewById(R.id.layoutLogout);
         ImageView cancelButton = dialog.findViewById(R.id.cancelButton);
 
         clienteLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                // Reemplazar el fragmento actual con ClienteFragment
                 replaceFragment(new ClienteFragment());
                 dialog.dismiss();
             }
@@ -94,8 +104,15 @@ public class MainActivity extends AppCompatActivity {
         usuarioLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                // Reemplazar el fragmento actual con UserFragment
                 replaceFragment(new UsuarioFragment());
+                dialog.dismiss();
+            }
+        });
+
+        logoutLayout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                logout();
                 dialog.dismiss();
             }
         });
@@ -108,24 +125,29 @@ public class MainActivity extends AppCompatActivity {
         });
 
         dialog.show();
-        dialog.getWindow().setLayout(ViewGroup.LayoutParams.MATCH_PARENT,ViewGroup.LayoutParams.WRAP_CONTENT);
+        dialog.getWindow().setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
         dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
         dialog.getWindow().getAttributes().windowAnimations = R.style.DialogAnimation;
         dialog.getWindow().setGravity(Gravity.BOTTOM);
-
     }
 
+    private void logout() {
+        FirebaseAuth.getInstance().signOut(); // Cerrar sesión de Firebase
+        SharedPreferences sharedPreferences = getSharedPreferences("MyAppPrefs", Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.clear(); // Limpiar SharedPreferences
+        editor.apply();
 
-
+        // Redirigir a la pantalla de login
+        Intent intent = new Intent(MainActivity.this, LoginActivity.class);
+        startActivity(intent);
+        finish(); // Finalizar MainActivity
+    }
     public void selectSunbed() {
         binding.bottomNavigationView.setSelectedItemId(R.id.sunbed); // Establece el elemento seleccionado programáticamente
     }
     public void setSelectedItemId(int itemId) {
         binding.bottomNavigationView.setSelectedItemId(itemId);
     }
-
-
-
-
 
 }
