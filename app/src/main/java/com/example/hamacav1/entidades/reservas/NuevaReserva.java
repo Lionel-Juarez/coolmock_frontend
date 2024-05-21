@@ -5,6 +5,7 @@ import android.app.Activity;
 import android.app.DatePickerDialog;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.net.ConnectivityManager;
 import android.net.Network;
 import android.net.NetworkCapabilities;
@@ -268,10 +269,16 @@ public class NuevaReserva extends AppCompatActivity {
     private void loadClientsFromBackend() {
         String url = getResources().getString(R.string.url_clientes);
         OkHttpClient client = new OkHttpClient();
-        Request request = new Request.Builder().url(url).build();
 
         Log.d("NuevaReserva", "Iniciando carga de clientes desde el backend: " + url);
+        // Obtener el token de SharedPreferences
+        SharedPreferences sharedPreferences = getSharedPreferences("MyAppPrefs", Context.MODE_PRIVATE);
+        String idToken = sharedPreferences.getString("idToken", null);
 
+        Request request = new Request.Builder()
+                .url(url)
+                .addHeader("Authorization", "Bearer " + idToken) // Añadir el token aquí
+                .build();
         client.newCall(request).enqueue(new Callback() {
             @Override
             public void onFailure(@NotNull Call call, @NotNull IOException e) {

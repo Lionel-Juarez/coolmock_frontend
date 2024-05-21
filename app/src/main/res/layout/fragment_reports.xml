@@ -4,51 +4,78 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/lightBackgroundColor"
     tools:context=".entidades.reportes.ReportsFragment">
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:padding="15dp"
-        android:background="@drawable/transparent_background"
-        android:text="@string/reportes"
-        android:layout_marginTop="30dp"
-        android:layout_gravity="center_horizontal"
-        android:textSize="30sp"
-        android:textColor="@color/black"
-        android:layout_alignParentTop="true"
-        android:layout_centerHorizontal="true"/>
-
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/reportsRecyclerView"
+    <!-- Imagen de fondo -->
+    <ImageView
+        android:id="@+id/headerImage"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_alignBottom="@+id/fab_add_report"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="100dp"
-        android:layout_marginEnd="8dp"
-        android:clipToPadding="false"
-        android:paddingTop="10dp"
-        android:paddingBottom="96dp"
-        android:scrollbars="vertical" />
+        android:scaleType="centerCrop"
+        android:src="@drawable/fondo1" />
 
-    <com.google.android.material.button.MaterialButton
-        android:id="@+id/fab_add_report"
+    <!-- Contenedor para el contenido encima de la imagen -->
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="16dp"
-        android:layout_marginEnd="16dp"
-        android:layout_marginBottom="76dp"
-        android:text="@string/fab_add_report"
-        android:textAllCaps="true"
-        android:textColor="@color/white"
-        android:onClick="ir"
-        app:backgroundTint="@color/black"
-        app:cornerRadius="20dp"
-        app:elevation="6dp"
-        app:iconGravity="textStart"
-        android:padding="16dp" />
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:background="@android:color/transparent">
+
+        <!-- Cuadro de título con transparencia -->
+        <RelativeLayout
+            android:id="@+id/overlayContainer"
+            android:layout_width="match_parent"
+            android:layout_height="120dp"
+            android:background="@drawable/rounded_bottom_corners"
+            android:padding="16dp"
+            android:elevation="4dp">
+
+            <!-- Título principal -->
+            <TextView
+                android:id="@+id/tvTitleReservas"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/reportes"
+                android:textColor="@color/black"
+                android:textSize="28sp"
+                android:textStyle="bold"
+                android:layout_alignParentStart="true" />
+
+            <!-- Subtítulo -->
+            <TextView
+                android:id="@+id/tvSubTitle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/tvTitleReservas"
+                android:layout_alignParentStart="true"
+                android:text="@string/historial"
+                android:textColor="@color/black"
+                android:textStyle="bold"
+                android:textSize="24sp"
+                android:layout_marginTop="8dp" />
+
+            <ImageView
+                android:id="@+id/openDatePicker"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentEnd="true"
+                android:src="@drawable/btnnueva"
+                android:clickable="true"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginTop="16dp"/>
+        </RelativeLayout>
+
+        <!-- RecyclerView para mostrar la lista -->
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/reportsRecyclerView"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:layout_marginStart="8dp"
+            android:layout_marginEnd="8dp"
+            android:clipToPadding="false"
+            android:scrollbars="vertical"
+            android:paddingTop="10dp"
+            android:paddingBottom="96dp" />
+    </LinearLayout>
 </RelativeLayout>

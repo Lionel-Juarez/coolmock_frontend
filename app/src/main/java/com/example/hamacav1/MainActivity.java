@@ -1,5 +1,6 @@
 package com.example.hamacav1;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
@@ -28,7 +29,11 @@ import com.example.hamacav1.databinding.ActivityMainBinding;
 import com.example.hamacav1.entidades.reservas.ReservaFragment;
 import com.example.hamacav1.entidades.usuarios.UsuarioFragment;
 import com.example.hamacav1.initialmenus.LoginActivity;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.auth.GetTokenResult;
 
 public class MainActivity extends AppCompatActivity {
     ActivityMainBinding binding;
@@ -46,6 +51,9 @@ public class MainActivity extends AppCompatActivity {
             finish();
             return; // Salir del método para evitar ejecutar el resto del código
         }
+
+        renovarToken();
+
         binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
         replaceFragment(new ReservaFragment());
@@ -130,6 +138,30 @@ public class MainActivity extends AppCompatActivity {
         dialog.getWindow().getAttributes().windowAnimations = R.style.DialogAnimation;
         dialog.getWindow().setGravity(Gravity.BOTTOM);
     }
+    // Método para renovar el token
+    private void renovarToken() {
+        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+        if (user != null) {
+            user.getIdToken(true).addOnCompleteListener(new OnCompleteListener<GetTokenResult>() {
+                @Override
+                public void onComplete(@NonNull Task<GetTokenResult> task) {
+                    if (task.isSuccessful()) {
+                        String idToken = task.getResult().getToken();
+                        // Guardar el token en SharedPreferences
+                        SharedPreferences sharedPreferences = getSharedPreferences("MyAppPrefs", Context.MODE_PRIVATE);
+                        SharedPreferences.Editor editor = sharedPreferences.edit();
+                        editor.putString("idToken", idToken);
+                        editor.apply();
+                        Log.d("TokenRenovado", "Firebase ID Token: " + idToken);
+                    } else {
+                        // Manejar error de renovación del token
+                        Log.e("TokenRenovacionError", "Error al renovar el token: " + task.getException().getMessage());
+                    }
+                }
+            });
+        }
+    }
+
 
     private void logout() {
         FirebaseAuth.getInstance().signOut(); // Cerrar sesión de Firebase

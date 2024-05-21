@@ -1,16 +1,24 @@
 package com.example.hamacav1.entidades.reservas;
 
 import android.app.DatePickerDialog;
+import android.content.Context;
 import android.content.DialogInterface;
+import android.graphics.drawable.InsetDrawable;
+import android.os.Build;
 import android.os.Bundle;
 import android.text.InputType;
 import android.util.Log;
+import android.util.TypedValue;
+import android.view.Gravity;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.LinearLayout;
 import android.widget.PopupMenu;
+import android.widget.PopupWindow;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -25,6 +33,7 @@ import com.example.hamacav1.R;
 
 import org.jetbrains.annotations.Nullable;
 
+import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -38,6 +47,8 @@ public class ReservaFragment extends Fragment implements ReservaAdapter.Reservas
     private ReservasViewModel viewModel;
     private TextView tvNoReservas;
     private Long reservaId;
+    private static final int ICON_MARGIN = 8; // Define the icon margin in dp
+
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -118,30 +129,40 @@ public class ReservaFragment extends Fragment implements ReservaAdapter.Reservas
         filterButton.setOnClickListener(v -> showFilterPopup(v));
     }
 
-
     private void showFilterPopup(View view) {
-        PopupMenu popupMenu = new PopupMenu(getContext(), view);
-        popupMenu.getMenuInflater().inflate(R.menu.filter_options_menu, popupMenu.getMenu());
-        popupMenu.setOnMenuItemClickListener(item -> {
-            int id = item.getItemId();
-            if (id == R.id.action_filter_name) {
-                showNameSearchDialog();
-                return true;
-            } else if (id == R.id.action_filter_state) {
-                showStateSelectionDialog();
-                return true;
-            } else if (id == R.id.action_select_date) {
-                showDatePickerDialog();
-                return true;
-            } else if (id == R.id.action_show_all) {
-                viewModel.loadAllReservas();
-                return true;
-            }else {
-                return false;
-            }
+        LayoutInflater inflater = (LayoutInflater) view.getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        View popupView = inflater.inflate(R.layout.popup_menu_layout, null);
+
+        int width = LinearLayout.LayoutParams.WRAP_CONTENT;
+        int height = LinearLayout.LayoutParams.WRAP_CONTENT;
+        boolean focusable = true;
+        final PopupWindow popupWindow = new PopupWindow(popupView, width, height, focusable);
+
+        popupWindow.showAtLocation(view.getRootView(), Gravity.CENTER, 0, 0);
+
+        popupView.findViewById(R.id.action_filter_name).setOnClickListener(v -> {
+            showNameSearchDialog();
+            popupWindow.dismiss();
         });
-        popupMenu.show();
+
+        popupView.findViewById(R.id.action_filter_state).setOnClickListener(v -> {
+            showStateSelectionDialog();
+            popupWindow.dismiss();
+        });
+
+        popupView.findViewById(R.id.action_select_date).setOnClickListener(v -> {
+            showDatePickerDialog();
+            popupWindow.dismiss();
+        });
+
+        popupView.findViewById(R.id.action_show_all).setOnClickListener(v -> {
+            viewModel.loadAllReservas();
+            popupWindow.dismiss();
+        });
     }
+
+
+
 
     private void showDatePickerDialog() {
         Calendar c = Calendar.getInstance();

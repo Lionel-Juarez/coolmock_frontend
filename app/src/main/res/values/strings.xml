@@ -94,6 +94,8 @@
     <string name="select_hour">Select arrival time</string>
     <string name="cliente">Customer:</string>
     <string name="horaLlegada">Check in: %s</string>
+    <string name="sombrillas">HAMMOCK PLOT</string>
+    <string name="historial">RECORDS</string>
 
     //Spinners
     <string-array name="hour_array">

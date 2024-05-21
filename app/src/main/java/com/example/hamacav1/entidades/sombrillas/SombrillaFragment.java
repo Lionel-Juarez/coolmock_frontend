@@ -88,7 +88,16 @@ public class SombrillaFragment extends Fragment implements SombrillaDetalles.Som
 
         String url = getResources().getString(R.string.url_sombrillas).concat("sombrillas");
         HttpUrl urlWithParams = HttpUrl.parse(url).newBuilder().build();
-        Request request = new Request.Builder().url(urlWithParams.toString()).get().build();
+
+        // Obtener el token de SharedPreferences
+        SharedPreferences sharedPreferences = getActivity().getSharedPreferences("MyAppPrefs", Context.MODE_PRIVATE);
+        String idToken = sharedPreferences.getString("idToken", null);
+
+        Request request = new Request.Builder()
+                .url(urlWithParams.toString())
+                .addHeader("Authorization", "Bearer " + idToken) // Añadir el token aquí
+                .get()
+                .build();
 
         OkHttpClient client = OkHttpProvider.getInstance(getContext());
         client.newCall(request).enqueue(new Callback() {
@@ -132,8 +141,6 @@ public class SombrillaFragment extends Fragment implements SombrillaDetalles.Som
             }
         });
     }
-
-
 
 
     private void checkReservationsAndSetReserved(Sombrilla sombrilla, JSONArray reservas, LocalDate today) throws JSONException {
