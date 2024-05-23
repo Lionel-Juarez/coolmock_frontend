@@ -140,7 +140,7 @@
             android:layout_below="@id/tvEstado"
             android:layout_marginEnd="16dp"
             android:contentDescription="@string/toggle_details"
-            android:src="@drawable/baseline_expand_more_24"
+            android:src="@drawable/abajo24"
             android:onClick="toggleDetails"/>
     </RelativeLayout>
 </androidx.cardview.widget.CardView>

@@ -1,7 +1,7 @@
 <resources>
     <string name="app_name">HamacaV1</string>
     <string name="hello_blank_fragment">Hello blank fragment</string>
-    <string name="singup">Sign up!!</string>
+    <string name="singup">Sign up!</string>
     <string name="sunbed">Sunbed</string>
     <string name="reportes">Reports</string>
     <string name="calcs">Daily calculations</string>
@@ -75,10 +75,13 @@
     <string name="no_reservas">There are no reservations for today</string>
     <string name="tvSombrillas">Reserved Sunbeds:</string>   
     <string name="payment_date">Payment date</string>
-    <string name="btn_verReserva">See reservation</string>
+    <string name="btn_verReserva">View</string>
+    <string name="btn_liberar">Free</string>
+    <string name="btn_ocupar">Occupy</string>
+    <string name="btn_reservar">Book</string>
     <string name="filter_by_name">Filter by name</string>   
     <string name="filter_by_date">Filter by date</string>   
-    <string name="select_date">Select date</string>   
+    <string name="select_date">Select date and time</string>
     <string name="filter_by_state">Filter by state</string>   
     <string name="cancel">Cancel</string>
     <string name="show_all">Show all</string>
@@ -96,6 +99,15 @@
     <string name="horaLlegada">Check in: %s</string>
     <string name="sombrillas">HAMMOCK PLOT</string>
     <string name="historial">RECORDS</string>
+    <string name="not_registered">Not yet registered? Sign Up</string>
+    <string name="forgot_password">Forgot Password?</string>
+    <string name="login">Login</string>
+    <string name="username">Username</string>
+    <string name="password">Password</string>
+    <string name="already_user">Already an user? Login</string>
+    <string name="email">Email</string>
+    <string name="email_hint">Email</string>
+    <string name="pagos">Payments</string>
 
     //Spinners
     <string-array name="hour_array">

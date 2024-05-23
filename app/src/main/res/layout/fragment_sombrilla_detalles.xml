@@ -1,101 +1,156 @@
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:padding="24dp">
-
-    <TextView
-        android:id="@+id/tvDetalleNumeroSombrilla"
+    android:layout_height="match_parent">
+    <androidx.cardview.widget.CardView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:textSize="18sp"
-        android:textStyle="bold"
-        android:text="Número de Sombrilla"/>
-
-    <TextView
-        android:id="@+id/tvDetallePrecio"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        android:text="Precio de Sombrilla"/>
-
-    <TextView
-        android:id="@+id/tvDetalleEstado"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        android:text="Estado Actual"/>
-
-    <!-- Botones para cambiar el estado de la sombrilla -->
-    <Button
-        android:id="@+id/btnReservar"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        android:text="Reservar"/>
-
-    <Button
-        android:id="@+id/btnOcupar"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
-        android:text="Ocupar"/>
-
-    <Button
-        android:id="@+id/btnLiberar"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
-        android:text="Liberar"/>
-
-    <Button
-        android:id="@+id/btnVerReserva"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
-        android:text="@string/btn_verReserva"/>
-
-
-
-    <LinearLayout
-        android:id="@+id/radioGroupLadoSombrilla"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:paddingTop="10dp">
-
-
-        <RadioGroup
-            android:id="@+id/radioGroupHamacas"
+        android:layout_margin="20dp"
+        android:layout_centerInParent="true"
+        app:cardCornerRadius="10dp"
+        app:cardElevation="50dp">
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:gravity="center">
+            android:orientation="vertical"
+            android:padding="20dp">
 
-            <RadioButton
-                android:id="@+id/radioOne"
-                android:layout_width="0dp"
+            <TextView
+                android:id="@+id/tvDetalleNumeroSombrilla"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="1"
-                android:background="@drawable/selector_button_background"
-                android:button="@android:color/transparent"
-                android:gravity="center"
-                android:layout_marginRight="20dp" />
+                android:textSize="18sp"
+                android:textStyle="bold"
+                android:text="Número de Sombrilla"
+                android:drawableLeft="@drawable/sombrilla24"
+                android:drawablePadding="10dp"
+                android:gravity="center_vertical"/>
 
-            <RadioButton
-                android:id="@+id/radioTwo"
-                android:layout_width="0dp"
+            <TextView
+                android:id="@+id/tvDetallePrecio"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="2"
-                android:background="@drawable/selector_button_background"
-                android:button="@android:color/transparent"
-                android:gravity="center" />
+                android:layout_marginTop="16dp"
+                android:text="Precio de Sombrilla"
+                android:drawableLeft="@drawable/etiqueta_precio24"
+                android:drawablePadding="10dp"
+                android:gravity="center_vertical"/>
 
-        </RadioGroup>
+            <TextView
+                android:id="@+id/tvDetalleEstado"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:text="Estado Actual"
+                android:drawableLeft="@drawable/etiqueta"
+                android:drawablePadding="10dp"
+                android:gravity="center_vertical"/>
+
+            <com.google.android.material.divider.MaterialDivider
+                android:layout_width="match_parent"
+                android:layout_height="3dp"
+                app:dividerInsetStart="16dp"
+                app:dividerInsetEnd="16dp"
+                android:layout_marginTop="20dp"/>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:paddingTop="10dp"
+                android:gravity="center_vertical">
+
+                <Button
+                    android:id="@+id/btnReservar"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:drawableLeft="@drawable/fecha24"
+                    android:onClick="reservarSombrilla"
+                    android:text="@string/btn_reservar"
+                    android:textColor="#FFFFFF"
+                    android:textSize="18sp"
+                    app:cornerRadius="10dp" />
 
 
-    </LinearLayout>
-</LinearLayout>
+                <Button
+                    android:id="@+id/btnOcupar"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:drawableLeft="@drawable/hamaca54"
+                    android:onClick="ocupar"
+                    android:text="@string/btn_ocupar"
+                    android:textColor="#FFFFFF"
+                    android:textSize="18sp"
+                    app:cornerRadius="10dp" />
+
+                <Button
+                    android:id="@+id/btnLiberar"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:drawableLeft="@drawable/candado_abierto24"
+                    android:onClick="liberar"
+                    android:text="@string/btn_liberar"
+                    android:textColor="#FFFFFF"
+                    android:textSize="18sp"
+                    app:cornerRadius="10dp" />
+
+                <Button
+                    android:id="@+id/btnVerReserva"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:drawableLeft="@drawable/lupa24"
+                    android:onClick="verReserva"
+                    android:text="@string/btn_verReserva"
+                    android:textColor="#FFFFFF"
+                    android:textSize="18sp"
+                    app:cornerRadius="10dp"/>
+            </LinearLayout>
+
+            <com.google.android.material.divider.MaterialDivider
+                android:layout_width="match_parent"
+                android:layout_height="3dp"
+                app:dividerInsetStart="16dp"
+                app:dividerInsetEnd="16dp"
+                android:layout_marginTop="20dp"
+                        android:layout_marginBottom="20dp"/>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:paddingTop="10dp"
+                android:gravity="center_horizontal">
+
+                <RadioGroup
+                    android:id="@+id/radioGroupHamacas"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:gravity="center">
+
+                    <RadioButton
+                        android:id="@+id/radioOne"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="1"
+                        android:background="@drawable/selector_button_background"
+                        android:button="@android:color/transparent"
+                        android:gravity="center"
+                        android:layout_marginRight="20dp" />
+
+                    <RadioButton
+                        android:id="@+id/radioTwo"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="2"
+                        android:background="@drawable/selector_button_background"
+                        android:button="@android:color/transparent"
+                        android:gravity="center" />
+                </RadioGroup>
+            </LinearLayout>
+        </LinearLayout>
+    </androidx.cardview.widget.CardView>
+</RelativeLayout>

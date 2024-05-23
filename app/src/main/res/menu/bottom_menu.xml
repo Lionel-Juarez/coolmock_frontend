@@ -1,16 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
-<menu xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
 
     <item
         android:id="@+id/home"
-        android:title="Home"
-        android:icon="@drawable/ic_home"/>
+        android:title="@string/reserva"
+        android:icon="@drawable/vacaciones"/>
 
     <item
         android:id="@+id/sunbed"
         android:title="@string/sunbed"
-        android:icon="@drawable/baseline_beach_access_24"
+        android:icon="@drawable/hamaca1"
         />
 
     <item
@@ -19,10 +18,10 @@
     <item
         android:id="@+id/reportes"
         android:title="@string/reportes"
-        android:icon="@drawable/baseline_report_24" />
+        android:icon="@drawable/historial24" />
     <item
         android:id="@+id/calcs"
         android:title="@string/calcs"
-        android:icon="@drawable/baseline_calculate_24" />
+        android:icon="@drawable/pagos24" />
 
 </menu>

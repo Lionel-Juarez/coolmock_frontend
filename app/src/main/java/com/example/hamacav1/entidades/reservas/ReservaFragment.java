@@ -3,22 +3,18 @@ package com.example.hamacav1.entidades.reservas;
 import android.app.DatePickerDialog;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.graphics.drawable.InsetDrawable;
-import android.os.Build;
 import android.os.Bundle;
 import android.text.InputType;
 import android.util.Log;
-import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.LayoutInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
-import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.PopupMenu;
 import android.widget.PopupWindow;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -33,7 +29,6 @@ import com.example.hamacav1.R;
 
 import org.jetbrains.annotations.Nullable;
 
-import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -48,6 +43,8 @@ public class ReservaFragment extends Fragment implements ReservaAdapter.Reservas
     private TextView tvNoReservas;
     private Long reservaId;
     private static final int ICON_MARGIN = 8; // Define the icon margin in dp
+    private ProgressBar progressBar; // Añade un ProgressBar para indicar la carga
+
 
 
     @Override
@@ -69,14 +66,32 @@ public class ReservaFragment extends Fragment implements ReservaAdapter.Reservas
         View view = inflater.inflate(R.layout.fragment_reservas, container, false);
         reservasRecyclerView = view.findViewById(R.id.reservasRecyclerView);
         tvNoReservas = view.findViewById(R.id.tvNoReservas);
+        progressBar = view.findViewById(R.id.progressBar); // Suponiendo que has añadido un ProgressBar en tu layout
+
         reservasRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         reservasAdapter = new ReservaAdapter(new ArrayList<>(), getContext(), this, reservaId);
         reservasRecyclerView.setAdapter(reservasAdapter);
 
-
         viewModel = new ViewModelProvider(this).get(ReservasViewModel.class);
         Date today = Calendar.getInstance().getTime();
         viewModel.loadReservasByDate(today);
+
+        // Observar el estado de carga
+        viewModel.getLoading().observe(getViewLifecycleOwner(), isLoading -> {
+            if (isLoading != null && isLoading) {
+                progressBar.setVisibility(View.VISIBLE);
+            } else {
+                progressBar.setVisibility(View.GONE);
+            }
+        });
+
+        // Observar los mensajes de error
+        viewModel.getErrorMessages().observe(getViewLifecycleOwner(), errorMessage -> {
+            if (errorMessage != null && !errorMessage.isEmpty()) {
+                Toast.makeText(getContext(), errorMessage, Toast.LENGTH_LONG).show();
+            }
+        });
+
         viewModel.getReservas().observe(getViewLifecycleOwner(), nuevasReservas -> {
             if (nuevasReservas == null || nuevasReservas.isEmpty()) {
                 tvNoReservas.setVisibility(View.VISIBLE);
@@ -97,6 +112,7 @@ public class ReservaFragment extends Fragment implements ReservaAdapter.Reservas
         setupFilterMenu(view);
         return view;
     }
+
 
     private void irSombrillas() {
         if (getActivity() instanceof MainActivity) {
@@ -125,7 +141,7 @@ public class ReservaFragment extends Fragment implements ReservaAdapter.Reservas
         return -1;
     }
     private void setupFilterMenu(View view) {
-        ImageButton filterButton = view.findViewById(R.id.btnFilter);
+        ImageView filterButton = view.findViewById(R.id.btnFilter);
         filterButton.setOnClickListener(v -> showFilterPopup(v));
     }
 
@@ -160,9 +176,6 @@ public class ReservaFragment extends Fragment implements ReservaAdapter.Reservas
             popupWindow.dismiss();
         });
     }
-
-
-
 
     private void showDatePickerDialog() {
         Calendar c = Calendar.getInstance();

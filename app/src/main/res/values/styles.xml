@@ -9,4 +9,19 @@
         <item name="android:textSize">18sp</item>
         <item name="android:textColor">@color/black</item>
     </style>
+
+    <style name="SaveButtonStyle">
+        <item name="android:background">#4CAF50</item> <!-- Verde -->
+        <item name="android:textColor">#FFFFFF</item> <!-- Blanco -->
+        <item name="android:padding">10dp</item>
+        <item name="android:drawablePadding">10dp</item>
+    </style>
+
+    <!-- Estilo para el botón de cancelar -->
+    <style name="CancelButtonStyle">
+        <item name="android:background">#F44336</item> <!-- Rojo -->
+        <item name="android:textColor">#FFFFFF</item> <!-- Blanco -->
+        <item name="android:padding">10dp</item>
+        <item name="android:drawablePadding">10dp</item>
+    </style>
 </resources>

@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">HamacaV1</string>
+    <string name="app_name">Hamacas</string>
     <string name="hello_blank_fragment">Hola fragmento en blanco</string>
     <string name="singup">¡Regístrate!</string>
     <string name="sunbed">Tumbona</string>
@@ -14,7 +14,7 @@
     <string name="write_here">Escribe aquí</string>
     <string name="accept">Aceptar</string>
     <string name="full_comment_hint">Sugerencia de comentario completo</string>
-    <string name="description">Esta es la descripción del informe, tendrá un máximo de 2 líneas...</string>
+    <string name="description">Esta es la descripción del informe, tendrá un máximo de 2 líneas</string>
     <string name="delete_comment">Eliminar informe</string>
     <string name="url_reportes">http://10.0.2.2:8080/api/reportes/</string>
     <string name="url_sombrillas">http://10.0.2.2:8080/api/sombrillas/</string>
@@ -75,7 +75,6 @@
     <string name="no_reservas">No hay reservas para hoy</string>
     <string name="tvSombrillas">Tumbonas reservadas:</string>
     <string name="payment_date">Fecha de pago</string>
-    <string name="btn_verReserva">Ver reserva</string>
     <string name="filter_by_name">Filtrar por nombre</string>
     <string name="filter_by_date">Filtrar por fecha</string>
     <string name="select_date">Seleccionar fecha</string>
@@ -94,6 +93,21 @@
     <string name="select_hour">Selecciona una hora</string>
     <string name="cliente">Customer:</string>
     <string name="horaLlegada">Hora llegada: %s</string>
+    <string name="sombrillas">PARCELA</string>
+    <string name="historial">HISTORIAL</string>
+    <string name="not_registered">Not yet registered? Sign Up</string>
+    <string name="forgot_password">Forgot Password?</string>
+    <string name="login">Login</string>
+    <string name="username">Username</string>
+    <string name="password">Password</string>
+    <string name="already_user">Already an user? Login</string>
+    <string name="email">Email</string>
+    <string name="btn_verReserva">Ver</string>
+    <string name="btn_liberar">Liberar</string>
+    <string name="btn_ocupar">Ocupar</string>
+    <string name="btn_reservar">Reservar</string>
+    <string name="email_hint">Email</string>
+    <string name="pagos">Pagos</string>
 
     <!-- Spinners -->
     <string-array name="rol">

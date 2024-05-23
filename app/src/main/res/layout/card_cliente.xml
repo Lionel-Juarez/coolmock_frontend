@@ -21,8 +21,7 @@
             android:layout_height="35dp"
             android:layout_marginStart="20dp"
             android:layout_marginTop="15dp"
-            android:src="@drawable/baseline_supervised_user_circle_24"
-            android:contentDescription="@string/desc_imagen_usuario"
+            android:src="@drawable/usuario"
             android:scaleType="centerCrop"/>
 
         <ImageView
@@ -31,9 +30,17 @@
             android:layout_height="35dp"
             android:layout_marginStart="20dp"
             android:layout_below="@id/imagenCliente"
-            android:layout_marginBottom="15dp"
             android:src="@drawable/baseline_local_phone_24"
-            android:contentDescription="@string/desc_imagen_telefono"
+            android:scaleType="centerCrop"/>
+
+        <ImageView
+            android:id="@+id/imagenEmail"
+            android:layout_width="35dp"
+            android:layout_height="35dp"
+            android:layout_marginStart="20dp"
+            android:layout_below="@id/imagenTelefono"
+            android:layout_marginBottom="15dp"
+            android:src="@drawable/email"
             android:scaleType="centerCrop"/>
 
         <TextView
@@ -59,30 +66,44 @@
             android:layout_marginTop="5dp"
             android:text="Número de Teléfono"/>
 
+        <TextView
+            android:id="@+id/email"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/black"
+            android:textSize="18sp"
+            android:layout_toEndOf="@id/imagenEmail"
+            android:layout_alignTop="@id/imagenEmail"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="5dp"
+            android:text="correo@correo.com"/>
+
+
+
         <ImageButton
             android:id="@+id/eliminarCliente"
-            android:layout_width="20dp"
-            android:layout_height="20dp"
-            android:background="@drawable/eliminar_azul"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/cancel32"
             android:layout_alignParentRight="true"
             android:focusable="false"
             android:focusableInTouchMode="false"
             android:scaleType="fitCenter"
             android:adjustViewBounds="true"
-            android:layout_marginTop="10dp"
+            android:layout_marginTop="15dp"
             android:layout_marginRight="10dp"/>
 
         <ImageButton
             android:id="@+id/modificarCliente"
-            android:layout_width="20dp"
-            android:layout_height="20dp"
-            android:background="@drawable/editar_azul"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/editar24"
             android:focusable="false"
             android:focusableInTouchMode="false"
             android:scaleType="fitCenter"
             android:adjustViewBounds="true"
             android:layout_toLeftOf="@id/eliminarCliente"
-            android:layout_marginTop="10dp"
+            android:layout_marginTop="15dp"
             android:layout_marginRight="20dp"/>
 
     </RelativeLayout>

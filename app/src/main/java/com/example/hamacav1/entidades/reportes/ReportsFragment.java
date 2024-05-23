@@ -99,7 +99,7 @@ public class ReportsFragment extends Fragment implements ReporteAdapter.ReportsA
 
         loadReportsFromBackend();
 
-        view.findViewById(R.id.fab_add_report).setOnClickListener(v -> newReport());
+//        view.findViewById(R.id.fab_add_report).setOnClickListener(v -> newReport());
 
         return view;
     }

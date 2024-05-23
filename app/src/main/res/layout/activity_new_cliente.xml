@@ -1,13 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView
+<RelativeLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:background="@color/lightBackgroundColor"
     tools:context=".entidades.clientes.NuevoCliente">
+
+    <ImageView
+        android:id="@+id/backgroundImage"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:scaleType="centerCrop"
+        android:src="@drawable/fondo1" />
 
     <androidx.cardview.widget.CardView
         android:layout_width="match_parent"
@@ -15,16 +20,17 @@
         android:layout_marginTop="50dp"
         android:layout_marginEnd="20dp"
         android:layout_marginStart="20dp"
-        app:cardCornerRadius="30dp"
-        app:cardElevation="20dp">
+        android:layout_centerInParent="true"
+        app:cardCornerRadius="10dp"
+        app:cardElevation="50dp">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
             android:layout_gravity="center_horizontal"
-            android:padding="20dp"
-            android:background="@drawable/card_border">
+
+            android:padding="20dp">
 
             <TextView
                 android:layout_width="match_parent"
@@ -37,47 +43,100 @@
                 android:layout_marginBottom="20dp"
                 android:layout_centerHorizontal="true"
                 android:textStyle="bold"
-                android:textSize="38dp" />
+                android:textSize="28sp" />
 
+            <com.google.android.material.divider.MaterialDivider
+                android:layout_width="match_parent"
+                android:layout_height="3dp"
+                app:dividerInsetStart="16dp"
+                app:dividerInsetEnd="16dp"/>
 
             <EditText
                 android:id="@+id/et_new_nombreCompleto_cliente"
-                android:textSize="20dp"
+                android:textSize="18sp"
                 android:hint="@string/user_name_hint"
                 android:layout_width="match_parent"
                 android:layout_height="60dp"
                 android:background="@drawable/card_border"
                 android:layout_marginTop="20dp"
                 android:padding="16dp"
-                android:gravity="start|center_vertical"
-                android:textColor="@color/principalColor"/>
+                android:drawableLeft="@drawable/nombrefiltro"
+                android:drawablePadding="20dp"
+                android:gravity="start|center_vertical"/>
 
             <EditText
                 android:id="@+id/et_new_telefono_cliente"
-                android:textSize="20dp"
+                android:textSize="18sp"
                 android:hint="@string/telefono_hint"
                 android:layout_width="match_parent"
                 android:layout_height="60dp"
                 android:background="@drawable/card_border"
                 android:layout_marginTop="20dp"
                 android:padding="16dp"
-                android:gravity="start|center_vertical"
-                android:textColor="@color/principalColor"
+                android:drawableLeft="@drawable/baseline_local_phone_24"
+                android:drawablePadding="20dp"
                 android:inputType="phone"/>
 
-            <Button
-                android:id="@+id/bt_cliente_accept"
-                android:layout_below="@id/et_new_telefono_cliente"
-                android:layout_marginBottom="40dp"
-                android:text="@string/accept"
-                android:onClick="addCliente"
-                android:layout_centerHorizontal="true"
+            <EditText
+                android:id="@+id/et_new_email_cliente"
+                android:textSize="18sp"
+                android:hint="@string/email_hint"
                 android:layout_width="match_parent"
                 android:layout_height="60dp"
-                android:textSize="18sp"
+                android:background="@drawable/card_border"
                 android:layout_marginTop="20dp"
-                app:cornerRadius = "20dp"/>
+                android:padding="16dp"
+                android:drawableLeft="@drawable/email"
+                android:drawablePadding="20dp"
+                android:inputType="textEmailAddress"/>
+
+            <com.google.android.material.divider.MaterialDivider
+                android:layout_width="match_parent"
+                android:layout_height="3dp"
+                app:dividerInsetStart="16dp"
+                app:dividerInsetEnd="16dp"
+                android:layout_marginTop="20dp"/>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:paddingTop="20dp">
+
+                <Button
+                    android:id="@+id/bt_cliente_accept"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginRight="15dp"
+                    android:drawableLeft="@drawable/check32"
+                    android:layout_weight="1"
+                    android:onClick="addCliente"
+                    android:text="@string/accept"
+                    android:textColor="#FFFFFF"
+                    android:padding="10dp"
+                    android:textSize="18sp"
+                    android:drawablePadding="10dp"
+                    android:gravity="center"
+                    app:cornerRadius="10dp" />
+
+                <Button
+                    android:id="@+id/bt_cliente_cancel"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:drawableLeft="@drawable/cancel32"
+                    android:onClick="cancel"
+                    android:text="@string/cancel"
+                    android:textColor="#FFFFFF"
+                    android:padding="10dp"
+                    android:textSize="18sp"
+                    android:drawablePadding="10dp"
+                    android:gravity="center"
+                    app:cornerRadius="10dp" />
+
+            </LinearLayout>
+
 
         </LinearLayout>
     </androidx.cardview.widget.CardView>
-</ScrollView>
+</RelativeLayout>

@@ -20,6 +20,7 @@ import android.view.ViewGroup;
 import android.view.Window;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 
 import com.example.hamacav1.entidades.calculos.CalcsFragment;
 import com.example.hamacav1.entidades.clientes.ClienteFragment;
@@ -96,9 +97,9 @@ public class MainActivity extends AppCompatActivity {
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
         dialog.setContentView(R.layout.bottomsheetlayout);
 
-        LinearLayout usuarioLayout = dialog.findViewById(R.id.layoutUsuario);
-        LinearLayout clienteLayout = dialog.findViewById(R.id.layoutCliente);
-        LinearLayout logoutLayout = dialog.findViewById(R.id.layoutLogout);
+        TextView usuarioLayout = dialog.findViewById(R.id.layoutUsuario);
+        TextView clienteLayout = dialog.findViewById(R.id.layoutCliente);
+        TextView logoutLayout = dialog.findViewById(R.id.layoutLogout);
         ImageView cancelButton = dialog.findViewById(R.id.cancelButton);
 
         clienteLayout.setOnClickListener(new View.OnClickListener() {
@@ -138,6 +139,7 @@ public class MainActivity extends AppCompatActivity {
         dialog.getWindow().getAttributes().windowAnimations = R.style.DialogAnimation;
         dialog.getWindow().setGravity(Gravity.BOTTOM);
     }
+
     // Método para renovar el token
     private void renovarToken() {
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();

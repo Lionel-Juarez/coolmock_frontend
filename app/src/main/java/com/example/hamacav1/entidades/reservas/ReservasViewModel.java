@@ -30,6 +30,14 @@ import org.json.JSONObject;
 public class ReservasViewModel extends ViewModel {
     private MutableLiveData<List<Reserva>> reservas;
     private MutableLiveData<String> errorMessages = new MutableLiveData<>();
+    private MutableLiveData<Boolean> loading = new MutableLiveData<>();
+    public MutableLiveData<String> getErrorMessages() {
+        return errorMessages;
+    }
+
+    public MutableLiveData<Boolean> getLoading() {
+        return loading;
+    }
 
     public MutableLiveData<List<Reserva>> getReservas() {
         if (reservas == null) {
@@ -39,6 +47,7 @@ public class ReservasViewModel extends ViewModel {
     }
 
     public void loadAllReservas() {
+        loading.postValue(true);  // Indicar que la carga está en progreso
         OkHttpClient client = new OkHttpClient();
         String url = "http://10.0.2.2:8080/api/reservas/";
         Request request = new Request.Builder().url(url).build();
@@ -48,7 +57,8 @@ public class ReservasViewModel extends ViewModel {
             public void onFailure(@NotNull Call call, @NotNull IOException e) {
                 Log.e("ReservasViewModel", "Error loading reservations", e);
                 errorMessages.postValue("Error al cargar las reservas: " + e.getMessage());
-                reservas.postValue(new ArrayList<>()); // Post an empty list instead of null
+                loading.postValue(false);  // Indicar que la carga ha finalizado
+                reservas.postValue(new ArrayList<>()); // Publicar una lista vacía en caso de error
             }
 
             @Override
@@ -80,11 +90,13 @@ public class ReservasViewModel extends ViewModel {
                 } else {
                     reservas.postValue(null);
                 }
+                loading.postValue(false);  // Indicar que la carga ha finalizado
             }
         });
     }
 
     public void loadReservasByDate(Date selectedDate) {
+        loading.postValue(true);  // Indicar que la carga está en progreso
         SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy", Locale.getDefault());
         String formattedDate = sdf.format(selectedDate);
 
@@ -100,6 +112,7 @@ public class ReservasViewModel extends ViewModel {
             public void onFailure(@NotNull Call call, @NotNull IOException e) {
                 Log.e("ReservasViewModel", "Error loading reservations", e);
                 errorMessages.postValue("Error al cargar las reservas: " + e.getMessage());
+                loading.postValue(false);  // Indicar que la carga ha finalizado
             }
 
             @Override
@@ -111,9 +124,11 @@ public class ReservasViewModel extends ViewModel {
                     Log.e("ReservasViewModel", "Failed to fetch reservations");
                     reservas.postValue(new ArrayList<>());
                 }
+                loading.postValue(false);  // Indicar que la carga ha finalizado
             }
         });
     }
+
 
     private void processResponseData(String responseData) {
         try {

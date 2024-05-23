@@ -3,8 +3,8 @@
     android:shape="rectangle">
     <solid android:color="#CCFFFFFF"/> <!-- Fondo blanco con 80% de transparencia -->
     <corners
-        android:bottomLeftRadius="30dp"
-        android:bottomRightRadius="30dp"
-        android:topLeftRadius="30dp"
-        android:topRightRadius="30dp"/>
+        android:bottomLeftRadius="12dp"
+        android:bottomRightRadius="12dp"
+        android:topLeftRadius="12dp"
+        android:topRightRadius="12dp"/>
 </shape>
