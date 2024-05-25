@@ -1,7 +1,4 @@
 package com.example.hamacav1.entidades.reportes;
-
-import static android.nfc.tech.MifareUltralight.PAGE_SIZE;
-
 import androidx.activity.result.ActivityResult;
 import androidx.activity.result.ActivityResultCallback;
 import androidx.activity.result.ActivityResultLauncher;
@@ -10,16 +7,9 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 
 import android.app.Activity;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.res.Resources;
-import android.graphics.pdf.PdfDocument;
-import android.net.ConnectivityManager;
-import android.net.Network;
-import android.net.NetworkCapabilities;
-import android.net.NetworkInfo;
-import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
@@ -27,8 +17,6 @@ import android.util.Log;
 import android.view.View;
 
 import android.widget.TextView;
-import android.widget.Toast;
-
 
 import org.json.JSONArray;
 import org.json.JSONException;
