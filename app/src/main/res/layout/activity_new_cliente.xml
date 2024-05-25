@@ -110,7 +110,7 @@
                     android:layout_marginRight="15dp"
                     android:drawableLeft="@drawable/check32"
                     android:layout_weight="1"
-                    android:onClick="addCliente"
+                    android:onClick="saveCliente"
                     android:text="@string/accept"
                     android:textColor="#FFFFFF"
                     android:padding="10dp"

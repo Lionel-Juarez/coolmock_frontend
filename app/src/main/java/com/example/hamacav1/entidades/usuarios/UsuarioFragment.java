@@ -30,6 +30,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.hamacav1.util.Internetop;
 import com.example.hamacav1.R;
+import com.example.hamacav1.util.Utils;
 
 import org.jetbrains.annotations.NotNull;
 import org.json.JSONArray;
@@ -181,11 +182,11 @@ public class UsuarioFragment extends Fragment implements UsuarioAdapter.UsuarioA
                 eliminarTask(url);
             } else {
                 Log.e("UsuariosFragment", "Conexión de red no disponible para eliminar Usuario.");
-                showError("error.IOException");
+                Utils.showError(getContext(),"error.IOException");
             }
         } else {
             Log.e("UsuariosFragment", "Posición de Usuario no válida o lista de Usuarios vacía.");
-            showError("error.desconocido");
+            Utils.showError(getContext(),"error.desconocido");
         }
     }
 
@@ -229,10 +230,10 @@ public class UsuarioFragment extends Fragment implements UsuarioAdapter.UsuarioA
                     public void run() {
                         if(result.equalsIgnoreCase("error.IOException")||
                                 result.equals("error.OKHttp")) {//Controlamos los posibles errores
-                            showError(result);
+                            Utils.showError(getContext(),result);
                         }
                         else if(result.equalsIgnoreCase("null")){
-                            showError("error.desconocido");
+                            Utils.showError(getContext(),"error.desconocido");
                         }
                         else{
 //                            ProgressBar pbMain = (ProgressBar) findViewById(R.id.pb_main);
@@ -261,7 +262,7 @@ public class UsuarioFragment extends Fragment implements UsuarioAdapter.UsuarioA
             getListaTask(url);
         } else {
             Log.e("UsuariosFragment", "Conexión de red no disponible.");
-            showError("error.IOException");
+            Utils.showError(getContext(),"error.IOException");
         }
     }
 
@@ -280,10 +281,10 @@ public class UsuarioFragment extends Fragment implements UsuarioAdapter.UsuarioA
                         if(result.equalsIgnoreCase("error.IOException")||
                                 result.equals("error.OKHttp")) {
 
-                            showError(result);
+                            Utils.showError(getContext(),result);
                         }
                         else if(result.equalsIgnoreCase("null")){
-                            showError("error.desconocido");
+                            Utils.showError(getContext(),"error.desconocido");
                         }
                         else{
                             resetLista(result);
@@ -318,28 +319,7 @@ public class UsuarioFragment extends Fragment implements UsuarioAdapter.UsuarioA
             // ProgressBar pbMain = findViewById(R.id.pb_main);
             // pbMain.setVisibility(View.GONE);
         } catch (JSONException e) {
-            showError(e.getMessage());
+            Utils.showError(getContext(),e.getMessage());
         }
-    }
-
-    private void showError(String error) {
-        String message;
-        Resources res = getResources();
-        int duration;
-        if (error.equals("error.IOException")||error.equals("error.OKHttp")) {
-            message = res.getString(R.string.error_connection);
-            duration = Toast.LENGTH_SHORT;
-        }
-        else if(error.equals("error.undelivered")){
-            message = res.getString(R.string.error_undelivered);
-            duration = Toast.LENGTH_LONG;
-        }
-        else {
-            message = res.getString(R.string.error_unknown);
-            duration = Toast.LENGTH_SHORT;
-        }
-        Toast toast = Toast.makeText(getActivity(), message, duration);
-        toast.show();
-        Log.d("UsuariosFragment", "Mostrando error: " + message);
     }
 }

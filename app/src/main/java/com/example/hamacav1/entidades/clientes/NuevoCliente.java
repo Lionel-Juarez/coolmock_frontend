@@ -23,6 +23,8 @@ import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.hamacav1.R;
+import com.example.hamacav1.util.Internetop;
+import com.example.hamacav1.util.Utils;
 
 import org.json.JSONObject;
 
@@ -39,6 +41,10 @@ import okhttp3.Response;
 public class NuevoCliente extends AppCompatActivity {
     private EditText etNombreCompleto;
     private EditText etNumeroTelefono;
+    private EditText etEmail;
+    private boolean isEditMode = false;
+    private Cliente cliente;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -46,130 +52,108 @@ public class NuevoCliente extends AppCompatActivity {
 
         etNombreCompleto = findViewById(R.id.et_new_nombreCompleto_cliente);
         etNumeroTelefono = findViewById(R.id.et_new_telefono_cliente);
+        etEmail = findViewById(R.id.et_new_email_cliente);
+
+        if (getIntent().hasExtra("cliente")) {
+            isEditMode = true;
+            cliente = (Cliente) getIntent().getSerializableExtra("cliente");
+            fillClientData(cliente);
+        }
+    }
+
+    private void fillClientData(Cliente cliente) {
+        etNombreCompleto.setText(cliente.getNombreCompleto());
+        etNumeroTelefono.setText(cliente.getNumeroTelefono());
+        etEmail.setText(cliente.getEmail());
     }
 
     @Override
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
     }
-    private Boolean isNetworkAvailable() {
 
-        ConnectivityManager connectivityManager = (ConnectivityManager)
-                getSystemService(Context.CONNECTIVITY_SERVICE);
-        Network nw = connectivityManager.getActiveNetwork();
-        if (nw == null) {
-            return false;
-        } else {
-            NetworkCapabilities actNw = connectivityManager.getNetworkCapabilities(nw);
-            return (actNw != null) && (actNw.hasTransport(NetworkCapabilities.TRANSPORT_WIFI) ||
-                    actNw.hasTransport(NetworkCapabilities.TRANSPORT_CELLULAR));
-        }
-    }
-
-    public void addCliente(View view) {
+    public void saveCliente(View view) {
         String nombreCompleto = etNombreCompleto.getText().toString();
         String numeroTelefono = etNumeroTelefono.getText().toString();
+        String email = etEmail.getText().toString();
 
-        if (validateInput(nombreCompleto, numeroTelefono)) {
-            if (isNetworkAvailable()) {
-                String url = getResources().getString(R.string.url_clientes) + "nuevoCliente";
-                sendTask(url, nombreCompleto, numeroTelefono);
+        if (validateInput(nombreCompleto, numeroTelefono, email)) {
+            if (Internetop.getInstance(getApplicationContext()).isNetworkAvailable()) {
+                String url;
+                if (isEditMode) {
+                    url = getResources().getString(R.string.url_clientes) + "actualizarCliente/" + cliente.getIdCliente();
+                } else {
+                    url = getResources().getString(R.string.url_clientes) + "nuevoCliente";
+                }
+                sendTask(url, nombreCompleto, numeroTelefono, email);
             } else {
-                showError("error.IOException");
+                Utils.showError(getApplicationContext(), "error.IOException");
             }
         }
     }
 
-    private boolean validateInput(String nombre, String telefono) {
+    private boolean validateInput(String nombre, String telefono, String email) {
         boolean isValid = true;
         Resources res = getResources();
 
-        // Validación para el nombre
         if (nombre.isEmpty()) {
             etNombreCompleto.setError(res.getString(R.string.campo_obligatorio));
             isValid = false;
-        } else if (nombre.length() > 50) { // Asumiendo que el máximo es 50 caracteres para el nombre
+        } else if (nombre.length() > 50) {
             etNombreCompleto.setError(res.getString(R.string.error_nombre_largo));
             isValid = false;
         }
 
-        // Validación para el teléfono
         if (telefono.isEmpty()) {
             etNumeroTelefono.setError(res.getString(R.string.campo_obligatorio));
             isValid = false;
-        } else if (!telefono.matches("\\d{9,15}")) { // Asume que el teléfono debe tener entre 9 y 15 dígitos
+        } else if (!telefono.matches("\\d{9,15}")) {
             etNumeroTelefono.setError(res.getString(R.string.error_telefono_formato));
             isValid = false;
         }
-
+        if (email.isEmpty()) {
+            etEmail.setError(res.getString(R.string.campo_obligatorio));
+            isValid = false;
+        } else if (email.length() > 50) {
+            etEmail.setError(res.getString(R.string.error_nombre_largo));
+            isValid = false;
+        }
         return isValid;
     }
-
-
-    private void sendTask(String url, String nombreCompleto, String numeroTelefono) {
+    private void sendTask(String url, String nombreCompleto, String numeroTelefono, String email) {
         ExecutorService executor = Executors.newSingleThreadExecutor();
         Handler handler = new Handler(Looper.getMainLooper());
 
         executor.execute(() -> {
             try {
-                OkHttpClient client = new OkHttpClient();
-                MediaType MEDIA_TYPE_JSON = MediaType.parse("application/json; charset=utf-8");
-
-                // Obtener el token de SharedPreferences
-                SharedPreferences sharedPreferences = getSharedPreferences("MyAppPrefs", Context.MODE_PRIVATE);
-                String idToken = sharedPreferences.getString("idToken", null);
-
                 JSONObject json = new JSONObject();
                 json.put("nombreCompleto", nombreCompleto);
                 json.put("numeroTelefono", numeroTelefono);
+                json.put("email", email);
 
-                RequestBody body = RequestBody.create(json.toString(), MEDIA_TYPE_JSON);
+                Internetop internetop = Internetop.getInstance(getApplicationContext());
+                String result;
 
-                // Añadir el token en la cabecera de la solicitud
-                Request request = new Request.Builder()
-                        .url(url)
-                        .post(body)
-                        .addHeader("Authorization", "Bearer " + idToken) // Añadir el token aquí
-                        .build();
-
-                try (Response response = client.newCall(request).execute()) {
-                    String result = response.body().string();
-                    handler.post(() -> {
-                        Log.d("Newcliente", "Respuesta del servidor: " + result);
-                        if (response.isSuccessful()) {
-                            Log.d("Newcliente", "Cliente añadido con éxito.");
-                            Toast.makeText(getApplicationContext(), "Cliente añadido con éxito", Toast.LENGTH_SHORT).show();
-                            // Actualizar lista de clientes
-                            setResult(Activity.RESULT_OK);
-                            finish();
-                        } else {
-                            Log.e("Newcliente", "Error al añadir cliente: " + result);
-                            showError("Error desconocido al añadir cliente.");
-                        }
-                    });
+                if (isEditMode) {
+                    json.put("id", cliente.getIdCliente());
+                    result = internetop.sendPutRequest(url, json);
+                } else {
+                    result = internetop.sendPostRequest(url, json);
                 }
+
+                handler.post(() -> {
+                    if (result.equals("error.OKHttp")) {
+                        Utils.showError(getApplicationContext(), "error.OKHttp");
+                    } else {
+                        Toast.makeText(getApplicationContext(), "Cliente " + (isEditMode ? "actualizado" : "añadido") + " con éxito", Toast.LENGTH_SHORT).show();
+                        setResult(Activity.RESULT_OK);
+                        finish();
+                    }
+                });
             } catch (Exception e) {
-                Log.e("Newcliente", "Excepción al enviar tarea: " + e.getMessage(), e);
-                handler.post(() -> showError("Error al procesar la solicitud."));
+                handler.post(() -> Utils.showError(getApplicationContext(), "error.Exception"));
             }
         });
     }
 
-
-    private void showError(String error) {
-        String message;
-        Resources res = getResources();
-        int duration;
-        if(error.equals("error.IOException")){
-            duration = Toast.LENGTH_LONG;
-            message=res.getString(R.string.error_connection);
-        }
-        else {
-            duration = Toast.LENGTH_SHORT;
-            message = res.getString(R.string.error_unknown);
-        }
-        Context context = this.getApplicationContext();
-        Toast toast = Toast.makeText(context, message, duration);
-        toast.show();
-    }
 }

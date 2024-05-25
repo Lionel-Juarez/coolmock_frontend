@@ -1,6 +1,11 @@
 package com.example.hamacav1.util;
 
 import android.content.Context;
+import android.net.ConnectivityManager;
+import android.net.Network;
+import android.net.NetworkCapabilities;
+import android.net.NetworkInfo;
+import android.os.Build;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -61,7 +66,23 @@ public class Internetop {
             return "error.JSONException";
         }
     }
-
+    public boolean isNetworkAvailable() {
+        ConnectivityManager connectivityManager = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            Network nw = connectivityManager.getActiveNetwork();
+            if (nw == null) {
+                return false;
+            } else {
+                NetworkCapabilities actNw = connectivityManager.getNetworkCapabilities(nw);
+                return (actNw != null) && (actNw.hasTransport(NetworkCapabilities.TRANSPORT_WIFI) ||
+                        actNw.hasTransport(NetworkCapabilities.TRANSPORT_CELLULAR));
+            }
+        } else {
+            @SuppressWarnings("deprecation")
+            NetworkInfo nwInfo = connectivityManager.getActiveNetworkInfo();
+            return nwInfo != null && nwInfo.isConnected();
+        }
+    }
     private String okPutText(String urlo, List<Parametro> params) {
         try {
             OkHttpClient client = OkHttpProvider.getInstance(context);
@@ -147,23 +168,43 @@ public class Internetop {
         }
     }
 
-    public String putText(String urlo, List<Parametro> params) {
-        int cont = 0;
-        String res = okPutText(urlo, params);
-        while ((cont < 5) && (res.equals("error.PIPE"))) {
-            ++cont;
-            res = okPutText(urlo, params);
+    public String sendPostRequest(String url, JSONObject json) throws IOException {
+        OkHttpClient client = new OkHttpClient();
+        MediaType MEDIA_TYPE_JSON = MediaType.parse("application/json; charset=utf-8");
+
+        RequestBody body = RequestBody.create(json.toString(), MEDIA_TYPE_JSON);
+        Request request = new Request.Builder()
+                .url(url)
+                .post(body)
+                .build();
+
+        try (Response response = client.newCall(request).execute()) {
+            if (!response.isSuccessful()) {
+                return "error.OKHttp";
+            } else {
+                return response.body().string();
+            }
         }
-        return res;
     }
 
-    public String postText(String urlo, List<Parametro> params) {
-        int cont = 0;
-        String res = okPostText(urlo, params);
-        while ((cont < 5) && (res.equals("error.PIPE"))) {
-            ++cont;
-            res = okPostText(urlo, params);
+    public String sendPutRequest(String url, JSONObject json) throws IOException {
+        OkHttpClient client = new OkHttpClient();
+        MediaType MEDIA_TYPE_JSON = MediaType.parse("application/json; charset=utf-8");
+
+        RequestBody body = RequestBody.create(json.toString(), MEDIA_TYPE_JSON);
+        Request request = new Request.Builder()
+                .url(url)
+                .put(body)
+                .build();
+
+        try (Response response = client.newCall(request).execute()) {
+            if (!response.isSuccessful()) {
+                return "error.OKHttp";
+            } else {
+                return response.body().string();
+            }
         }
-        return res;
     }
+
+
 }

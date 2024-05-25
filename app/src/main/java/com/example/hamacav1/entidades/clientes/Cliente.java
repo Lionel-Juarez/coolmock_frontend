@@ -2,6 +2,9 @@ package com.example.hamacav1.entidades.clientes;
 
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import java.io.Serializable;
+
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -9,10 +12,11 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class Cliente {
+public class Cliente implements Serializable {
     private long idCliente;
     private String nombreCompleto;
     private String numeroTelefono;
+    private String email;
 
     @Override
     public String toString() {
@@ -24,5 +28,6 @@ public class Cliente {
         this.idCliente = jsonObject.optLong("idCliente", -1);
         this.nombreCompleto = jsonObject.optString("nombreCompleto", "");
         this.numeroTelefono = jsonObject.optString("numeroTelefono", "");
+        this.email = jsonObject.optString("email", "");
     }
 }

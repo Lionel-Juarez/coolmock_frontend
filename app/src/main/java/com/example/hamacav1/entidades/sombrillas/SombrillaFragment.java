@@ -89,13 +89,13 @@ public class SombrillaFragment extends Fragment implements SombrillaDetalles.Som
         String url = getResources().getString(R.string.url_sombrillas).concat("sombrillas");
         HttpUrl urlWithParams = HttpUrl.parse(url).newBuilder().build();
 
-        // Obtener el token de SharedPreferences
-        SharedPreferences sharedPreferences = getActivity().getSharedPreferences("MyAppPrefs", Context.MODE_PRIVATE);
-        String idToken = sharedPreferences.getString("idToken", null);
+//        // Obtener el token de SharedPreferences
+//        SharedPreferences sharedPreferences = getActivity().getSharedPreferences("MyAppPrefs", Context.MODE_PRIVATE);
+//        String idToken = sharedPreferences.getString("idToken", null);
 
         Request request = new Request.Builder()
                 .url(urlWithParams.toString())
-                .addHeader("Authorization", "Bearer " + idToken) // Añadir el token aquí
+//                .addHeader("Authorization", "Bearer " + idToken) // Añadir el token aquí
                 .get()
                 .build();
 

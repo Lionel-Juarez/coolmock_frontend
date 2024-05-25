@@ -23,6 +23,7 @@ import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.hamacav1.R;
+import com.example.hamacav1.util.Utils;
 
 import org.json.JSONObject;
 
@@ -84,7 +85,7 @@ public class NuevoUsuario extends AppCompatActivity {
                 String url = getResources().getString(R.string.url_usuarios) + "nuevoUsuario";
                 sendTask(url, nombre, password, rol);
             } else {
-                showError("error.IOException");
+                Utils.showError(getApplicationContext(),"error.IOException");
             }
         }
     }
@@ -145,32 +146,14 @@ public class NuevoUsuario extends AppCompatActivity {
                             finish();
                         } else {
                             Log.e("Newusuario", "Error al añadir usuarioe: " + result);
-                            showError("Error desconocido al añadir usuarioe.");
+                            Utils.showError(getApplicationContext(),"Error desconocido al añadir usuarioe.");
                         }
                     });
                 }
             } catch (Exception e) {
                 Log.e("Newusuario", "Excepción al enviar tarea: " + e.getMessage(), e);
-                handler.post(() -> showError("Error al procesar la solicitud."));
+                handler.post(() -> Utils.showError(getApplicationContext(),"Error al procesar la solicitud."));
             }
         });
-    }
-
-    private void showError(String error) {
-        String message;
-        Resources res = getResources();
-        int duration;
-        if(error.equals("error.IOException")){
-            duration = Toast.LENGTH_LONG;
-            message=res.getString(R.string.error_connection);
-        }
-        else {
-            duration = Toast.LENGTH_SHORT;
-            message = res.getString(R.string.error_unknown);
-        }
-        Context context = this.getApplicationContext();
-        Toast toast = Toast.makeText(context, message, duration);
-        toast.setGravity(Gravity.CENTER, 0, 0);
-        toast.show();
     }
 }

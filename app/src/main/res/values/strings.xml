@@ -4,7 +4,7 @@
     <string name="singup">Sign up!</string>
     <string name="sunbed">Sunbed</string>
     <string name="reportes">Reports</string>
-    <string name="calcs">Daily calculations</string>
+    <string name="calcs">Payments</string>
     <string name="user">User</string>
     <string name="logout">Log out</string>
     <string name="reportsTitle">REPORTS</string>
@@ -21,7 +21,7 @@
     <string name="url_clientes">http://10.0.2.2:8080/api/clientes/</string>
     <string name="url_reservas">http://10.0.2.2:8080/api/reservas/</string>
     <string name="url_usuarios">http://10.0.2.2:8080/api/usuarios/</string>
-    <string name="url_calculos">http://10.0.2.2:8080/api/calculos/</string>
+    <string name="url_pagos">http://10.0.2.2:8080/api/pagos/</string>
     <string name="eliminar_reporte">Delete report</string>
     <string name="are_you_sure">Are you sure?</string>
     <string name="yes">Yes</string>
@@ -108,6 +108,7 @@
     <string name="email">Email</string>
     <string name="email_hint">Email</string>
     <string name="pagos">Payments</string>
+    <string name="desc_icono_metodo_pago">Metodo de pago</string>
 
     //Spinners
     <string-array name="hour_array">

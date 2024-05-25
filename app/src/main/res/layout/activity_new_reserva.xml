@@ -33,7 +33,6 @@
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:padding="10dp"
                 android:text="@string/create_new_reservation"
                 android:textAlignment="center"
                 android:textSize="24sp"
@@ -69,7 +68,7 @@
                     android:background="?attr/selectableItemBackground"
                     android:drawableLeft="@drawable/calendario"
                     android:onClick="showDatePickerDialog"
-                    android:layout_marginRight="50dp"
+                    android:layout_marginRight="30dp"
                     android:padding="10dp"
                     android:textColor="@color/black"
                     android:textAlignment="textStart"/>
@@ -85,9 +84,10 @@
 
             <com.google.android.material.divider.MaterialDivider
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="3dp"
                 app:dividerInsetStart="16dp"
-                app:dividerInsetEnd="16dp"/>
+                app:dividerInsetEnd="16dp"
+                android:layout_marginTop="20dp"/>
 
             <TextView
                 android:layout_width="match_parent"
@@ -186,7 +186,7 @@
                     android:id="@+id/btn_save_reserva"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_marginRight="15dp"
+                    android:layout_marginRight="10dp"
                     android:drawableLeft="@drawable/check32"
                     android:layout_weight="1"
                     android:onClick="addReserva"

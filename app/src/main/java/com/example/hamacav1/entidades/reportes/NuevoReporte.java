@@ -25,6 +25,8 @@ import androidx.appcompat.app.AppCompatActivity;
 
 
 import com.example.hamacav1.R;
+import com.example.hamacav1.util.Internetop;
+import com.example.hamacav1.util.Utils;
 
 import org.json.JSONObject;
 
@@ -100,11 +102,11 @@ public class NuevoReporte extends AppCompatActivity {
         String estado = String.valueOf(spinnerEstado.getSelectedItemPosition() + 1); // Asegúrate de que los estados en el spinner estén correctamente alineados con tu backend
 
         if (validateInput(titulo, comentarioCompleto)) {
-            if (isNetworkAvailable()) {
+            if (Internetop.getInstance(getApplicationContext()).isNetworkAvailable()) {
                 String url = getResources().getString(R.string.url_reportes) + "newReport";
                 sendTask(url, titulo, comentarioCompleto, estado, fechaCreacion, String.valueOf(creadoPor));
             } else {
-                showError("error.IOException");
+                Utils.showError(getApplicationContext(),"error.IOException");
             }
         }
     }
@@ -158,13 +160,13 @@ public class NuevoReporte extends AppCompatActivity {
                             finish();
                         } else {
                             Log.e("NewReport", "Error al añadir reporte: " + result);
-                            showError("Error desconocido al añadir reporte.");
+                            Utils.showError(getApplicationContext(),"Error desconocido al añadir reporte.");
                         }
                     });
                 }
             } catch (Exception e) {
                 Log.e("NewReport", "Excepción al enviar tarea: " + e.getMessage(), e);
-                handler.post(() -> showError("Error al procesar la solicitud."));
+                handler.post(() -> Utils.showError(getApplicationContext(),"Error al procesar la solicitud."));
             }
         });
     }
@@ -181,30 +183,12 @@ public class NuevoReporte extends AppCompatActivity {
             setResult(RESULT_OK);
             finish();
         } else {
-            showError("error.desconocido");
+            Utils.showError(getApplicationContext(),"error.desconocido");
         }
     }
 
     private long getCurrentUserId() {
         // Implementa la lógica para obtener el ID del usuario actual
         return 1;
-    }
-
-    private void showError(String error) {
-        String message;
-        Resources res = getResources();
-        int duration;
-        if(error.equals("error.IOException")){
-            duration = Toast.LENGTH_LONG;
-            message=res.getString(R.string.error_connection);
-        }
-        else {
-            duration = Toast.LENGTH_SHORT;
-            message = res.getString(R.string.error_unknown);
-        }
-        Context context = this.getApplicationContext();
-        Toast toast = Toast.makeText(context, message, duration);
-        toast.setGravity(Gravity.CENTER, 0, 0);
-        toast.show();
     }
 }

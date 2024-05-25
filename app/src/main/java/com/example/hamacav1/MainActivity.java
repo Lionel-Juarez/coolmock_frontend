@@ -19,10 +19,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import com.example.hamacav1.entidades.calculos.CalcsFragment;
+import com.example.hamacav1.entidades.pagos.PagoFragment;
 import com.example.hamacav1.entidades.clientes.ClienteFragment;
 import com.example.hamacav1.entidades.sombrillas.SombrillaFragment;
 import com.example.hamacav1.entidades.reportes.ReportsFragment;
@@ -71,7 +70,7 @@ public class MainActivity extends AppCompatActivity {
             } else if (itemId == R.id.reportes) {
                 replaceFragment(new ReportsFragment());
             } else if (itemId == R.id.calcs) {
-                replaceFragment(new CalcsFragment());
+                replaceFragment(new PagoFragment());
             }
 
             return true;

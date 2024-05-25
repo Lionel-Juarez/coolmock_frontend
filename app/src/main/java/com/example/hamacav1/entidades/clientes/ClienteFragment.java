@@ -31,6 +31,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.hamacav1.R;
 import com.example.hamacav1.util.Internetop;
+import com.example.hamacav1.util.Utils;
 
 import org.jetbrains.annotations.NotNull;
 import org.json.JSONArray;
@@ -64,18 +65,6 @@ public class ClienteFragment extends Fragment implements ClienteAdapter.ClienteA
                     }
                 }
             });
-
-    @Override
-    public void editPressed(int position) {
-        if (clienteList != null) {
-            if (clienteList.size() > position) {
-                Cliente cliente = clienteList.get(position);
-                Intent myIntent = new Intent(getActivity(), NuevoCliente.class);
-                myIntent.putExtra("idCliente", cliente.getIdCliente());
-                nuevoResultLauncher.launch(myIntent);
-            }
-        }
-    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -160,7 +149,7 @@ public class ClienteFragment extends Fragment implements ClienteAdapter.ClienteA
     @Override
     public void deletePressed(int position) {
         AlertDialog diaBox = AskOption(position);
-        diaBox.show();//Mostramos un diálogo de confirmación
+        diaBox.show();
     }
     private AlertDialog AskOption(final int position) {
         AlertDialog myQuittingDialogBox = new AlertDialog.Builder(getActivity())
@@ -187,63 +176,36 @@ public class ClienteFragment extends Fragment implements ClienteAdapter.ClienteA
             Cliente Cliente = clienteList.get(position);
             Log.d("ClientesFragment", "Eliminando Cliente: " + Cliente.getIdCliente());
 
-            if (isNetworkAvailable()) {
+            if (Internetop.getInstance(getContext()).isNetworkAvailable()) {
                 String url = getResources().getString(R.string.url_clientes) + "eliminarCliente/" + Cliente.getIdCliente();
                 eliminarTask(url);
             } else {
                 Log.e("ClientesFragment", "Conexión de red no disponible para eliminar Cliente.");
-                showError("error.IOException");
+                Utils.showError(getContext(),"error.IOException");
             }
         } else {
             Log.e("ClientesFragment", "Posición de Cliente no válida o lista de Clientes vacía.");
-            showError("error.desconocido");
+            Utils.showError(getContext(),"error.desconocido");
         }
     }
-
-
-    private Boolean isNetworkAvailable() {
-        ConnectivityManager connectivityManager = (ConnectivityManager)
-                getContext().getSystemService(Context.CONNECTIVITY_SERVICE);
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            Network nw = connectivityManager.getActiveNetwork();
-            if (nw == null) {
-                return false;
-            } else {
-                NetworkCapabilities actNw = connectivityManager.getNetworkCapabilities(nw);
-                return (actNw != null) && (actNw.hasTransport(NetworkCapabilities.TRANSPORT_WIFI) ||
-                        actNw.hasTransport(NetworkCapabilities.TRANSPORT_CELLULAR));
-            }
-        } else {
-            @SuppressWarnings("deprecation")
-            NetworkInfo nwInfo = connectivityManager.getActiveNetworkInfo();
-            return nwInfo != null && nwInfo.isConnected();
-        }
-    }
-
 
     private void eliminarTask(String url){
-        //La clase Executor será la encargada de lanzar un nuevo hilo en background con la tarea
         ExecutorService executor = Executors.newSingleThreadExecutor();
-        //Handler es la clase encargada de manejar el resultado de la tarea ejecutada en segundo plano
         Handler handler = new Handler(Looper.getMainLooper());
         executor.execute(new Runnable() {//Ejecutamos el nuevo hilo
             @Override
             public void run() {
-                /*Aquí ejecutamos el código en segundo plano, que consiste en obtener del servidor
-                 * la lista de alumnos*/
                 Internetop internetop = Internetop.getInstance(getContext());
                 String result = internetop.deleteTask(url);
-                handler.post(new Runnable() {/*Una vez handler recoge el resultado de la tarea en
-                segundo plano, hacemos los cambios pertinentes en la interfaz de cliente en función
-                del resultado obtenido*/
+                handler.post(new Runnable() {
                     @Override
                     public void run() {
                         if(result.equalsIgnoreCase("error.IOException")||
-                                result.equals("error.OKHttp")) {//Controlamos los posibles errores
-                            showError(result);
+                                result.equals("error.OKHttp")) {
+                            Utils.showError(getContext(), result);
                         }
                         else if(result.equalsIgnoreCase("null")){
-                            showError("error.desconocido");
+                            Utils.showError(getContext(), "error.desconocido");
                         }
                         else{
 //                            ProgressBar pbMain = (ProgressBar) findViewById(R.id.pb_main);
@@ -255,10 +217,19 @@ public class ClienteFragment extends Fragment implements ClienteAdapter.ClienteA
             }
         });
     }
+    @Override
+    public void editPressed(int position) {
+        if (clienteList != null && clienteList.size() > position) {
+            Cliente cliente = clienteList.get(position);
+            Intent myIntent = new Intent(getActivity(), NuevoCliente.class);
+            myIntent.putExtra("cliente", cliente);
+            nuevoResultLauncher.launch(myIntent);
+        }
+    }
 
     private void cargarClientes() {
         Log.d("ClientesFragment", "Intentando cargar Clientes...");
-        if (isNetworkAvailable()) {
+        if (Internetop.getInstance(getContext()).isNetworkAvailable()) {
             Log.d("ClientesFragment", "Conexión de red disponible. Cargando Clientes...");
 
             // Aquí podría ir el código para mostrar una barra de progreso si es necesario
@@ -272,7 +243,9 @@ public class ClienteFragment extends Fragment implements ClienteAdapter.ClienteA
             getListaTask(url);
         } else {
             Log.e("ClientesFragment", "Conexión de red no disponible.");
-            showError("error.IOException");
+            Utils.showError(getContext(), "error.IOException");
+
+
         }
     }
 
@@ -291,10 +264,10 @@ public class ClienteFragment extends Fragment implements ClienteAdapter.ClienteA
                         if(result.equalsIgnoreCase("error.IOException")||
                                 result.equals("error.OKHttp")) {
 
-                            showError(result);
+                            Utils.showError(getContext(), result);
                         }
                         else if(result.equalsIgnoreCase("null")){
-                            showError("error.desconocido");
+                            Utils.showError(getContext(), "error.desconocido");
                         }
                         else{
                             resetLista(result);
@@ -329,28 +302,7 @@ public class ClienteFragment extends Fragment implements ClienteAdapter.ClienteA
             // ProgressBar pbMain = findViewById(R.id.pb_main);
             // pbMain.setVisibility(View.GONE);
         } catch (JSONException e) {
-            showError(e.getMessage());
+            Utils.showError(getContext(), e.getMessage());
         }
-    }
-
-    private void showError(String error) {
-        String message;
-        Resources res = getResources();
-        int duration;
-        if (error.equals("error.IOException")||error.equals("error.OKHttp")) {
-            message = res.getString(R.string.error_connection);
-            duration = Toast.LENGTH_SHORT;
-        }
-        else if(error.equals("error.undelivered")){
-            message = res.getString(R.string.error_undelivered);
-            duration = Toast.LENGTH_LONG;
-        }
-        else {
-            message = res.getString(R.string.error_unknown);
-            duration = Toast.LENGTH_SHORT;
-        }
-        Toast toast = Toast.makeText(getActivity(), message, duration);
-        toast.show();
-        Log.d("ClientesFragment", "Mostrando error: " + message);
     }
 }

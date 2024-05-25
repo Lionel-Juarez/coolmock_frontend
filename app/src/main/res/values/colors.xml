@@ -12,6 +12,8 @@
     <color name="accentColor">#FF8A65</color>
     <color name="lightBackgroundColor">#72B0DD</color>
     <color name="darkBackgroundColor">#01579B</color>
+    <color name="grey">#6A7177</color>
+
 
     <!-- Colores para estados de las sombrillas -->
     <color name="colorReservada">#0B710D</color>

@@ -29,6 +29,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.example.hamacav1.entidades.clientes.Cliente;
 import com.example.hamacav1.R;
 import com.example.hamacav1.entidades.usuarios.Usuario;
+import com.example.hamacav1.util.Utils;
 
 import org.jetbrains.annotations.NotNull;
 import org.json.JSONArray;
@@ -155,7 +156,7 @@ public class NuevaReserva extends AppCompatActivity {
                 String url = getResources().getString(R.string.url_reservas) + "nuevaReserva";
                 sendTask(url, fechaReserva, fechaReservaRealizada, estado, pagada, metodoPago, cliente.getIdCliente(), idsSombrillas, 1, cantidadHamacas, horaLlegada);
             } else {
-                showError("No hay conexión a Internet.");
+                Utils.showError(getApplicationContext(),"No hay conexión a Internet.");
             }
         }
     }
@@ -209,15 +210,15 @@ public class NuevaReserva extends AppCompatActivity {
                     } else {
                         String errorMessage = response.body() != null ? response.body().string() : "Respuesta vacía";
                         Log.e("sendTask", "Error al añadir reserva, respuesta del servidor: " + errorMessage);
-                        handler.post(() -> showError("Error al añadir reserva: " + errorMessage));
+                        handler.post(() -> Utils.showError(getApplicationContext(),"Error al añadir reserva: " + errorMessage));
                     }
                 } catch (Exception e) {
                     Log.e("sendTask", "Excepción al enviar datos de reserva: " + e.getMessage(), e);
-                    handler.post(() -> showError("Error de conexión al servidor: " + e.getMessage()));
+                    handler.post(() -> Utils.showError(getApplicationContext(),"Error de conexión al servidor: " + e.getMessage()));
                 }
             } catch (Exception e) {
                 Log.e("sendTask", "Excepción al enviar datos de reserva: " + e.getMessage(), e);
-                handler.post(() -> showError("Error de conexión al servidor: " + e.getMessage()));
+                handler.post(() -> Utils.showError(getApplicationContext(),"Error de conexión al servidor: " + e.getMessage()));
             }
         });
     }
@@ -305,8 +306,9 @@ public class NuevaReserva extends AppCompatActivity {
                             JSONObject jsonObject = jsonArray.getJSONObject(i);
                             Long id = jsonObject.getLong("idCliente");
                             String nombre = jsonObject.getString("nombreCompleto");
-                            String telefono = jsonObject.optString("numeroTelefono"); // Opcional si no todos los clientes tienen teléfono
-                            clientsList.add(new Cliente(id, nombre, telefono));
+                            String telefono = jsonObject.optString("numeroTelefono");
+                            String email = jsonObject.optString("email");
+                            clientsList.add(new Cliente(id, nombre, telefono, email));
                         }
                         updateClientsSpinner(clientsList);
                     } catch (JSONException e) {
@@ -334,20 +336,20 @@ public class NuevaReserva extends AppCompatActivity {
     private boolean validateInput(String fechaReserva, Cliente cliente, List<Long> idsSombrillas, String fechaReservaSeleccionada, String horaLlegada, String cantidadHamacas) {
         boolean isValid = true;
         if (fechaReserva == null || fechaReserva.isEmpty() || fechaReservaSeleccionada == null || fechaReservaSeleccionada.isEmpty()) {
-            showError("Fecha de reserva no seleccionada.");
+            Utils.showError(getApplicationContext(),"Fecha de reserva no seleccionada.");
             isValid = false;
         }
         if (cliente == null || cliente.getIdCliente() <= 0 || idsSombrillas == null || idsSombrillas.isEmpty()) {
-            showError("Información crítica de la reserva está incompleta o incorrecta.");
+            Utils.showError(getApplicationContext(),"Información crítica de la reserva está incompleta o incorrecta.");
             isValid = false;
         }
 
         if(horaLlegada == null) {
-            showError("Hora de llegada no seleccionada.");
+            Utils.showError(getApplicationContext(),"Hora de llegada no seleccionada.");
             isValid = false;
         }
         if(cantidadHamacas == null) {
-            showError("Cantidad de hamacas no seleccionada.");
+            Utils.showError(getApplicationContext(),"Cantidad de hamacas no seleccionada.");
             isValid = false;
         }
         return isValid;
@@ -385,9 +387,6 @@ public class NuevaReserva extends AppCompatActivity {
             return null;
         }
     }
-
-    private void showError(String message) {
-        Toast.makeText(this, message, Toast.LENGTH_LONG).show();
-    }
+    
 }
 

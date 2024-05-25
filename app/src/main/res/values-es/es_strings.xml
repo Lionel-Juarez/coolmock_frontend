@@ -21,7 +21,7 @@
     <string name="url_clientes">http://10.0.2.2:8080/api/clientes/</string>
     <string name="url_reservas">http://10.0.2.2:8080/api/reservas/</string>
     <string name="url_usuarios">http://10.0.2.2:8080/api/usuarios/</string>
-    <string name="url_calculos">http://10.0.2.2:8080/api/calculos/</string>
+    <string name="url_pagos">http://10.0.2.2:8080/api/pagos/</string>
     <string name="eliminar_reporte">Eliminar informe</string>
     <string name="are_you_sure">¿Estás seguro?</string>
     <string name="yes">Sí</string>
@@ -108,6 +108,8 @@
     <string name="btn_reservar">Reservar</string>
     <string name="email_hint">Email</string>
     <string name="pagos">Pagos</string>
+    <string name="desc_icono_metodo_pago">Metodo de pago</string>
+
 
     <!-- Spinners -->
     <string-array name="rol">
