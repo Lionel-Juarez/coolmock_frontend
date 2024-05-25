@@ -109,6 +109,9 @@
     <string name="email_hint">Email</string>
     <string name="pagos">Payments</string>
     <string name="desc_icono_metodo_pago">Metodo de pago</string>
+    <string name="pagos_diarios">Daily Payments</string>
+    <string name="no_pagos_hoy">No payments have been made on the current day</string>
+    <string name="no_reports">There are no reports yet</string>
 
     //Spinners
     <string-array name="hour_array">

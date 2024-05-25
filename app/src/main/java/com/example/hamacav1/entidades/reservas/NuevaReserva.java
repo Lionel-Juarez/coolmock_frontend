@@ -28,7 +28,9 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.hamacav1.entidades.clientes.Cliente;
 import com.example.hamacav1.R;
+import com.example.hamacav1.entidades.reportes.NuevoReporte;
 import com.example.hamacav1.entidades.usuarios.Usuario;
+import com.example.hamacav1.util.Internetop;
 import com.example.hamacav1.util.Utils;
 
 import org.jetbrains.annotations.NotNull;
@@ -47,6 +49,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.stream.Collectors;
 
 import okhttp3.Call;
 import okhttp3.Callback;
@@ -77,23 +80,6 @@ public class NuevaReserva extends AppCompatActivity {
     @Override
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
-    }
-    private Boolean isNetworkAvailable() {
-        ConnectivityManager connectivityManager = (ConnectivityManager)
-                getSystemService(Context.CONNECTIVITY_SERVICE);
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            Network nw = connectivityManager.getActiveNetwork();
-            if (nw == null) {
-                return false;
-            } else {
-                NetworkCapabilities actNw = connectivityManager.getNetworkCapabilities(nw);
-                return (actNw != null) && (actNw.hasTransport(NetworkCapabilities.TRANSPORT_WIFI) ||
-                        actNw.hasTransport(NetworkCapabilities.TRANSPORT_CELLULAR));
-            }
-        } else {
-            NetworkInfo nwInfo = connectivityManager.getActiveNetworkInfo();
-            return nwInfo != null && nwInfo.isConnected();
-        }
     }
 
     private void initializeUIComponents() {
@@ -152,7 +138,7 @@ public class NuevaReserva extends AppCompatActivity {
         String horaLlegada = hours[numberPickerHoraLlegada.getValue()];
 
         if (validateInput(fechaReserva, cliente, idsSombrillas, fechaReservaRealizada, horaLlegada, cantidadHamacas)) {
-            if (isNetworkAvailable()) {
+            if (Internetop.getInstance(getApplicationContext()).isNetworkAvailable()) {
                 String url = getResources().getString(R.string.url_reservas) + "nuevaReserva";
                 sendTask(url, fechaReserva, fechaReservaRealizada, estado, pagada, metodoPago, cliente.getIdCliente(), idsSombrillas, 1, cantidadHamacas, horaLlegada);
             } else {
@@ -160,6 +146,7 @@ public class NuevaReserva extends AppCompatActivity {
             }
         }
     }
+
 
     private void sendTask(String url, String fechaReserva, String fechaReservaRealizada, String estado, boolean pagada, String metodoPago, long idCliente, List<Long> idsSombrillas, long idUsuario, String cantidadHamacas, String horaLlegada) {
         ExecutorService executor = Executors.newSingleThreadExecutor();
@@ -199,7 +186,12 @@ public class NuevaReserva extends AppCompatActivity {
                             Log.d("NuevaReserva", "Reserva creada con éxito, ID: " + idReserva);
                             updateSombrillasAsReserved(idsSombrillas, idReserva, cantidadHamacas);
 
+                            // Crear el reporte de la nueva reserva
                             handler.post(() -> {
+                                List<Integer> numSombrillas = idsSombrillas.stream().map(Long::intValue).collect(Collectors.toList());
+                                String nombreUsuario = "Nombre del Usuario"; // Obtén el nombre del usuario actual desde donde sea apropiado
+                                NuevoReporte.crearReporteReserva(getApplicationContext(), idUsuario, nombreUsuario, numSombrillas, numSombrillas.size());
+
                                 Toast.makeText(getApplicationContext(), "Reserva añadida con éxito", Toast.LENGTH_SHORT).show();
                                 setResult(Activity.RESULT_OK);
                                 finish();
@@ -223,7 +215,6 @@ public class NuevaReserva extends AppCompatActivity {
         });
     }
 
-
     private void updateSombrillasAsReserved(List<Long> idsSombrillas, long idReserva, String cantidadHamacas) {
         Log.e("UpdateSombrilla", "dentro de la funcion updateSombrillas");
 
@@ -236,7 +227,7 @@ public class NuevaReserva extends AppCompatActivity {
 
             Request request = new Request.Builder()
                     .url(urlBuilder.build().toString())
-                    .patch(RequestBody.create("", null)) // Aquí, se puede enviar un cuerpo vacío o la información necesaria si el servidor lo requiere
+                    .patch(RequestBody.create("", null))
                     .build();
 
             client.newCall(request).enqueue(new Callback() {

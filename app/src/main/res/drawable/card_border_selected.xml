@@ -4,8 +4,8 @@
     <solid android:color="@android:color/white"/> <!-- Fondo blanco -->
     <stroke
         android:width="2dp"
-        android:color="@color/blueColor"/>
+        android:color="@color/colorReservada"/>
     <corners
-        android:radius="30dp"/>
+        android:radius="10dp"/>
 </shape>
 

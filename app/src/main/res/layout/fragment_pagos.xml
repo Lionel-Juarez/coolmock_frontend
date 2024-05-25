@@ -6,7 +6,6 @@
     android:layout_height="match_parent"
     tools:context=".entidades.reportes.ReportsFragment">
 
-    <!-- Imagen de fondo -->
     <ImageView
         android:id="@+id/headerImage"
         android:layout_width="match_parent"
@@ -14,20 +13,17 @@
         android:scaleType="centerCrop"
         android:src="@drawable/fondo1" />
 
-    <!-- Contenedor con ScrollView -->
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:fillViewport="true">
 
-        <!-- Contenedor para el contenido encima de la imagen -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
             android:background="@android:color/transparent">
 
-            <!-- Cuadro de título con transparencia -->
             <RelativeLayout
                 android:id="@+id/overlayContainer"
                 android:layout_width="match_parent"
@@ -36,7 +32,6 @@
                 android:padding="16dp"
                 android:elevation="4dp">
 
-                <!-- Título principal -->
                 <TextView
                     android:id="@+id/tvTitleReservas"
                     android:layout_width="wrap_content"
@@ -65,13 +60,11 @@
 
             </androidx.cardview.widget.CardView>
 
-            <!-- Contenedor horizontal para los dos CardView que ocupan la mitad del ancho cada uno -->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal">
 
-                <!-- Segundo CardView -->
                 <androidx.cardview.widget.CardView
                     android:layout_width="0dp"
                     android:layout_height="180dp"
@@ -90,7 +83,6 @@
 
                 </androidx.cardview.widget.CardView>
 
-                <!-- Tercer CardView -->
                 <androidx.cardview.widget.CardView
                     android:layout_width="0dp"
                     android:layout_height="180dp"
@@ -119,6 +111,26 @@
                 android:paddingLeft="2dp"
                 android:paddingRight="2dp">
 
+                <TextView
+                    android:id="@+id/tvPagosTitle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/pagos_diarios"
+                    android:layout_gravity="center_horizontal"
+                    android:textSize="20sp"
+                    android:textStyle="bold"
+                    android:paddingBottom="10dp" />
+
+                <TextView
+                    android:id="@+id/tvNoPagosMessage"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/no_pagos_hoy"
+                    android:textSize="16sp"
+                    android:gravity="center"
+                    android:visibility="gone"
+                    android:padding="16dp" />
+
                 <androidx.recyclerview.widget.RecyclerView
                     android:id="@+id/pagosRecyclerView"
                     android:layout_width="match_parent"
@@ -127,6 +139,7 @@
                     android:scrollbars="vertical"
                     android:paddingBottom="76dp" />
             </LinearLayout>
+
 
         </LinearLayout>
     </ScrollView>

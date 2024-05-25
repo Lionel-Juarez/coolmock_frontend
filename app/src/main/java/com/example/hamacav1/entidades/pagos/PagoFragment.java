@@ -15,6 +15,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -51,6 +52,8 @@ public class PagoFragment extends Fragment implements PagoAdapter.PagoAdapterCal
     private boolean isLoading = false;
     private int currentPage = 0;
     private int pageSize = 10;
+    private TextView tvNoPagosMessage;
+
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -59,6 +62,8 @@ public class PagoFragment extends Fragment implements PagoAdapter.PagoAdapterCal
         pagoRecyclerView = view.findViewById(R.id.pagosRecyclerView);
         LinearLayoutManager layoutManager = new LinearLayoutManager(getContext());
         pagoRecyclerView.setLayoutManager(layoutManager);
+        tvNoPagosMessage = view.findViewById(R.id.tvNoPagosMessage);
+
         pagoList = new ArrayList<>();
         pagoAdapter = new PagoAdapter(pagoList, getContext(), this);
         pagoRecyclerView.setAdapter(pagoAdapter);
@@ -89,16 +94,12 @@ public class PagoFragment extends Fragment implements PagoAdapter.PagoAdapterCal
 
     private void loadPagos(int page, int size) {
         LocalDate today = LocalDate.now();
+
         String url = "http://10.0.2.2:8080/api/pagos?fecha=" + today.toString() + "&page=" + page + "&size=" + size;
         OkHttpClient client = new OkHttpClient();
 
-        // Elimina temporalmente la parte del token si no es necesario
-    /*SharedPreferences sharedPreferences = getActivity().getSharedPreferences("MyAppPrefs", Context.MODE_PRIVATE);
-    String idToken = sharedPreferences.getString("idToken", null);*/
-
         Request request = new Request.Builder()
                 .url(url)
-                // .addHeader("Authorization", "Bearer " + idToken) // Elimina temporalmente si no es necesario
                 .build();
 
         Log.d("PagoFragment", "Iniciando carga de Pagos desde el backend: " + url);
@@ -132,7 +133,14 @@ public class PagoFragment extends Fragment implements PagoAdapter.PagoAdapterCal
                                 pago.fromJSON(jsonObject);
                                 nuevosPagos.add(pago);
                             }
-                            pagoAdapter.addPagos(nuevosPagos);
+                            if (nuevosPagos.isEmpty() && pagoList.isEmpty()) { // Añadido
+                                tvNoPagosMessage.setVisibility(View.VISIBLE);
+                                pagoRecyclerView.setVisibility(View.GONE);
+                            } else {
+                                tvNoPagosMessage.setVisibility(View.GONE);
+                                pagoRecyclerView.setVisibility(View.VISIBLE);
+                                pagoAdapter.addPagos(nuevosPagos);
+                            }
                             isLoading = false;
                         } catch (JSONException e) {
                             Log.e("PagoFragment", "Error al parsear Pagos: ", e);

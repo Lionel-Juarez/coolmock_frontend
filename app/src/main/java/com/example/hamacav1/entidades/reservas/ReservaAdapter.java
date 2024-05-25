@@ -113,7 +113,7 @@ public class ReservaAdapter extends RecyclerView.Adapter<ReservaAdapter.ReservaV
 
         boolean isExpanded = expandedState.get(position, false); // Obtiene el estado actual
         holder.expandableView.setVisibility(isExpanded ? View.VISIBLE : View.GONE);
-        holder.expandIcon.setImageResource(isExpanded ? R.drawable.abajo24 : R.drawable.abajo24);
+        holder.expandIcon.setImageResource(isExpanded ? R.drawable.arriba24 : R.drawable.abajo24);
 
         holder.expandIcon.setOnClickListener(v -> {
             expandItem(position, holder); // Actualiza para incluir holder como parámetro

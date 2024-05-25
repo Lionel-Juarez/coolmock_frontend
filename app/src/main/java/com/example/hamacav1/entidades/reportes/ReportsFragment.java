@@ -1,9 +1,12 @@
 package com.example.hamacav1.entidades.reportes;
 
+import static android.nfc.tech.MifareUltralight.PAGE_SIZE;
+
 import androidx.activity.result.ActivityResult;
 import androidx.activity.result.ActivityResultCallback;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 
 import android.app.Activity;
@@ -11,6 +14,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.res.Resources;
+import android.graphics.pdf.PdfDocument;
 import android.net.ConnectivityManager;
 import android.net.Network;
 import android.net.NetworkCapabilities;
@@ -22,6 +26,7 @@ import android.os.Looper;
 import android.util.Log;
 import android.view.View;
 
+import android.widget.TextView;
 import android.widget.Toast;
 
 
@@ -61,6 +66,12 @@ public class ReportsFragment extends Fragment implements ReporteAdapter.ReportsA
     private RecyclerView reportsRecyclerView;
     private ReporteAdapter reporteAdapter;
     private List<Reporte> reportsList;
+    private TextView emptyView;
+    private int currentPage = 0;
+    private boolean isLoading = false;
+    private boolean hasMoreReports = true;
+    private final int PAGE_SIZE = 10;
+    private final int LOAD_MORE_SIZE = 5;
     ActivityResultLauncher<Intent> nuevoResultLauncher = registerForActivityResult(
             new ActivityResultContracts.StartActivityForResult(),
             new ActivityResultCallback<ActivityResult>() {
@@ -73,22 +84,6 @@ public class ReportsFragment extends Fragment implements ReporteAdapter.ReportsA
             });
 
     @Override
-    public void editPressed(int position) {
-        if (reportsList != null) {
-            if (reportsList.size() > position) {
-                Reporte reporte = reportsList.get(position);
-                Intent myIntent = new Intent(getActivity(), NuevoReporte.class);
-                myIntent.putExtra("idReporte", reporte.getCreadoPor());
-                nuevoResultLauncher.launch(myIntent);
-            }
-        }
-    }
-
-    public interface OnReportsReceivedListener {
-        void onReceived(List<Reporte> reportes);
-    }
-
-    @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_reports, container, false);
@@ -97,21 +92,29 @@ public class ReportsFragment extends Fragment implements ReporteAdapter.ReportsA
         reportsList = new ArrayList<>();
         reporteAdapter = new ReporteAdapter(reportsList, getContext(), this);
         reportsRecyclerView.setAdapter(reporteAdapter);
+        emptyView = view.findViewById(R.id.emptyView);
 
-        loadReportsFromBackend();
+        loadReportsFromBackend(currentPage, PAGE_SIZE);
 
-//        view.findViewById(R.id.fab_add_report).setOnClickListener(v -> newReport());
+        reportsRecyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
+                super.onScrolled(recyclerView, dx, dy);
+
+                LinearLayoutManager layoutManager = (LinearLayoutManager) recyclerView.getLayoutManager();
+                if (!isLoading && hasMoreReports && layoutManager != null && layoutManager.findLastCompletelyVisibleItemPosition() == reportsList.size() - 1) {
+                    // Último ítem visible
+                    loadReportsFromBackend(++currentPage, LOAD_MORE_SIZE); // Load next page with 5 items
+                    isLoading = true;
+                }
+            }
+        });
 
         return view;
     }
 
-    private void newReport() {
-        Intent intent = new Intent(getContext(), NuevoReporte.class);
-        nuevoResultLauncher.launch(intent);
-    }
-
-    private void loadReportsFromBackend() {
-        String url = getResources().getString(R.string.url_reportes) ;
+    private void loadReportsFromBackend(int page, int size) {
+        String url = getResources().getString(R.string.url_reportes) + "?page=" + page + "&size=" + size;
         OkHttpClient client = new OkHttpClient();
         Request request = new Request.Builder().url(url).build();
 
@@ -121,7 +124,7 @@ public class ReportsFragment extends Fragment implements ReporteAdapter.ReportsA
             @Override
             public void onFailure(@NotNull Call call, @NotNull IOException e) {
                 Log.e("ReportsFragment", "Error al cargar reportes: ", e);
-                // Aquí puedes añadir un mensaje de UI para informar al usuario
+                isLoading = false;
             }
 
             @Override
@@ -139,17 +142,25 @@ public class ReportsFragment extends Fragment implements ReporteAdapter.ReportsA
                     public void run() {
                         try {
                             JSONArray jsonArray = new JSONArray(responseData);
-                            reportsList.clear();
+                            List<Reporte> newReportsList = new ArrayList<>();
                             for (int i = 0; i < jsonArray.length(); i++) {
-                                JSONObject jsonObject = jsonArray.getJSONObject(i);
+                                JSONObject reportObject = jsonArray.getJSONObject(i);
                                 Reporte reporte = new Reporte();
-                                reporte.fromJSON(jsonObject);
-                                reportsList.add(reporte);
+                                reporte.fromJSON(reportObject);
+                                newReportsList.add(reporte);
+                            }
+                            for (Reporte reporte : newReportsList) {
+                                if (!reportsList.contains(reporte)) {
+                                    reportsList.add(reporte);
+                                }
                             }
                             reporteAdapter.notifyDataSetChanged();
+                            checkEmptyView();
                             Log.d("ReportsFragment", "Reportes actualizados en la interfaz de usuario.");
                         } catch (JSONException e) {
                             Log.e("ReportsFragment", "Error al parsear reportes: ", e);
+                        } finally {
+                            isLoading = false;
                         }
                     }
                 });
@@ -157,6 +168,15 @@ public class ReportsFragment extends Fragment implements ReporteAdapter.ReportsA
         });
     }
 
+    private void checkEmptyView() {
+        if (reporteAdapter.getItemCount() == 0) {
+            reportsRecyclerView.setVisibility(View.GONE);
+            emptyView.setVisibility(View.VISIBLE);
+        } else {
+            reportsRecyclerView.setVisibility(View.VISIBLE);
+            emptyView.setVisibility(View.GONE);
+        }
+    }
 
     @Override
     public void deletePressed(int position) {
@@ -283,32 +303,27 @@ public class ReportsFragment extends Fragment implements ReporteAdapter.ReportsA
             }
         });
     }
-    private void resetLista(String result){
+    private void resetLista(String result) {
         try {
             JSONArray listaReportesJson = new JSONArray(result);
-            if (reportsList == null) {
-                reportsList = new ArrayList<>();
-            } else {
-                reportsList.clear();
-            }
+            reportsList.clear();  // Clear the existing list to prevent duplicates
             for (int i = 0; i < listaReportesJson.length(); ++i) {
                 JSONObject jsonUser = listaReportesJson.getJSONObject(i);
                 Reporte reporte = new Reporte();
                 reporte.fromJSON(jsonUser);
                 reportsList.add(reporte);
             }
-            if (reporteAdapter == null) {
-                reporteAdapter = new ReporteAdapter(reportsList, getContext(), this);
-                reportsRecyclerView.setAdapter(reporteAdapter);
-            } else {
-                reporteAdapter.notifyDataSetChanged();
-            }
-            // Si estás utilizando una ProgressBar, aquí iría el código para ocultarla
-            // Por ejemplo:
-            // ProgressBar pbMain = findViewById(R.id.pb_main);
-            // pbMain.setVisibility(View.GONE);
+            reporteAdapter.notifyDataSetChanged();
+            checkEmptyView();
         } catch (JSONException e) {
-            Utils.showError(getContext(),e.getMessage());
+            Utils.showError(getContext(), e.getMessage());
         }
     }
+
+
+    private void newReport() {
+        Intent intent = new Intent(getContext(), NuevoReporte.class);
+        nuevoResultLauncher.launch(intent);
+    }
+
 }

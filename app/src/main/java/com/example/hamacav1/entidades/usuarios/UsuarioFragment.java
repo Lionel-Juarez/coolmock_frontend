@@ -177,7 +177,7 @@ public class UsuarioFragment extends Fragment implements UsuarioAdapter.UsuarioA
             Usuario Usuario = usuarioList.get(position);
             Log.d("UsuariosFragment", "Eliminando Usuario: " + Usuario.getId());
 
-            if (isNetworkAvailable()) {
+            if (Internetop.getInstance(requireContext()).isNetworkAvailable()) {
                 String url = getResources().getString(R.string.url_usuarios) + "eliminarUsuario/" + Usuario.getId();
                 eliminarTask(url);
             } else {
@@ -189,27 +189,6 @@ public class UsuarioFragment extends Fragment implements UsuarioAdapter.UsuarioA
             Utils.showError(getContext(),"error.desconocido");
         }
     }
-
-
-    private Boolean isNetworkAvailable() {
-        ConnectivityManager connectivityManager = (ConnectivityManager)
-                getContext().getSystemService(Context.CONNECTIVITY_SERVICE);
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            Network nw = connectivityManager.getActiveNetwork();
-            if (nw == null) {
-                return false;
-            } else {
-                NetworkCapabilities actNw = connectivityManager.getNetworkCapabilities(nw);
-                return (actNw != null) && (actNw.hasTransport(NetworkCapabilities.TRANSPORT_WIFI) ||
-                        actNw.hasTransport(NetworkCapabilities.TRANSPORT_CELLULAR));
-            }
-        } else {
-            @SuppressWarnings("deprecation")
-            NetworkInfo nwInfo = connectivityManager.getActiveNetworkInfo();
-            return nwInfo != null && nwInfo.isConnected();
-        }
-    }
-
 
     private void eliminarTask(String url){
         //La clase Executor será la encargada de lanzar un nuevo hilo en background con la tarea
@@ -248,7 +227,7 @@ public class UsuarioFragment extends Fragment implements UsuarioAdapter.UsuarioA
 
     private void cargarUsuarios() {
         Log.d("UsuariosFragment", "Intentando cargar Usuarios...");
-        if (isNetworkAvailable()) {
+        if (Internetop.getInstance(requireContext()).isNetworkAvailable()) {
             Log.d("UsuariosFragment", "Conexión de red disponible. Cargando Usuarios...");
 
             // Aquí podría ir el código para mostrar una barra de progreso si es necesario

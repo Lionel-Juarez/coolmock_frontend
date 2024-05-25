@@ -23,6 +23,7 @@ import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.hamacav1.R;
+import com.example.hamacav1.util.Internetop;
 import com.example.hamacav1.util.Utils;
 
 import org.json.JSONObject;
@@ -56,24 +57,6 @@ public class NuevoUsuario extends AppCompatActivity {
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
     }
-    private Boolean isNetworkAvailable() {
-
-        ConnectivityManager connectivityManager = (ConnectivityManager)
-                getSystemService(Context.CONNECTIVITY_SERVICE);
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            Network nw = connectivityManager.getActiveNetwork();
-            if (nw == null) {
-                return false;
-            } else {
-                NetworkCapabilities actNw = connectivityManager.getNetworkCapabilities(nw);
-                return (actNw != null) && (actNw.hasTransport(NetworkCapabilities.TRANSPORT_WIFI) ||
-                        actNw.hasTransport(NetworkCapabilities.TRANSPORT_CELLULAR));
-            }
-        } else {
-            NetworkInfo nwInfo = connectivityManager.getActiveNetworkInfo();
-            return nwInfo != null && nwInfo.isConnected();
-        }
-    }
 
     public void addUsuario(View view) {
         String nombre = etNombre.getText().toString();
@@ -81,7 +64,7 @@ public class NuevoUsuario extends AppCompatActivity {
         String rol = String.valueOf(spinnerRol.getSelectedItemPosition() + 1); // Asegúrate de que los estados en el spinner estén correctamente alineados con tu backend
 
         if (validateInput(nombre, password)) {
-            if (isNetworkAvailable()) {
+            if (Internetop.getInstance(getApplicationContext()).isNetworkAvailable()) {
                 String url = getResources().getString(R.string.url_usuarios) + "nuevoUsuario";
                 sendTask(url, nombre, password, rol);
             } else {

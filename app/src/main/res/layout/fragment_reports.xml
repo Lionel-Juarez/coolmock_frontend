@@ -65,6 +65,18 @@
                 android:layout_marginTop="16dp"/>
         </RelativeLayout>
 
+        <!-- Texto de lista vacía -->
+        <TextView
+            android:id="@+id/emptyView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/no_reports"
+            android:textSize="18sp"
+            android:textColor="@color/black"
+            android:gravity="center"
+            android:layout_gravity="center"
+            android:visibility="gone"/>
+
         <!-- RecyclerView para mostrar la lista -->
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/reportsRecyclerView"
@@ -73,9 +85,9 @@
             android:layout_weight="1"
             android:layout_marginStart="8dp"
             android:layout_marginEnd="8dp"
-            android:clipToPadding="false"
             android:scrollbars="vertical"
             android:paddingTop="10dp"
-            android:paddingBottom="96dp" />
+            android:paddingBottom="100dp"
+            android:clipToPadding="false" />
     </LinearLayout>
 </RelativeLayout>
