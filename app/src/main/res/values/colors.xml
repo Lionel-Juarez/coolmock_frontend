@@ -8,6 +8,7 @@
     <color name="blueColor">#7FB6DC</color>
     <!-- Colores básicos y de fondo -->
     <color name="principalColor">#DE605A</color>
+    <color name="secondaryColor">#0E1B42</color>
     <color name="colorFondo">#775675</color>
     <color name="accentColor">#FF8A65</color>
     <color name="lightBackgroundColor">#72B0DD</color>

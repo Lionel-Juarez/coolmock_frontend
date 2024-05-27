@@ -12,7 +12,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:scaleType="centerCrop"
-        android:src="@drawable/fondo1" />
+        android:background="@color/white"/>
 
     <!-- Contenedor para el contenido encima de la imagen -->
     <LinearLayout

@@ -1,40 +1,43 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/fragment_reservas"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:id="@+id/fragment_reservas"
     tools:context=".entidades.reservas.ReservaFragment">
 
     <ImageView
         android:id="@+id/headerImage"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:scaleType="centerCrop"
-        android:src="@drawable/fondo1" />
+        android:layout_width="200dp"
+        android:layout_height="200dp"
+        android:src="@drawable/undraw_chore_list_re_2lq8"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentEnd="true"
+        android:layout_marginBottom="60dp"/>
+
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:orientation="vertical"
-        android:background="@android:color/transparent">
+        android:background="@android:color/transparent"
+        android:orientation="vertical">
 
         <RelativeLayout
             android:id="@+id/overlayContainer"
             android:layout_width="match_parent"
-            android:layout_height="160dp"
+            android:layout_height="120dp"
             android:background="@drawable/rounded_bottom_corners"
+            android:elevation="4dp"
             android:padding="16dp">
 
             <TextView
                 android:id="@+id/tvTitleReservas"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_alignParentStart="true"
                 android:text="@string/reservas"
                 android:textColor="@color/black"
-                android:textSize="28sp"
-                android:textStyle="bold"
-                android:layout_alignParentStart="true" />
+                android:textSize="24sp"/>
 
             <TextView
                 android:id="@+id/tvSubTitle"
@@ -42,42 +45,42 @@
                 android:layout_height="wrap_content"
                 android:layout_below="@id/tvTitleReservas"
                 android:layout_alignParentStart="true"
+                android:layout_marginTop="8dp"
                 android:text="07/06/24"
                 android:textColor="@color/black"
-                android:textSize="24sp"
-                android:layout_marginTop="8dp" />
+                android:textSize="20sp" />
 
             <ImageView
                 android:id="@+id/btnFilter"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="30dp"
                 android:layout_alignParentEnd="true"
-                android:src="@drawable/filtrar"
-                android:layout_marginEnd="12dp"/>
+                android:layout_marginTop="30dp"
+                android:layout_marginEnd="12dp"
+                android:src="@drawable/filtrar" />
 
             <ImageView
                 android:id="@+id/fab_add_reserva"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="30dp"
+                android:layout_marginEnd="12dp"
                 android:layout_toStartOf="@id/btnFilter"
                 android:background="?attr/selectableItemBackgroundBorderless"
-                android:src="@drawable/filtrar"
                 android:onClick="addReserva"
-                android:layout_marginEnd="12dp"/>
+                android:src="@drawable/filtrar" />
         </RelativeLayout>
 
         <TextView
             android:id="@+id/tvNoReservas"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/no_reservas"
             android:gravity="center"
-            android:visibility="gone"
-            android:textSize="18sp"
+            android:padding="16dp"
+            android:text="@string/no_reservas"
             android:textColor="#616161"
-            android:padding="16dp" />
+            android:textSize="18sp"
+            android:visibility="gone" />
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/reservasRecyclerView"
@@ -93,6 +96,6 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerInParent="true"
-            android:visibility="gone"/>
+            android:visibility="gone" />
     </LinearLayout>
 </RelativeLayout>

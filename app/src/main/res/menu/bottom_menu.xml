@@ -3,25 +3,24 @@
 
     <item
         android:id="@+id/home"
-        android:title="@string/reserva"
-        android:icon="@drawable/vacaciones"/>
+        android:icon="@drawable/vacaciones"
+        android:title="@string/reserva" />
 
     <item
         android:id="@+id/sunbed"
-        android:title="@string/sunbed"
         android:icon="@drawable/hamaca1"
-        />
-
-    <item
-        android:title=""/>
-
-    <item
-        android:id="@+id/reportes"
-        android:title="@string/reportes"
-        android:icon="@drawable/historial24" />
+        android:title="@string/sunbed" />
     <item
         android:id="@+id/calcs"
-        android:title="@string/calcs"
-        android:icon="@drawable/pagos24" />
+        android:icon="@drawable/pagos24"
+        android:title="@string/calcs" />
+    <item
+        android:id="@+id/reportes"
+        android:icon="@drawable/historial24"
+        android:title="@string/reportes" />
+    <item
+        android:id="@+id/cuentas"
+        android:icon="@drawable/baseline_person_24"
+        android:title="@string/accounts"/>
 
 </menu>

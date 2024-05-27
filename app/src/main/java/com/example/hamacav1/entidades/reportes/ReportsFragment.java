@@ -129,7 +129,12 @@ public class ReportsFragment extends Fragment implements ReporteAdapter.ReportsA
                     @Override
                     public void run() {
                         try {
-                            JSONArray jsonArray = new JSONArray(responseData);
+                            JSONObject jsonObject = new JSONObject(responseData);
+                            JSONArray jsonArray = jsonObject.getJSONArray("content");
+                            boolean lastPage = jsonObject.getBoolean("last");
+                            if (lastPage) {
+                                hasMoreReports = false;
+                            }
                             List<Reporte> newReportsList = new ArrayList<>();
                             for (int i = 0; i < jsonArray.length(); i++) {
                                 JSONObject reportObject = jsonArray.getJSONObject(i);
@@ -155,6 +160,7 @@ public class ReportsFragment extends Fragment implements ReporteAdapter.ReportsA
             }
         });
     }
+
 
     private void checkEmptyView() {
         if (reporteAdapter.getItemCount() == 0) {
