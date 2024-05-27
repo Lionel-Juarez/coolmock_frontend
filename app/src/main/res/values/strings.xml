@@ -112,6 +112,10 @@
     <string name="pagos_diarios">Daily Payments</string>
     <string name="no_pagos_hoy">No payments have been made on the current day</string>
     <string name="no_reports">There are no reports yet</string>
+    <string name="accounts">Accounts</string>
+    <string name="gestion_cuentas">Account Management</string>
+    <string name="cerrar_sesion">Are you sure you want to log out?</string>
+    <string name="cerrar_sesion_title">Logging Out</string>
 
     //Spinners
     <string-array name="hour_array">
