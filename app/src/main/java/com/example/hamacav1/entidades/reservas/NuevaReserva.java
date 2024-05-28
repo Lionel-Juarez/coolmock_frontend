@@ -15,6 +15,7 @@ import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.CheckBox;
+import android.widget.ImageView;
 import android.widget.NumberPicker;
 import android.widget.RadioButton;
 import android.widget.Spinner;
@@ -83,7 +84,7 @@ public class NuevaReserva extends AppCompatActivity {
     }
 
     private void initializeUIComponents() {
-        Button btnOpenCalendar = findViewById(R.id.btnOpenCalendar);
+        ImageView btnOpenCalendar = findViewById(R.id.btnOpenCalendar);
         spMetodoPago = findViewById(R.id.sp_metodo_pago);
         actvCliente = findViewById(R.id.actv_cliente);
         cbPagada = findViewById(R.id.cb_reserva_pagada);
@@ -104,6 +105,10 @@ public class NuevaReserva extends AppCompatActivity {
                 showDatePickerDialog();
             }
         });
+        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this,
+                R.array.payment_array, R.layout.spinner_item);
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spMetodoPago.setAdapter(adapter);
 
         radioOne.setChecked(true);
     }

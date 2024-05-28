@@ -7,8 +7,8 @@
     <color name="teal_700">#FF018786</color>
     <color name="blueColor">#7FB6DC</color>
     <!-- Colores básicos y de fondo -->
-    <color name="principalColor">#DE605A</color>
-    <color name="secondaryColor">#0E1B42</color>
+    <color name="principalColor">#336DFF</color>
+    <color name="secondaryColor">#BAA204</color>
     <color name="colorFondo">#775675</color>
     <color name="accentColor">#FF8A65</color>
     <color name="lightBackgroundColor">#72B0DD</color>
@@ -18,7 +18,7 @@
 
     <!-- Colores para estados de las sombrillas -->
     <color name="colorReservada">#0B710D</color>
-    <color name="colorOcupada">#BA380F</color>
+    <color name="colorOcupada">#9C0808</color>
     <color name="colorDisponible">#1C1515</color>
 
     <!-- Textos y UI -->

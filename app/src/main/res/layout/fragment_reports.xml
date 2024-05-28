@@ -1,4 +1,3 @@
-<?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     xmlns:app="http://schemas.android.com/apk/res-auto"
@@ -21,8 +20,7 @@
         android:orientation="vertical"
         android:background="@android:color/transparent">
 
-        <!-- Cuadro de título con transparencia -->
-        <RelativeLayout
+        <FrameLayout
             android:id="@+id/overlayContainer"
             android:layout_width="match_parent"
             android:layout_height="120dp"
@@ -39,31 +37,34 @@
                 android:textColor="@color/black"
                 android:textSize="28sp"
                 android:textStyle="bold"
-                android:layout_alignParentStart="true" />
+                android:layout_gravity="center_vertical|start"
+                android:layout_marginEnd="16dp"/>
 
             <!-- Subtítulo -->
             <TextView
                 android:id="@+id/tvSubTitle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_below="@id/tvTitleReservas"
-                android:layout_alignParentStart="true"
                 android:text="@string/historial"
                 android:textColor="@color/black"
                 android:textStyle="bold"
                 android:textSize="24sp"
-                android:layout_marginTop="8dp" />
+                android:layout_marginTop="8dp"/>
 
+            <!-- Botón para abrir el selector de fecha -->
             <ImageView
                 android:id="@+id/openDatePicker"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentEnd="true"
-                android:src="@drawable/btnnueva"
+                android:layout_width="207dp"
+                android:layout_height="125dp"
+                android:layout_gravity="center_vertical|end"
+                android:layout_marginTop="30dp"
                 android:clickable="true"
-                android:layout_gravity="center_horizontal"
-                android:layout_marginTop="16dp"/>
-        </RelativeLayout>
+                android:contentDescription="@string/fab_add_cliente"
+                android:scaleType="centerCrop"
+                android:src="@drawable/resource_new"
+                android:translationZ="4dp"/>
+
+        </FrameLayout>
 
         <!-- Texto de lista vacía -->
         <TextView
@@ -88,6 +89,6 @@
             android:scrollbars="vertical"
             android:paddingTop="10dp"
             android:paddingBottom="100dp"
-            android:clipToPadding="false" />
+            android:clipToPadding="false"/>
     </LinearLayout>
 </RelativeLayout>

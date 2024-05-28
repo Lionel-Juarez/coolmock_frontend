@@ -116,6 +116,10 @@
     <string name="gestion_cuentas">Account Management</string>
     <string name="cerrar_sesion">Are you sure you want to log out?</string>
     <string name="cerrar_sesion_title">Logging Out</string>
+    <string name="nueva">New</string>
+    <string name="_1">1</string>
+    <string name="_2">2</string>
+    <string name="logouticon">logouticon</string>
 
 
 
