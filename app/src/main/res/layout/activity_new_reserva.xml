@@ -138,12 +138,28 @@
 
             </LinearLayout>
 
-            <Spinner
-                android:id="@+id/sp_cliente"
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="10dp"
-                android:hint="@string/sp_clientes" />
+                android:orientation="horizontal"
+                android:layout_marginTop="10dp">
+
+                <AutoCompleteTextView
+                    android:id="@+id/actv_cliente"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:hint="@string/sp_clientes"
+                    android:inputType="text" />
+
+                <Button
+                    android:id="@+id/btn_add_cliente"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="New"
+                    android:onClick="openNuevoCliente"/>
+            </LinearLayout>
+
 
             <LinearLayout
                 android:layout_width="match_parent"

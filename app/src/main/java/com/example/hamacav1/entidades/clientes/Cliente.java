@@ -20,7 +20,7 @@ public class Cliente implements Serializable {
 
     @Override
     public String toString() {
-        return this.getNombreCompleto();  // Asume que getNombreCompleto() es el método para obtener el nombre del cliente
+        return this.getNombreCompleto();
     }
 
 

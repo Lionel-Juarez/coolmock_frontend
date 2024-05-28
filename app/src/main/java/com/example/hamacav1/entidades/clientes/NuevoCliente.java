@@ -2,23 +2,14 @@ package com.example.hamacav1.entidades.clientes;
 
 
 import android.app.Activity;
-import android.content.Context;
-import android.content.SharedPreferences;
+import android.content.Intent;
 import android.content.res.Resources;
-import android.net.ConnectivityManager;
-import android.net.Network;
-import android.net.NetworkCapabilities;
-import android.net.NetworkInfo;
-import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
-import android.util.Log;
-import android.view.Gravity;
+
 import android.view.View;
 import android.widget.EditText;
-import android.widget.Spinner;
-import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -26,17 +17,11 @@ import com.example.hamacav1.R;
 import com.example.hamacav1.util.Internetop;
 import com.example.hamacav1.util.Utils;
 
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-
-import okhttp3.MediaType;
-import okhttp3.OkHttpClient;
-import okhttp3.Request;
-import okhttp3.RequestBody;
-import okhttp3.Response;
-
 
 public class NuevoCliente extends AppCompatActivity {
     private EditText etNombreCompleto;
@@ -145,9 +130,17 @@ public class NuevoCliente extends AppCompatActivity {
                     if (result.equals("error.OKHttp")) {
                         Utils.showError(getApplicationContext(), "error.OKHttp");
                     } else {
-                        Toast.makeText(getApplicationContext(), "Cliente " + (isEditMode ? "actualizado" : "añadido") + " con éxito", Toast.LENGTH_SHORT).show();
-                        setResult(Activity.RESULT_OK);
-                        finish();
+                        try {
+                            JSONObject responseObject = new JSONObject(result);
+                            long idCliente = responseObject.getLong("idCliente");
+                            Cliente newClient = new Cliente(idCliente, nombreCompleto, numeroTelefono, email);
+                            Intent resultIntent = new Intent();
+                            resultIntent.putExtra("cliente", newClient);
+                            setResult(Activity.RESULT_OK, resultIntent);
+                            finish();
+                        } catch (JSONException e) {
+                            Utils.showError(getApplicationContext(), "error.Exception");
+                        }
                     }
                 });
             } catch (Exception e) {
@@ -155,5 +148,4 @@ public class NuevoCliente extends AppCompatActivity {
             }
         });
     }
-
 }

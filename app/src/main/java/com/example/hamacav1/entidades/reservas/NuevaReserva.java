@@ -12,6 +12,7 @@ import android.os.Looper;
 import android.util.Log;
 import android.view.View;
 import android.widget.ArrayAdapter;
+import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.NumberPicker;
@@ -23,6 +24,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.hamacav1.entidades.clientes.Cliente;
 import com.example.hamacav1.R;
+import com.example.hamacav1.entidades.clientes.NuevoCliente;
 import com.example.hamacav1.entidades.reportes.NuevoReporte;
 import com.example.hamacav1.util.Internetop;
 import com.example.hamacav1.util.Utils;
@@ -56,12 +58,16 @@ import okhttp3.Response;
 import okhttp3.ResponseBody;
 
 public class NuevaReserva extends AppCompatActivity {
-    private Spinner spCliente, spMetodoPago;
+    private AutoCompleteTextView actvCliente;
+    private Spinner spMetodoPago;
     private CheckBox cbPagada;
     private String fechaReservaSeleccionada;
     private List<Long> idsSombrillas;
     private RadioButton radioOne, radioTwo;
     private NumberPicker numberPickerHoraLlegada;
+    private List<Cliente> clientsList;
+    private ArrayAdapter<Cliente> clienteAdapter;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -79,7 +85,7 @@ public class NuevaReserva extends AppCompatActivity {
     private void initializeUIComponents() {
         Button btnOpenCalendar = findViewById(R.id.btnOpenCalendar);
         spMetodoPago = findViewById(R.id.sp_metodo_pago);
-        spCliente = findViewById(R.id.sp_cliente);
+        actvCliente = findViewById(R.id.actv_cliente);
         cbPagada = findViewById(R.id.cb_reserva_pagada);
         radioOne = findViewById(R.id.radioOne);
         radioTwo = findViewById(R.id.radioTwo);
@@ -100,9 +106,6 @@ public class NuevaReserva extends AppCompatActivity {
         });
 
         radioOne.setChecked(true);
-        // Comentar o descomentar según sean necesarios:
-        // btnGuardarReserva = findViewById(R.id.btn_save_reserva);
-        // btnCancelarReserva = findViewById(R.id.btn_cancel_reserva);
     }
 
     private void loadData() {
@@ -120,7 +123,6 @@ public class NuevaReserva extends AppCompatActivity {
         String estado = "Pendiente";
         String metodoPago = spMetodoPago.getSelectedItem().toString();
         boolean pagada = cbPagada.isChecked();
-        Cliente cliente = (Cliente) spCliente.getSelectedItem();
         String cantidadHamacas = getSelectedSide();
 
         Calendar calendarNow = Calendar.getInstance();
@@ -130,6 +132,12 @@ public class NuevaReserva extends AppCompatActivity {
         // Obtener la hora de llegada desde el NumberPicker
         String[] hours = getResources().getStringArray(R.array.hour_array);
         String horaLlegada = hours[numberPickerHoraLlegada.getValue()];
+
+        Cliente cliente = getSelectedCliente();
+        if (cliente == null) {
+            Toast.makeText(this, "Por favor seleccione un cliente válido", Toast.LENGTH_SHORT).show();
+            return;
+        }
 
         if (validateInput(fechaReserva, cliente, idsSombrillas, fechaReservaRealizada, horaLlegada, cantidadHamacas)) {
             if (Internetop.getInstance(getApplicationContext()).isNetworkAvailable()) {
@@ -244,11 +252,20 @@ public class NuevaReserva extends AppCompatActivity {
         }
     }
 
-
-    private void updateClientsSpinner(List<Cliente> clientsList) {
-        ArrayAdapter<Cliente> adapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, clientsList);
-        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        spCliente.setAdapter(adapter);
+    private Cliente getSelectedCliente() {
+        String clienteNombre = actvCliente.getText().toString();
+        for (Cliente cliente : clientsList) {
+            if (cliente.getNombreCompleto().equals(clienteNombre)) {
+                return cliente;
+            }
+        }
+        return null;
+    }
+    private void updateClientsAutoComplete(List<Cliente> clientsList) {
+        this.clientsList = clientsList;
+        clienteAdapter = new ArrayAdapter<>(this, android.R.layout.simple_dropdown_item_1line, clientsList);
+        actvCliente.setAdapter(clienteAdapter);
+        actvCliente.setThreshold(1);  // Comienza a sugerir después de una letra
         Log.d("NuevaReserva", "Clientes actualizados en la interfaz de usuario.");
     }
 
@@ -257,19 +274,17 @@ public class NuevaReserva extends AppCompatActivity {
         OkHttpClient client = new OkHttpClient();
 
         Log.d("NuevaReserva", "Iniciando carga de clientes desde el backend: " + url);
-        // Obtener el token de SharedPreferences
         SharedPreferences sharedPreferences = getSharedPreferences("MyAppPrefs", Context.MODE_PRIVATE);
         String idToken = sharedPreferences.getString("idToken", null);
 
         Request request = new Request.Builder()
                 .url(url)
-                .addHeader("Authorization", "Bearer " + idToken) // Añadir el token aquí
+                .addHeader("Authorization", "Bearer " + idToken)
                 .build();
         client.newCall(request).enqueue(new Callback() {
             @Override
             public void onFailure(@NotNull Call call, @NotNull IOException e) {
                 Log.e("NuevaReserva", "Error al cargar clientes: ", e);
-                // Mostrar algún mensaje de error en la interfaz de usuario
                 runOnUiThread(() -> Toast.makeText(NuevaReserva.this, "Error al cargar datos", Toast.LENGTH_SHORT).show());
             }
 
@@ -295,7 +310,7 @@ public class NuevaReserva extends AppCompatActivity {
                             String email = jsonObject.optString("email");
                             clientsList.add(new Cliente(id, nombre, telefono, email));
                         }
-                        updateClientsSpinner(clientsList);
+                        updateClientsAutoComplete(clientsList);
                     } catch (JSONException e) {
                         Log.e("NuevaReserva", "Error al parsear clientes: ", e);
                     }
@@ -303,7 +318,23 @@ public class NuevaReserva extends AppCompatActivity {
             }
         });
     }
+    public void openNuevoCliente(View view) {
+        Intent intent = new Intent(this, NuevoCliente.class);
+        startActivityForResult(intent, 1);
+    }
 
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == 1 && resultCode == RESULT_OK && data != null) {
+            Cliente newClient = (Cliente) data.getSerializableExtra("cliente");
+            if (newClient != null) {
+                clientsList.add(newClient);
+                clienteAdapter.notifyDataSetChanged();
+                actvCliente.setText(newClient.getNombreCompleto());
+            }
+        }
+    }
     private String getSelectedSide() {
         radioOne = findViewById(R.id.radioOne);
         radioTwo = findViewById(R.id.radioTwo);
