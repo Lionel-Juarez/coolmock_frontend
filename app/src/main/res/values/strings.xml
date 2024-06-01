@@ -3,7 +3,7 @@
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="singup">Sign up!</string>
     <string name="sunbed">Sunbed</string>
-    <string name="reportes">Historial y Reportes</string>
+    <string name="reportes">History and Reports</string>
     <string name="calcs">Payments</string>
     <string name="user">User</string>
     <string name="logout">Log out</string>
@@ -16,12 +16,15 @@
     <string name="full_comment_hint">Full comment hint</string>
     <string name="description">This is the description of the report, it will have a maximum of 2 lines…</string>
     <string name="delete_comment">Delete report</string>
+
+
     <string name="url_reportes">http://10.0.2.2:8080/api/reportes/</string>
     <string name="url_sombrillas">http://10.0.2.2:8080/api/sombrillas/</string>
     <string name="url_clientes">http://10.0.2.2:8080/api/clientes/</string>
     <string name="url_reservas">http://10.0.2.2:8080/api/reservas/</string>
     <string name="url_usuarios">http://10.0.2.2:8080/api/usuarios/</string>
     <string name="url_pagos">http://10.0.2.2:8080/api/pagos/</string>
+
     <string name="eliminar_reporte">Delete report</string>
     <string name="are_you_sure">Are you sure?</string>
     <string name="yes">Yes</string>
@@ -47,68 +50,70 @@
     <string name="rol_card">Role:</string>
     <string name="user_name_hint">Full name</string>
     <string name="password_hint">Password</string>
-    <string name="desc_imagen_telefono">Phone image</string>   
+    <string name="desc_imagen_telefono">Phone image</string>
     <string name="nuevo_cliente">New Customer</string>
     <string name="telefono_hint">Phone number</string>
-    <string name="error_telefono_formato">Phone number format error</string>  Corrected 
+    <string name="error_telefono_formato">Phone number format error</string>
     <string name="eliminar_cliente">Delete Customer</string>
     <string name="fab_add_cliente">Add customer</string>
     <string name="clientes">Customers</string>
     <string name="numero_sombrilla">#%d</string>
     <string name="estado_sombrilla">Sunbed state</string>
-    <string name="reserva">Reservations</string>  Better context 
+    <string name="reserva">Reservations</string>
     <string name="create_new_reservation">Create a new reservation</string>
     <string name="pagada">Paid</string>
     <string name="sp_clientes">Select a customer</string>
     <string name="save">Save</string>
+
+
     <string name="eliminar_reserva">Delete reservation</string>
     <string name="toggle_details">Details</string>
     <string name="reservas">Reservations</string>
     <string name="fab_add_reserva">Make a reservation</string>
     <string name="fecha_reserva">Date: %s</string>
-    <string name="estado_reserva">State: %s</string>
+    <string name="estado_reserva">Status: %s</string>
     <string name="metodo_pago">Payment method: %s</string>
     <string name="reserva_pagada">Paid?: %s</string>
     <string name="fecha_pago">Payment date: %s</string>
     <string name="creado_por">Created by: %s</string>
     <string name="reservations">Reservations</string>
-    <string name="no_reservas">There are no reservations for today</string>
-    <string name="tvSombrillas">Reserved Sunbeds:</string>   
+    <string name="no_reservas">No reservations for today</string>
+    <string name="tvSombrillas">Reserved sunbeds:</string>
     <string name="payment_date">Payment date</string>
-    <string name="btn_verReserva">View</string>
-    <string name="btn_liberar">Free</string>
-    <string name="btn_ocupar">Occupy</string>
-    <string name="btn_reservar">Book</string>
-    <string name="filter_by_name">Filter by name</string>   
-    <string name="filter_by_date">Filter by date</string>   
-    <string name="select_date">Select date and time</string>
-    <string name="filter_by_state">Filter by state</string>   
+    <string name="filter_by_name">Filter by name</string>
+    <string name="filter_by_date">Filter by date</string>
+    <string name="select_date">Select date</string>
+    <string name="filter_by_state">Filter by status</string>
     <string name="cancel">Cancel</string>
     <string name="show_all">Show all</string>
-    <string name="sombrillas_reservadas">Reserved Sunbeds: %1$s</string>   
-    <string name="pagar">Pay</string>   
-    <string name="mod_estado">State</string>   
-    <string name="modificar">Edit</string>   
+    <string name="sombrillas_reservadas">Reserved sunbeds: %1$s</string>
+    <string name="pagar">Pay</string>
+    <string name="mod_estado">Status</string>
+    <string name="modificar">Edit</string>
     <string name="left_sombrilla">Left</string>
     <string name="right_sombrilla">Right</string>
     <string name="both_sombrillas">Both</string>
-    <string name="select_sunbed">Select sunbed amount</string>
+    <string name="select_sunbed">Select number of sunbeds</string>
     <string name="select_time">Select a time</string>
-    <string name="select_hour">Select arrival time</string>
+    <string name="select_hour">Select an hour</string>
     <string name="cliente">Customer:</string>
-    <string name="horaLlegada">Check in: %s</string>
-    <string name="sombrillas">HAMMOCK PLOT</string>
-    <string name="historial">RECORDS</string>
+    <string name="horaLlegada">Arrival time: %s</string>
+    <string name="sombrillas">PARCEL</string>
+    <string name="historial">HISTORY</string>
     <string name="not_registered">Not yet registered? Sign Up</string>
     <string name="forgot_password">Forgot Password?</string>
     <string name="login">Login</string>
     <string name="username">Username</string>
     <string name="password">Password</string>
-    <string name="already_user">Already an user? Login</string>
+    <string name="already_user">Already a user? Login</string>
     <string name="email">Email</string>
+    <string name="btn_verReserva">View</string>
+    <string name="btn_liberar">Release</string>
+    <string name="btn_ocupar">Occupy</string>
+    <string name="btn_reservar">Reserve</string>
     <string name="email_hint">Email</string>
     <string name="pagos">Payments</string>
-    <string name="desc_icono_metodo_pago">Metodo de pago</string>
+    <string name="desc_icono_metodo_pago">Payment method icon</string>
     <string name="pagos_diarios">Daily Payments</string>
     <string name="no_pagos_hoy">No payments have been made on the current day</string>
     <string name="no_reports">There are no reports yet</string>
@@ -119,15 +124,16 @@
     <string name="nueva">New</string>
     <string name="_1">1</string>
     <string name="_2">2</string>
-    <string name="logouticon">logouticon</string>
+    <string name="logouticon">logout icon</string>
     <string name="calendar_description">Calendar icon</string>
     <string name="historial_pagos">Payment history</string>
-    <string name="titulo_ocupando_sombrilla">Ocupando sombrilla</string>
-    <string name="descripcion_ocupando_sombrilla">La sombrilla #%1$d ha sido ocupada, Cantidad de Hamacas: %2$s</string>
-    <string name="titulo_liberando_sombrilla">Liberando sombrilla</string>
-    <string name="descripcion_liberando_sombrilla">La sombrilla #%1$d ha sido liberada, Cantidad de Hamacas: %2$s</string>
-    <string name="titulo_reservando_sombrilla">Reservando sombrilla</string>
+    <string name="titulo_ocupando_sombrilla">Occupying sunbed</string>
+    <string name="descripcion_ocupando_sombrilla">The sunbed #%1$d has been occupied, Number of Hammocks: %2$s</string>
+    <string name="titulo_liberando_sombrilla">Releasing sunbed</string>
+    <string name="descripcion_liberando_sombrilla">The sunbed #%1$d has been released, Number of Hammocks: %2$s</string>
+    <string name="titulo_reservando_sombrilla">Reserving sunbed</string>
     <string name="new_hint">New</string>
+
     <string name="filter">Filter</string>
     <string name="content_graph">graph img</string>
     <string name="content_savings">img savings</string>
@@ -139,7 +145,6 @@
     <string name="content_logout">img logout</string>
     <string name="created_by">Created By:</string>
     <string name="title">Title</string>
-
 
     //Spinners
     <string-array name="hour_array">
@@ -185,6 +190,5 @@
         <item>Sort by date</item>
         <item>Sort by type</item>
     </string-array>
-
 
 </resources>

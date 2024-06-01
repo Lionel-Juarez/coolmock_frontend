@@ -3,54 +3,57 @@
     <string name="hello_blank_fragment">Hola fragmento en blanco</string>
     <string name="singup">¡Regístrate!</string>
     <string name="sunbed">Tumbona</string>
-    <string name="reportes">Informes</string>
-    <string name="calcs">Cálculos diarios</string>
+    <string name="reportes">Historial y Reportes</string>
+    <string name="calcs">Pagos</string>
     <string name="user">Usuario</string>
     <string name="logout">Cerrar sesión</string>
-    <string name="reportsTitle">INFORMES</string>
-    <string name="fab_add_report">Agregar un informe</string>
-    <string name="nuevo_libro">Nuevo Informe</string>
-    <string name="insert_name">Insertar título</string>
+    <string name="reportsTitle">REPORTES</string>
+    <string name="fab_add_report">Agregar un reporte</string>
+    <string name="nuevo_libro">Nuevo Reporte</string>
+    <string name="insert_name">Inserta título</string>
     <string name="write_here">Escribe aquí</string>
     <string name="accept">Aceptar</string>
-    <string name="full_comment_hint">Sugerencia de comentario completo</string>
-    <string name="description">Esta es la descripción del informe, tendrá un máximo de 2 líneas</string>
-    <string name="delete_comment">Eliminar informe</string>
+    <string name="full_comment_hint">Pista de comentario completo</string>
+    <string name="description">Esta es la descripción del reporte, tendrá un máximo de 2 líneas…</string>
+    <string name="delete_comment">Eliminar reporte</string>
+
+
     <string name="url_reportes">http://10.0.2.2:8080/api/reportes/</string>
     <string name="url_sombrillas">http://10.0.2.2:8080/api/sombrillas/</string>
     <string name="url_clientes">http://10.0.2.2:8080/api/clientes/</string>
     <string name="url_reservas">http://10.0.2.2:8080/api/reservas/</string>
     <string name="url_usuarios">http://10.0.2.2:8080/api/usuarios/</string>
     <string name="url_pagos">http://10.0.2.2:8080/api/pagos/</string>
-    <string name="eliminar_reporte">Eliminar informe</string>
+
+    <string name="eliminar_reporte">Eliminar reporte</string>
     <string name="are_you_sure">¿Estás seguro?</string>
     <string name="yes">Sí</string>
     <string name="no">No</string>
     <string name="error_connection">Error de conexión</string>
-    <string name="error_undelivered">Error no entregado</string>
+    <string name="error_undelivered">Error de entrega</string>
     <string name="error_unknown">Error desconocido</string>
     <string name="campo_obligatorio">Campo obligatorio</string>
     <string name="usuarios">Usuarios</string>
     <string name="fab_add_usuario">Agregar usuario</string>
     <string name="eliminar_Usuario">Eliminar usuario</string>
-    <string name="esAdministrador">Rol del trabajador</string>
+    <string name="esAdministrador">Rol de trabajador:</string>
     <string name="settings">Ajustes</string>
     <string name="ajuste_clientes">Ajustes de clientes</string>
     <string name="ajustes_usuarios">Ajustes de usuarios</string>
     <string name="nuevo_usuario">Nuevo usuario</string>
     <string name="rol">Seleccionar rol</string>
-    <string name="error_nombre_largo">El nombre no puede superar los 50 caracteres.</string>
-    <string name="error_apellidos_largo">Los apellidos no pueden superar los 50 caracteres.</string>
+    <string name="error_nombre_largo">El nombre no puede exceder los 50 caracteres.</string>
+    <string name="error_apellidos_largo">Los apellidos no pueden exceder los 50 caracteres.</string>
     <string name="error_password_corto">La contraseña debe tener al menos 8 caracteres.</string>
-    <string name="error_password_largo">La contraseña no puede superar los 20 caracteres.</string>
-    <string name="desc_imagen_usuario">Imagen de usuario</string>
+    <string name="error_password_largo">La contraseña no puede exceder los 20 caracteres.</string>
+    <string name="desc_imagen_usuario">Imagen del usuario</string>
     <string name="rol_card">Rol:</string>
     <string name="user_name_hint">Nombre completo</string>
     <string name="password_hint">Contraseña</string>
-    <string name="desc_imagen_telefono">Imagen de teléfono</string>
+    <string name="desc_imagen_telefono">Imagen del teléfono</string>
     <string name="nuevo_cliente">Nuevo cliente</string>
     <string name="telefono_hint">Número de teléfono</string>
-    <string name="error_telefono_formato">Error de formato de teléfono</string>
+    <string name="error_telefono_formato">Error en el formato del número de teléfono</string>
     <string name="eliminar_cliente">Eliminar cliente</string>
     <string name="fab_add_cliente">Agregar cliente</string>
     <string name="clientes">Clientes</string>
@@ -58,9 +61,10 @@
     <string name="estado_sombrilla">Estado de la tumbona</string>
     <string name="reserva">Reservas</string>
     <string name="create_new_reservation">Crear una nueva reserva</string>
-    <string name="pagada">Pagado</string>
+    <string name="pagada">Pagada</string>
     <string name="sp_clientes">Seleccionar un cliente</string>
     <string name="save">Guardar</string>
+
     <string name="eliminar_reserva">Eliminar reserva</string>
     <string name="toggle_details">Detalles</string>
     <string name="reservas">Reservas</string>
@@ -91,43 +95,44 @@
     <string name="select_sunbed">Seleccionar cantidad de tumbonas</string>
     <string name="select_time">Selecciona una hora</string>
     <string name="select_hour">Selecciona una hora</string>
-    <string name="cliente">Customer:</string>
-    <string name="horaLlegada">Hora llegada: %s</string>
+    <string name="cliente">Cliente:</string>
+    <string name="horaLlegada">Hora de llegada: %s</string>
     <string name="sombrillas">PARCELA</string>
     <string name="historial">HISTORIAL</string>
-    <string name="not_registered">Not yet registered? Sign Up</string>
-    <string name="forgot_password">Forgot Password?</string>
-    <string name="login">Login</string>
-    <string name="username">Username</string>
-    <string name="password">Password</string>
-    <string name="already_user">Already an user? Login</string>
-    <string name="email">Email</string>
+    <string name="not_registered">¿No estás registrado? Regístrate</string>
+    <string name="forgot_password">¿Olvidaste la contraseña?</string>
+    <string name="login">Iniciar sesión</string>
+    <string name="username">Nombre de usuario</string>
+    <string name="password">Contraseña</string>
+    <string name="already_user">¿Ya tienes cuenta? Inicia sesión</string>
+    <string name="email">Correo electrónico</string>
     <string name="btn_verReserva">Ver</string>
     <string name="btn_liberar">Liberar</string>
     <string name="btn_ocupar">Ocupar</string>
     <string name="btn_reservar">Reservar</string>
-    <string name="email_hint">Email</string>
+    <string name="email_hint">Correo electrónico</string>
     <string name="pagos">Pagos</string>
-    <string name="desc_icono_metodo_pago">Metodo de pago</string>
-    <string name="pagos_diarios">Daily Payments</string>
-    <string name="no_pagos_hoy">No payments have been made on the current day</string>
-    <string name="no_reports">There are no reports yet</string>
-    <string name="accounts">Accounts</string>
-    <string name="gestion_cuentas">Account Management</string>
-    <string name="cerrar_sesion">Are you sure you want to log out?</string>
-    <string name="cerrar_sesion_title">Logging Out</string>
-    <string name="nueva">New</string>
+    <string name="desc_icono_metodo_pago">Ícono del método de pago</string>
+    <string name="pagos_diarios">Pagos diarios</string>
+    <string name="no_pagos_hoy">No se han realizado pagos en el día actual</string>
+    <string name="no_reports">Aún no hay reportes</string>
+    <string name="accounts">Cuentas</string>
+    <string name="gestion_cuentas">Gestión de cuentas</string>
+    <string name="cerrar_sesion">¿Estás seguro de que quieres cerrar sesión?</string>
+    <string name="cerrar_sesion_title">Cerrando sesión</string>
+    <string name="nueva">Nueva</string>
     <string name="_1">1</string>
     <string name="_2">2</string>
-    <string name="logouticon">logouticon</string>
-    <string name="calendar_description">Calendar icon</string>
-    <string name="historial_pagos">Payment history</string>
+    <string name="logouticon">ícono de cierre de sesión</string>
+    <string name="calendar_description">Ícono del calendario</string>
+    <string name="historial_pagos">Historial de pagos</string>
     <string name="titulo_ocupando_sombrilla">Ocupando sombrilla</string>
     <string name="descripcion_ocupando_sombrilla">La sombrilla #%1$d ha sido ocupada, Cantidad de Hamacas: %2$s</string>
     <string name="titulo_liberando_sombrilla">Liberando sombrilla</string>
     <string name="descripcion_liberando_sombrilla">La sombrilla #%1$d ha sido liberada, Cantidad de Hamacas: %2$s</string>
     <string name="titulo_reservando_sombrilla">Reservando sombrilla</string>
-    <string name="new_hint">New</string>
+    <string name="new_hint">Nuevo</string>
+
     <string name="filter">Filter</string>
     <string name="content_graph">graph img</string>
     <string name="content_savings">img savings</string>
@@ -140,38 +145,7 @@
     <string name="created_by">Created By:</string>
     <string name="title">Title</string>
 
-
-
-    <!-- Spinners -->
-    <string-array name="rol">
-        <item>Admin</item>
-        <item>Trabajador</item>
-    </string-array>
-    <string-array name="state">
-        <item>Error</item>
-        <item>CancecantidadHamacas</item>
-        <item>Advertencia</item>
-        <item>Información</item>
-    </string-array>
-    <string-array name="planos_array">
-        <item>Plano 1</item>
-        <item>Plano 2</item>
-        <item>Plano 3</item>
-    </string-array>
-    <string-array name="payment_array">
-        <item>Efectivo</item>
-        <item>Tarjeta de crédito</item>
-    </string-array>
-    <string-array name="estado_reserva_array">
-        <item>Pendiente</item>
-        <item>Ha llegado</item>
-        <item>Cancelada</item>
-    </string-array>
-    <string-array name="filtro_options">
-        <item>Ordenar por nombre</item>
-        <item>Ordenar por fecha</item>
-        <item>Ordenar por tipo</item>
-    </string-array>
+    //Spinners
     <string-array name="hour_array">
         <item>08:00 AM</item>
         <item>09:00 AM</item>
@@ -186,4 +160,34 @@
         <item>06:00 PM</item>
         <item>07:00 PM</item>
     </string-array>
+    <string-array name="rol">
+        <item>Administrador</item>
+        <item>Trabajador</item>
+    </string-array>
+    <string-array name="state">
+        <item>Error</item>
+        <item>Cancelado</item>
+        <item>Advertencia</item>
+        <item>Información</item>
+    </string-array>
+    <string-array name="planos_array">
+        <item>Plan 1</item>
+        <item>Plan 2</item>
+        <item>Plan 3</item>
+    </string-array>
+    <string-array name="payment_array">
+        <item>Efectivo</item>
+        <item>Tarjeta de crédito</item>
+    </string-array>
+    <string-array name="estado_reserva_array">
+        <item>Pendiente</item>
+        <item>Ha llegado</item>
+        <item>Cancelado</item>
+    </string-array>
+    <string-array name="filtro_options">
+        <item>Ordenar por nombre</item>
+        <item>Ordenar por fecha</item>
+        <item>Ordenar por tipo</item>
+    </string-array>
+
 </resources>
