@@ -29,6 +29,8 @@ import com.example.hamacav1.entidades.clientes.NuevoCliente;
 import com.example.hamacav1.entidades.reportes.NuevoReporte;
 import com.example.hamacav1.util.Internetop;
 import com.example.hamacav1.util.Utils;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 
 import org.jetbrains.annotations.NotNull;
 import org.json.JSONArray;
@@ -143,15 +145,14 @@ public class NuevaReserva extends AppCompatActivity {
         if (validateInput(fechaReserva, cliente, idsSombrillas, fechaReservaRealizada, horaLlegada, cantidadHamacas)) {
             if (Internetop.getInstance(getApplicationContext()).isNetworkAvailable()) {
                 String url = getResources().getString(R.string.url_reservas) + "nuevaReserva";
-                sendTask(url, fechaReserva, fechaReservaRealizada, estado, pagada, metodoPago, cliente.getIdCliente(), idsSombrillas, 1, cantidadHamacas, horaLlegada);
+                sendTask(url, fechaReserva, fechaReservaRealizada, estado, pagada, metodoPago, cliente.getIdCliente(), idsSombrillas, cantidadHamacas, horaLlegada);
             } else {
                 Utils.showError(getApplicationContext(),"No hay conexión a Internet.");
             }
         }
     }
 
-
-    private void sendTask(String url, String fechaReserva, String fechaReservaRealizada, String estado, boolean pagada, String metodoPago, long idCliente, List<Long> idsSombrillas, long idUsuario, String cantidadHamacas, String horaLlegada) {
+    private void sendTask(String url, String fechaReserva, String fechaReservaRealizada, String estado, boolean pagada, String metodoPago, long idCliente, List<Long> idsSombrillas, String cantidadHamacas, String horaLlegada) {
         ExecutorService executor = Executors.newSingleThreadExecutor();
         Handler handler = new Handler(Looper.getMainLooper());
 
@@ -160,6 +161,16 @@ public class NuevaReserva extends AppCompatActivity {
             MediaType MEDIA_TYPE_JSON = MediaType.parse("application/json; charset=utf-8");
             JSONObject json = new JSONObject();
             try {
+                // Obtener información del usuario desde Firebase
+                FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+                if (user == null) {
+                    Log.e("sendTask", "El usuario no está autenticado.");
+                    handler.post(() -> Utils.showError(getApplicationContext(), "El usuario no está autenticado."));
+                    return;
+                }
+                String uidUsuario = user.getUid();
+                String nombreUsuario = user.getDisplayName() != null ? user.getDisplayName() : "Usuario desconocido";
+
                 json.put("fechaReserva", convertToIso8601(fechaReserva));  // Asegurarse de que la fecha está en formato ISO-8601
                 json.put("fechaReservaRealizada", convertToIso8601(fechaReservaRealizada));  // Asegurarse de que la fecha está en formato ISO-8601
                 json.put("estado", estado);
@@ -167,15 +178,19 @@ public class NuevaReserva extends AppCompatActivity {
                 json.put("metodoPago", metodoPago);
                 json.put("horaLlegada", horaLlegada);
                 json.put("idCliente", idCliente);
-                json.put("idUsuario", idUsuario);
+                json.put("idUsuario", uidUsuario);  // Pasar el UID del usuario desde Firebase
                 json.put("idSombrillas", new JSONArray(idsSombrillas));
                 if (pagada) {
                     json.put("fechaPago", convertToIso8601(fechaReserva));  // Usar la misma fecha de reserva para la fecha de pago
                 }
 
+                SharedPreferences sharedPreferences = getSharedPreferences("MyAppPrefs", Context.MODE_PRIVATE);
+                String idToken = sharedPreferences.getString("idToken", null);
+
                 RequestBody body = RequestBody.create(json.toString(), MEDIA_TYPE_JSON);
                 Request request = new Request.Builder()
                         .url(url)
+                        .addHeader("Authorization", "Bearer " + idToken)
                         .post(body)
                         .build();
 
@@ -189,14 +204,12 @@ public class NuevaReserva extends AppCompatActivity {
                             Log.d("NuevaReserva", "Reserva creada con éxito, ID: " + idReserva);
                             updateSombrillasAsReserved(idsSombrillas, idReserva, cantidadHamacas);
 
-                            // Crear el reporte de la nueva reserva
                             handler.post(() -> {
                                 List<Integer> numSombrillas = idsSombrillas.stream().map(Long::intValue).collect(Collectors.toList());
-                                String nombreUsuario = getCurrentUserName(); // Implementa este método para obtener el nombre del usuario actual
                                 String titulo = "Creación de Reserva";
                                 String descripcion = "Sombrilla/s " + numSombrillas + " reservadas, cantidad: " + cantidadHamacas;
 
-                                NuevoReporte.crearReporte(getApplicationContext(), idUsuario, nombreUsuario, titulo, descripcion);
+                                NuevoReporte.crearReporte(getApplicationContext(), titulo, descripcion);
 
                                 Toast.makeText(getApplicationContext(), "Reserva añadida con éxito", Toast.LENGTH_SHORT).show();
                                 setResult(Activity.RESULT_OK);
@@ -208,25 +221,18 @@ public class NuevaReserva extends AppCompatActivity {
                     } else {
                         String errorMessage = response.body() != null ? response.body().string() : "Respuesta vacía";
                         Log.e("sendTask", "Error al añadir reserva, respuesta del servidor: " + errorMessage);
-                        handler.post(() -> Utils.showError(getApplicationContext(),"Error al añadir reserva: " + errorMessage));
+                        handler.post(() -> Utils.showError(getApplicationContext(), "Error al añadir reserva: " + errorMessage));
                     }
                 } catch (Exception e) {
                     Log.e("sendTask", "Excepción al enviar datos de reserva: " + e.getMessage(), e);
-                    handler.post(() -> Utils.showError(getApplicationContext(),"Error de conexión al servidor: " + e.getMessage()));
+                    handler.post(() -> Utils.showError(getApplicationContext(), "Error de conexión al servidor: " + e.getMessage()));
                 }
             } catch (Exception e) {
                 Log.e("sendTask", "Excepción al enviar datos de reserva: " + e.getMessage(), e);
-                handler.post(() -> Utils.showError(getApplicationContext(),"Error de conexión al servidor: " + e.getMessage()));
+                handler.post(() -> Utils.showError(getApplicationContext(), "Error de conexión al servidor: " + e.getMessage()));
             }
         });
     }
-
-    // Método adicional para obtener el nombre de usuario actual
-    private String getCurrentUserName() {
-        // Implementa la lógica para obtener el nombre del usuario actual
-        return "nombreUsuario"; // Esto es solo un ejemplo, deberías obtenerlo de tus datos de usuario
-    }
-
     private void updateSombrillasAsReserved(List<Long> idsSombrillas, long idReserva, String cantidadHamacas) {
         Log.e("UpdateSombrilla", "dentro de la funcion updateSombrillas");
 

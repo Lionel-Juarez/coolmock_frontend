@@ -89,8 +89,8 @@ public class ReservaAdapter extends RecyclerView.Adapter<ReservaAdapter.ReservaV
             holder.metodoPago.setVisibility(View.GONE);
         }
 
-        if (reserva.getCreadaPor() != null && reserva.getCreadaPor().getNombreUsuario() != null) {
-            holder.creadaPor.setText(context.getString(R.string.creado_por, reserva.getCreadaPor().getNombreUsuario()));
+        if (reserva.getCreadaPor() != null && reserva.getCreadaPor().getUsername() != null) {
+            holder.creadaPor.setText(context.getString(R.string.creado_por, reserva.getCreadaPor().getUsername()));
         } else {
             holder.creadaPor.setText(context.getString(R.string.creado_por, "Información no disponible"));
         }

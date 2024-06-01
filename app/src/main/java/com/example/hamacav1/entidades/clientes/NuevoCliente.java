@@ -2,26 +2,41 @@ package com.example.hamacav1.entidades.clientes;
 
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.res.Resources;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 
+import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.hamacav1.R;
+import com.example.hamacav1.entidades.reportes.NuevoReporte;
 import com.example.hamacav1.util.Internetop;
 import com.example.hamacav1.util.Utils;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.IOException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+
+import okhttp3.MediaType;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.RequestBody;
+import okhttp3.Response;
+import okhttp3.ResponseBody;
 
 public class NuevoCliente extends AppCompatActivity {
     private EditText etNombreCompleto;
@@ -42,6 +57,7 @@ public class NuevoCliente extends AppCompatActivity {
         if (getIntent().hasExtra("cliente")) {
             isEditMode = true;
             cliente = (Cliente) getIntent().getSerializableExtra("cliente");
+            assert cliente != null;
             fillClientData(cliente);
         }
     }
@@ -53,7 +69,7 @@ public class NuevoCliente extends AppCompatActivity {
     }
 
     @Override
-    public void onSaveInstanceState(Bundle outState) {
+    public void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
     }
 
@@ -110,41 +126,61 @@ public class NuevoCliente extends AppCompatActivity {
         Handler handler = new Handler(Looper.getMainLooper());
 
         executor.execute(() -> {
+            OkHttpClient client = new OkHttpClient();
+            MediaType MEDIA_TYPE_JSON = MediaType.parse("application/json; charset=utf-8");
+            JSONObject json = new JSONObject();
             try {
-                JSONObject json = new JSONObject();
                 json.put("nombreCompleto", nombreCompleto);
                 json.put("numeroTelefono", numeroTelefono);
                 json.put("email", email);
 
-                Internetop internetop = Internetop.getInstance(getApplicationContext());
-                String result;
+                SharedPreferences sharedPreferences = getSharedPreferences("MyAppPrefs", Context.MODE_PRIVATE);
+                String idToken = sharedPreferences.getString("idToken", null);
 
-                if (isEditMode) {
-                    json.put("id", cliente.getIdCliente());
-                    result = internetop.sendPutRequest(url, json);
-                } else {
-                    result = internetop.sendPostRequest(url, json);
-                }
+                RequestBody body = RequestBody.create(json.toString(), MEDIA_TYPE_JSON);
+                Request request = new Request.Builder()
+                        .url(url)
+                        .addHeader("Authorization", "Bearer " + idToken)
+                        .post(body)
+                        .build();
 
-                handler.post(() -> {
-                    if (result.equals("error.OKHttp")) {
-                        Utils.showError(getApplicationContext(), "error.OKHttp");
-                    } else {
-                        try {
-                            JSONObject responseObject = new JSONObject(result);
+                try (Response response = client.newCall(request).execute()) {
+                    if (response.isSuccessful()) {
+                        ResponseBody responseBody = response.body();
+                        if (responseBody != null) {
+                            String responseData = responseBody.string();
+                            JSONObject responseObject = new JSONObject(responseData);
                             long idCliente = responseObject.getLong("idCliente");
                             Cliente newClient = new Cliente(idCliente, nombreCompleto, numeroTelefono, email);
-                            Intent resultIntent = new Intent();
-                            resultIntent.putExtra("cliente", newClient);
-                            setResult(Activity.RESULT_OK, resultIntent);
-                            finish();
-                        } catch (JSONException e) {
-                            Utils.showError(getApplicationContext(), "error.Exception");
+                            Log.d("NuevoCliente", "Cliente creado con éxito, ID: " + idCliente);
+
+                            // Crear el reporte de la nueva creación de cliente
+                            handler.post(() -> {
+                                String titulo = "Creación de Cliente";
+                                String descripcion = "Cliente " + nombreCompleto + " creado con éxito.";
+
+                                NuevoReporte.crearReporte(getApplicationContext(), titulo, descripcion);
+
+                                Intent resultIntent = new Intent();
+                                resultIntent.putExtra("cliente", newClient);
+                                setResult(Activity.RESULT_OK, resultIntent);
+                                finish();
+                            });
+                        } else {
+                            throw new IOException("El cuerpo de la respuesta está vacío");
                         }
+                    } else {
+                        String errorMessage = response.body() != null ? response.body().string() : "Respuesta vacía";
+                        Log.e("sendTask", "Error al crear cliente, respuesta del servidor: " + errorMessage);
+                        handler.post(() -> Utils.showError(getApplicationContext(), "Error al crear cliente: " + errorMessage));
                     }
-                });
+                } catch (Exception e) {
+                    Log.e("sendTask", "Excepción al enviar datos del cliente: " + e.getMessage(), e);
+                    handler.post(() -> Utils.showError(getApplicationContext(), "Error de conexión al servidor: " + e.getMessage()));
+                }
             } catch (Exception e) {
-                handler.post(() -> Utils.showError(getApplicationContext(), "error.Exception"));
+                Log.e("sendTask", "Excepción al enviar datos del cliente: " + e.getMessage(), e);
+                handler.post(() -> Utils.showError(getApplicationContext(), "Error de conexión al servidor: " + e.getMessage()));
             }
         });
     }

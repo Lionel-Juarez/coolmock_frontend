@@ -37,7 +37,7 @@ public class UsuarioAdapter extends RecyclerView.Adapter<UsuarioAdapter.UsuarioV
     @Override
     public void onBindViewHolder(@NonNull UsuarioViewHolder holder, int position) {
         Usuario usuario = usuarioList.get(position);
-        holder.nombre.setText(usuario.getNombreUsuario());
+        holder.nombre.setText(usuario.getUsername());
         holder.rol.setText(usuario.getRol());
         holder.edit.setOnClickListener(v -> callback.editPressed(position)); // Edita
         holder.delete.setOnClickListener(v -> callback.deletePressed(position)); // Elimina
@@ -51,15 +51,15 @@ public class UsuarioAdapter extends RecyclerView.Adapter<UsuarioAdapter.UsuarioV
     public static class UsuarioViewHolder extends RecyclerView.ViewHolder {
         TextView nombre, rol;
         ImageButton edit;
-        ImageView delete; // Cambiado a ImageView para reflejar tu XML
+        ImageView delete;
 
         public UsuarioViewHolder(@NonNull View itemView) {
             super(itemView);
             nombre = itemView.findViewById(R.id.nombreCompleto);
             rol = itemView.findViewById(R.id.rol);
 
-            delete = itemView.findViewById(R.id.eliminarUsuario); // Asegúrate de que esto coincida con tu XML
-            edit = itemView.findViewById(R.id.modificarUsuario); // Asegúrate de que esto coincida con tu XML
+            delete = itemView.findViewById(R.id.eliminarUsuario);
+            edit = itemView.findViewById(R.id.modificarUsuario);
 
             //expandableView.setVisibility(View.GONE);
         }

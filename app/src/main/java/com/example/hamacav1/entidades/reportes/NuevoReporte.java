@@ -21,6 +21,8 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.example.hamacav1.R;
 import com.example.hamacav1.util.Internetop;
 import com.example.hamacav1.util.Utils;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 
 import org.json.JSONObject;
 
@@ -149,9 +151,18 @@ public class NuevoReporte extends AppCompatActivity {
     }
 
     // Método estático para crear un reporte de reserva
-    public static void crearReporte(Context context, long userId, String nombreUsuario, String titulo, String descripcion) {
+    public static void crearReporte(Context context, String titulo, String descripcion) {
         SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy HH:mm", Locale.getDefault());
         String fechaCreacion = sdf.format(Calendar.getInstance().getTime());
+
+        // Obtener información del usuario desde Firebase
+        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+        if (user == null) {
+            Log.e("crearReporte", "El usuario no está autenticado.");
+            return;
+        }
+        String uidUsuario = user.getUid();
+        String nombreUsuario = user.getDisplayName() != null ? user.getDisplayName() : "Usuario desconocido";
 
         try {
             OkHttpClient client = new OkHttpClient();
@@ -162,10 +173,8 @@ public class NuevoReporte extends AppCompatActivity {
             json.put("comentarioCompleto", descripcion);
             json.put("estado", "1"); // Estado predeterminado para la creación de reportes
             json.put("fechaCreacion", fechaCreacion);
-            JSONObject creadoPorObj = new JSONObject();
-            creadoPorObj.put("id", userId);
-            creadoPorObj.put("nombreUsuario", nombreUsuario);
-            json.put("creadoPor", creadoPorObj);
+            json.put("creadoPorUid", uidUsuario);
+            json.put("creadoPorNombre", nombreUsuario);
 
             String url = context.getResources().getString(R.string.url_reportes) + "newReport";
             RequestBody body = RequestBody.create(json.toString(), MEDIA_TYPE_JSON);

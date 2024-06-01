@@ -115,7 +115,7 @@ public class SombrillaDetalles  extends DialogFragment {
                     // Crear reporte para la acción realizada
                     String titulo = getString(R.string.titulo_liberando_sombrilla);
                     String descripcion = getString(R.string.descripcion_liberando_sombrilla, sombrilla.getIdSombrilla(), sombrilla.getCantidadHamacas());
-                    NuevoReporte.crearReporte(getContext(), getCurrentUserId(), getCurrentUserName(), titulo, descripcion);
+                    NuevoReporte.crearReporte(getContext(), titulo, descripcion);
 
 
                     if (updateListener != null) {
@@ -155,7 +155,7 @@ public class SombrillaDetalles  extends DialogFragment {
                         // Crear reporte para la acción realizada
                         String titulo = getString(R.string.titulo_ocupando_sombrilla);
                         String descripcion = getString(R.string.descripcion_ocupando_sombrilla, sombrilla.getIdSombrilla(), cantidadHamacas);
-                        NuevoReporte.crearReporte(getContext(), getCurrentUserId(), getCurrentUserName(), titulo, descripcion);
+                        NuevoReporte.crearReporte(getContext(), titulo, descripcion);
 
                         if (updateListener != null) {
                             updateListener.onSombrillaUpdated(sombrilla);
