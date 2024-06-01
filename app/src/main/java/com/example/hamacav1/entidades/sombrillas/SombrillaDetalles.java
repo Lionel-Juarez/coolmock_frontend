@@ -10,15 +10,16 @@ import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
 import androidx.fragment.app.DialogFragment;
 
 import android.app.Dialog;
 import android.widget.Toast;
 
 import com.example.hamacav1.MainActivity;
+import com.example.hamacav1.entidades.reportes.NuevoReporte;
 import com.example.hamacav1.entidades.reservas.NuevaReserva;
 import com.example.hamacav1.R;
-import com.example.hamacav1.entidades.reservas.Reserva;
 import com.example.hamacav1.entidades.reservas.ReservaFragment;
 
 import org.jetbrains.annotations.NotNull;
@@ -27,6 +28,7 @@ import org.json.JSONObject;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Objects;
 
 import okhttp3.Call;
 import okhttp3.Callback;
@@ -109,6 +111,13 @@ public class SombrillaDetalles  extends DialogFragment {
                     updateSombrillaOnServer(sombrilla);
                     radioOne.setVisibility(View.GONE);
                     radioTwo.setVisibility(View.GONE);
+
+                    // Crear reporte para la acción realizada
+                    String titulo = getString(R.string.titulo_liberando_sombrilla);
+                    String descripcion = getString(R.string.descripcion_liberando_sombrilla, sombrilla.getIdSombrilla(), sombrilla.getCantidadHamacas());
+                    NuevoReporte.crearReporte(getContext(), getCurrentUserId(), getCurrentUserName(), titulo, descripcion);
+
+
                     if (updateListener != null) {
                         updateListener.onSombrillaUpdated(sombrilla);
                     }
@@ -133,8 +142,6 @@ public class SombrillaDetalles  extends DialogFragment {
                     startActivity(intent);
                     dismiss();
                 });
-
-
                 btnOcupar.setOnClickListener(v -> {
                     if (radioGroupHamacas.getCheckedRadioButtonId() != -1) {
                         sombrilla.setOcupada(true);
@@ -144,6 +151,12 @@ public class SombrillaDetalles  extends DialogFragment {
 
                         actualizarEstado(tvDetalleEstado, sombrilla);
                         updateSombrillaOnServer(sombrilla);
+
+                        // Crear reporte para la acción realizada
+                        String titulo = getString(R.string.titulo_ocupando_sombrilla);
+                        String descripcion = getString(R.string.descripcion_ocupando_sombrilla, sombrilla.getIdSombrilla(), cantidadHamacas);
+                        NuevoReporte.crearReporte(getContext(), getCurrentUserId(), getCurrentUserName(), titulo, descripcion);
+
                         if (updateListener != null) {
                             updateListener.onSombrillaUpdated(sombrilla);
                         }
@@ -152,8 +165,6 @@ public class SombrillaDetalles  extends DialogFragment {
                         Toast.makeText(getContext(), "Seleccione una cantidad de hamacas para ocupar", Toast.LENGTH_SHORT).show();
                     }
                 });
-
-
             }
         }
 
@@ -166,10 +177,11 @@ public class SombrillaDetalles  extends DialogFragment {
         tvDetalleEstado.setText("Estado: " + estado);
     }
 
+    @NonNull
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
         Dialog dialog = super.onCreateDialog(savedInstanceState);
-        dialog.getWindow().getAttributes().windowAnimations = R.style.DialogAnimation;
+        Objects.requireNonNull(dialog.getWindow()).getAttributes().windowAnimations = R.style.DialogAnimation;
         return dialog;
     }
 
@@ -215,6 +227,7 @@ public class SombrillaDetalles  extends DialogFragment {
                 @Override
                 public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
                     if (!response.isSuccessful()) {
+                        assert response.body() != null;
                         String responseBody = response.body().string(); // Leer la respuesta del servidor
                         Log.e("SombrillaUpdate", "Respuesta no exitosa del servidor al actualizar sombrilla: HTTP " + response.code() + " - " + responseBody);
                     } else {
@@ -226,8 +239,6 @@ public class SombrillaDetalles  extends DialogFragment {
             Log.e("SombrillaUpdate", "Error al crear JSON para actualizar la sombrilla: " + e.getMessage(), e);
         }
     }
-
-
     private void checkCantidadHamacas(Sombrilla sombrilla) {
         String cantidadHamacas = sombrilla.getCantidadHamacas();
 
@@ -254,6 +265,14 @@ public class SombrillaDetalles  extends DialogFragment {
         }
     }
 
+    private String getCurrentUserName() {
+        // Implementa la lógica para obtener el nombre del usuario actual
+        return "nombreUsuario"; // Esto es solo un ejemplo, deberías obtenerlo de tus datos de usuario
+    }
+
+    public long getCurrentUserId(){
+        return 1;
+    }
 }
 
 

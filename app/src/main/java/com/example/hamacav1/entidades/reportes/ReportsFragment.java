@@ -1,14 +1,15 @@
 package com.example.hamacav1.entidades.reportes;
-import androidx.activity.result.ActivityResult;
-import androidx.activity.result.ActivityResultCallback;
+
+
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
-import androidx.appcompat.app.AlertDialog;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
-import android.content.DialogInterface;
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.res.Resources;
 import android.os.Bundle;
 import android.os.Handler;
@@ -16,6 +17,8 @@ import android.os.Looper;
 import android.util.Log;
 import android.view.View;
 
+import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import org.json.JSONArray;
@@ -23,6 +26,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -57,17 +61,13 @@ public class ReportsFragment extends Fragment implements ReporteAdapter.ReportsA
     private TextView emptyView;
     private int currentPage = 0;
     private boolean isLoading = false;
-    private boolean hasMoreReports = true;
-    private final int PAGE_SIZE = 10;
+    private final boolean hasMoreReports = true;
     private final int LOAD_MORE_SIZE = 5;
     ActivityResultLauncher<Intent> nuevoResultLauncher = registerForActivityResult(
             new ActivityResultContracts.StartActivityForResult(),
-            new ActivityResultCallback<ActivityResult>() {
-                @Override
-                public void onActivityResult(ActivityResult result) {
-                    if (result.getResultCode() == Activity.RESULT_OK) {
-                        cargarReportes();
-                    }
+            result -> {
+                if (result.getResultCode() == Activity.RESULT_OK) {
+                    cargarReportes();
                 }
             });
 
@@ -78,10 +78,11 @@ public class ReportsFragment extends Fragment implements ReporteAdapter.ReportsA
         reportsRecyclerView = view.findViewById(R.id.reportsRecyclerView);
         reportsRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         reportsList = new ArrayList<>();
-        reporteAdapter = new ReporteAdapter(reportsList, getContext(), this);
+        reporteAdapter = new ReporteAdapter(reportsList, getContext());
         reportsRecyclerView.setAdapter(reporteAdapter);
         emptyView = view.findViewById(R.id.emptyView);
 
+        int PAGE_SIZE = 10;
         loadReportsFromBackend(currentPage, PAGE_SIZE);
 
         reportsRecyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
@@ -98,15 +99,42 @@ public class ReportsFragment extends Fragment implements ReporteAdapter.ReportsA
             }
         });
 
+        // Encontrar y configurar el ImageView para el filtro
+        ImageView btnFilter = view.findViewById(R.id.btnFilter);
+        if (btnFilter != null) {
+            btnFilter.setOnClickListener(v -> {
+            });
+        } else {
+            Log.e("ReportsFragment", "ImageView btnFilter is null");
+        }
+
+        // Encontrar y configurar el Button para nuevo reporte
+        Button btnNew = view.findViewById(R.id.btnNew);
+        if (btnNew != null) {
+            btnNew.setOnClickListener(this::newReport);
+        } else {
+            Log.e("ReportsFragment", "Button btnNew is null");
+        }
+
         return view;
     }
 
     private void loadReportsFromBackend(int page, int size) {
         String url = getResources().getString(R.string.url_reportes) + "?page=" + page + "&size=" + size;
-        OkHttpClient client = new OkHttpClient();
-        Request request = new Request.Builder().url(url).build();
-
         Log.d("ReportsFragment", "Iniciando carga de reportes desde el backend: " + url);
+
+        if (!Internetop.getInstance(requireContext()).isNetworkAvailable()) {
+            Utils.showError(requireContext(), "No hay conexión a internet");
+            isLoading = false;
+            return;
+        }
+        SharedPreferences sharedPreferences = requireActivity().getSharedPreferences("MyAppPrefs", Context.MODE_PRIVATE);
+        String idToken = sharedPreferences.getString("idToken", null);
+        OkHttpClient client = new OkHttpClient();
+        Request request = new Request.Builder()
+                .url(url)
+                .addHeader("Authorization", "Bearer " + idToken)
+                .build();
 
         client.newCall(request).enqueue(new Callback() {
             @Override
@@ -119,40 +147,50 @@ public class ReportsFragment extends Fragment implements ReporteAdapter.ReportsA
             public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
                 if (!response.isSuccessful()) {
                     Log.e("ReportsFragment", "Respuesta no exitosa del servidor: " + response);
+                    // Manejar el código de error aquí
+                    if (response.code() == 403) {
+                        requireActivity().runOnUiThread(() -> Utils.showError(requireContext(), "Acceso denegado. Por favor, verifica tus permisos."));
+                    }
                     throw new IOException("Código inesperado " + response);
                 }
 
+                assert response.body() != null;
                 final String responseData = response.body().string();
                 Log.d("ReportsFragment", "Reportes cargados correctamente: " + responseData);
 
-                getActivity().runOnUiThread(new Runnable() {
+                if (!isAdded()) {
+                    return;
+                }
+
+                requireActivity().runOnUiThread(new Runnable() {
+                    @SuppressLint("NotifyDataSetChanged")
                     @Override
                     public void run() {
                         try {
-                            JSONObject jsonObject = new JSONObject(responseData);
-                            JSONArray jsonArray = jsonObject.getJSONArray("content");
-                            boolean lastPage = jsonObject.getBoolean("last");
-                            if (lastPage) {
-                                hasMoreReports = false;
-                            }
+                            JSONArray jsonArray = new JSONArray(responseData);
                             List<Reporte> newReportsList = new ArrayList<>();
                             for (int i = 0; i < jsonArray.length(); i++) {
                                 JSONObject reportObject = jsonArray.getJSONObject(i);
                                 Reporte reporte = new Reporte();
                                 reporte.fromJSON(reportObject);
-                                newReportsList.add(reporte);
-                            }
-                            for (Reporte reporte : newReportsList) {
+
                                 if (!reportsList.contains(reporte)) {
-                                    reportsList.add(reporte);
+                                    newReportsList.add(reporte);
                                 }
                             }
-                            reporteAdapter.notifyDataSetChanged();
-                            checkEmptyView();
-                            Log.d("ReportsFragment", "Reportes actualizados en la interfaz de usuario.");
+                            Collections.reverse(newReportsList);
+                            if (newReportsList.isEmpty() && reportsList.isEmpty()) {
+                                emptyView.setVisibility(View.VISIBLE);
+                                reportsRecyclerView.setVisibility(View.GONE);
+                            } else {
+                                emptyView.setVisibility(View.GONE);
+                                reportsRecyclerView.setVisibility(View.VISIBLE);
+                                reportsList.addAll(newReportsList);
+                                reporteAdapter.notifyDataSetChanged();
+                            }
+                            isLoading = false;
                         } catch (JSONException e) {
                             Log.e("ReportsFragment", "Error al parsear reportes: ", e);
-                        } finally {
                             isLoading = false;
                         }
                     }
@@ -160,7 +198,6 @@ public class ReportsFragment extends Fragment implements ReporteAdapter.ReportsA
             }
         });
     }
-
 
     private void checkEmptyView() {
         if (reporteAdapter.getItemCount() == 0) {
@@ -172,91 +209,10 @@ public class ReportsFragment extends Fragment implements ReporteAdapter.ReportsA
         }
     }
 
-    @Override
-    public void deletePressed(int position) {
-        AlertDialog diaBox = AskOption(position);
-        diaBox.show();//Mostramos un diálogo de confirmación
-    }
-    private AlertDialog AskOption(final int position) {
-        AlertDialog myQuittingDialogBox = new AlertDialog.Builder(getActivity())
-
-                .setTitle(R.string.eliminar_reporte)
-                .setMessage(R.string.are_you_sure)
-                .setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int whichButton) {
-                        eliminarReporte(position);
-                        dialog.dismiss();
-                    }
-                })
-                .setNegativeButton(R.string.no, new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int which) {
-                        dialog.dismiss();
-                    }
-                })
-                .create();
-        return myQuittingDialogBox;
-    }
-
-    private void eliminarReporte(int position){
-        if(reportsList !=null && reportsList.size() > position) {
-            Reporte reporte = reportsList.get(position);
-            Log.d("ReportsFragment", "Eliminando reporte: " + reporte.getIdReporte());
-
-            if (Internetop.getInstance(getContext()).isNetworkAvailable()) {
-                String url = getResources().getString(R.string.url_reportes) + "deleteReport/" + reporte.getIdReporte();
-                eliminarTask(url);
-            } else {
-                Log.e("ReportsFragment", "Conexión de red no disponible para eliminar reporte.");
-                Utils.showError(getContext(),"error.IOException");
-            }
-        } else {
-            Log.e("ReportsFragment", "Posición de reporte no válida o lista de reportes vacía.");
-            Utils.showError(getContext(),"error.desconocido");
-        }
-    }
-    private void eliminarTask(String url){
-        //La clase Executor será la encargada de lanzar un nuevo hilo en background con la tarea
-        ExecutorService executor = Executors.newSingleThreadExecutor();
-        //Handler es la clase encargada de manejar el resultado de la tarea ejecutada en segundo plano
-        Handler handler = new Handler(Looper.getMainLooper());
-        executor.execute(new Runnable() {//Ejecutamos el nuevo hilo
-            @Override
-            public void run() {
-                /*Aquí ejecutamos el código en segundo plano, que consiste en obtener del servidor
-                 * la lista de alumnos*/
-                Internetop internetop = Internetop.getInstance(getContext());
-                String result = internetop.deleteTask(url);
-                handler.post(new Runnable() {/*Una vez handler recoge el resultado de la tarea en
-                segundo plano, hacemos los cambios pertinentes en la interfaz de usuario en función
-                del resultado obtenido*/
-                    @Override
-                    public void run() {
-                        if(result.equalsIgnoreCase("error.IOException")||
-                                result.equals("error.OKHttp")) {//Controlamos los posibles errores
-                            Utils.showError(getContext(),result);
-                        }
-                        else if(result.equalsIgnoreCase("null")){
-                            Utils.showError(getContext(),"error.desconocido");
-                        }
-                        else{
-//                            ProgressBar pbMain = (ProgressBar) findViewById(R.id.pb_main);
-//                            pbMain.setVisibility(View.GONE);
-                            cargarReportes();
-                        }
-                    }
-                });
-            }
-        });
-    }
-
     private void cargarReportes() {
         Log.d("ReportsFragment", "Intentando cargar reportes...");
         if (Internetop.getInstance(requireContext()).isNetworkAvailable()) {
             Log.d("ReportsFragment", "Conexión de red disponible. Cargando reportes...");
-
-            // Aquí podría ir el código para mostrar una barra de progreso si es necesario
-            // ProgressBar pbMain = (ProgressBar) findViewById(R.id.pb_main);
-            // pbMain.setVisibility(View.VISIBLE);
 
             Resources res = getResources();
             String url = res.getString(R.string.url_reportes);
@@ -265,7 +221,7 @@ public class ReportsFragment extends Fragment implements ReporteAdapter.ReportsA
             getListaTask(url);
         } else {
             Log.e("ReportsFragment", "Conexión de red no disponible.");
-            Utils.showError(getContext(),"error.IOException");
+            Utils.showError(requireContext(), "error.IOException");
         }
     }
 
@@ -273,30 +229,24 @@ public class ReportsFragment extends Fragment implements ReporteAdapter.ReportsA
     private void getListaTask(String url) {
         ExecutorService executor = Executors.newSingleThreadExecutor();
         Handler handler = new Handler(Looper.getMainLooper());
-        executor.execute(new Runnable() {
-            @Override
-            public void run() {
-                Internetop internetop = Internetop.getInstance(getContext());
-                String result = internetop.getString(url);
-                handler.post(new Runnable() {
-                    @Override
-                    public void run() {
-                        if(result.equalsIgnoreCase("error.IOException")||
-                                result.equals("error.OKHttp")) {
+        executor.execute(() -> {
+            Internetop internetop = Internetop.getInstance(getContext());
+            String result = internetop.getString(url);
+            handler.post(() -> {
+                if (result.equalsIgnoreCase("error.IOException") ||
+                        result.equals("error.OKHttp")) {
 
-                            Utils.showError(getContext(),result);
-                        }
-                        else if(result.equalsIgnoreCase("null")){
-                            Utils.showError(getContext(),"error.desconocido");
-                        }
-                        else{
-                            resetLista(result);
-                        }
-                    }
-                });
-            }
+                    Utils.showError(requireContext(), result);
+                } else if (result.equalsIgnoreCase("null")) {
+                    Utils.showError(requireContext(), "error.desconocido");
+                } else {
+                    resetLista(result);
+                }
+            });
         });
     }
+
+    @SuppressLint("NotifyDataSetChanged")
     private void resetLista(String result) {
         try {
             JSONArray listaReportesJson = new JSONArray(result);
@@ -305,19 +255,20 @@ public class ReportsFragment extends Fragment implements ReporteAdapter.ReportsA
                 JSONObject jsonUser = listaReportesJson.getJSONObject(i);
                 Reporte reporte = new Reporte();
                 reporte.fromJSON(jsonUser);
-                reportsList.add(reporte);
+
+                // Verificar si el reporte ya existe en la lista
+                if (!reportsList.contains(reporte)) {
+                    reportsList.add(reporte);
+                }
             }
             reporteAdapter.notifyDataSetChanged();
             checkEmptyView();
         } catch (JSONException e) {
-            Utils.showError(getContext(), e.getMessage());
+            Utils.showError(requireContext(), e.getMessage());
         }
     }
-
-
-    private void newReport() {
+    public void newReport(View view) {
         Intent intent = new Intent(getContext(), NuevoReporte.class);
         nuevoResultLauncher.launch(intent);
     }
-
 }

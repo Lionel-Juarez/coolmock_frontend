@@ -13,7 +13,6 @@ import android.util.Log;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
-import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.ImageView;
 import android.widget.NumberPicker;
@@ -21,6 +20,7 @@ import android.widget.RadioButton;
 import android.widget.Spinner;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.hamacav1.entidades.clientes.Cliente;
@@ -44,6 +44,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 import java.util.Locale;
+import java.util.Objects;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.stream.Collectors;
@@ -79,7 +80,7 @@ public class NuevaReserva extends AppCompatActivity {
         loadData();
     }
     @Override
-    public void onSaveInstanceState(Bundle outState) {
+    public void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
     }
 
@@ -97,14 +98,9 @@ public class NuevaReserva extends AppCompatActivity {
         numberPickerHoraLlegada.setMinValue(0);
         numberPickerHoraLlegada.setMaxValue(hours.length - 1);
         numberPickerHoraLlegada.setDisplayedValues(hours);
-        numberPickerHoraLlegada.setValue(0);  // Establece el valor inicial a "08:00 AM"
+        numberPickerHoraLlegada.setValue(0);
 
-        btnOpenCalendar.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                showDatePickerDialog();
-            }
-        });
+        btnOpenCalendar.setOnClickListener(v -> showDatePickerDialog());
         ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this,
                 R.array.payment_array, R.layout.spinner_item);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
@@ -196,8 +192,11 @@ public class NuevaReserva extends AppCompatActivity {
                             // Crear el reporte de la nueva reserva
                             handler.post(() -> {
                                 List<Integer> numSombrillas = idsSombrillas.stream().map(Long::intValue).collect(Collectors.toList());
-                                String nombreUsuario = "Nombre del Usuario"; // Obtén el nombre del usuario actual desde donde sea apropiado
-                                NuevoReporte.crearReporteReserva(getApplicationContext(), idUsuario, nombreUsuario, numSombrillas, numSombrillas.size());
+                                String nombreUsuario = getCurrentUserName(); // Implementa este método para obtener el nombre del usuario actual
+                                String titulo = "Creación de Reserva";
+                                String descripcion = "Sombrilla/s " + numSombrillas + " reservadas, cantidad: " + cantidadHamacas;
+
+                                NuevoReporte.crearReporte(getApplicationContext(), idUsuario, nombreUsuario, titulo, descripcion);
 
                                 Toast.makeText(getApplicationContext(), "Reserva añadida con éxito", Toast.LENGTH_SHORT).show();
                                 setResult(Activity.RESULT_OK);
@@ -222,13 +221,19 @@ public class NuevaReserva extends AppCompatActivity {
         });
     }
 
+    // Método adicional para obtener el nombre de usuario actual
+    private String getCurrentUserName() {
+        // Implementa la lógica para obtener el nombre del usuario actual
+        return "nombreUsuario"; // Esto es solo un ejemplo, deberías obtenerlo de tus datos de usuario
+    }
+
     private void updateSombrillasAsReserved(List<Long> idsSombrillas, long idReserva, String cantidadHamacas) {
         Log.e("UpdateSombrilla", "dentro de la funcion updateSombrillas");
 
         OkHttpClient client = new OkHttpClient();
         for (Long idSombrilla : idsSombrillas) {
             String url = getResources().getString(R.string.url_sombrillas) + "updateReservaSombrilla/" + idSombrilla;
-            HttpUrl.Builder urlBuilder = HttpUrl.parse(url).newBuilder();
+            HttpUrl.Builder urlBuilder = Objects.requireNonNull(HttpUrl.parse(url)).newBuilder();
             urlBuilder.addQueryParameter("idReserva", String.valueOf(idReserva));
             urlBuilder.addQueryParameter("cantidadHamacas", cantidadHamacas);
 
@@ -247,6 +252,7 @@ public class NuevaReserva extends AppCompatActivity {
                 @Override
                 public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
                     if (!response.isSuccessful()) {
+                        assert response.body() != null;
                         Log.e("updateSombrilla", "Error al actualizar sombrilla ID " + idSombrilla + ", respuesta del servidor: " + response.body().string());
                         // Opcional: Manejar el error en la UI thread si es necesario
                     } else {
@@ -300,6 +306,7 @@ public class NuevaReserva extends AppCompatActivity {
                     throw new IOException("Código inesperado " + response);
                 }
 
+                assert response.body() != null;
                 final String responseData = response.body().string();
                 Log.d("NuevaReserva", "Clientes cargados correctamente: " + responseData);
 
@@ -309,7 +316,7 @@ public class NuevaReserva extends AppCompatActivity {
                         List<Cliente> clientsList = new ArrayList<>();
                         for (int i = 0; i < jsonArray.length(); i++) {
                             JSONObject jsonObject = jsonArray.getJSONObject(i);
-                            Long id = jsonObject.getLong("idCliente");
+                            long id = jsonObject.getLong("idCliente");
                             String nombre = jsonObject.getString("nombreCompleto");
                             String telefono = jsonObject.optString("numeroTelefono");
                             String email = jsonObject.optString("email");

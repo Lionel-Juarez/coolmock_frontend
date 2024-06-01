@@ -8,7 +8,7 @@
 
     <item
         android:id="@+id/sunbed"
-        android:icon="@drawable/hamaca1"
+        android:icon="@drawable/sillaplaya"
         android:title="@string/sunbed" />
     <item
         android:id="@+id/calcs"

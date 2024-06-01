@@ -27,7 +27,6 @@ import org.json.JSONObject;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
-import java.util.List;
 import java.util.Locale;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -42,8 +41,6 @@ import okhttp3.Response;
 
 
 public class NuevoReporte extends AppCompatActivity {
-
-
     private long creadoPor;
     private String fechaCreacion;
     private EditText etTitulo;
@@ -66,7 +63,7 @@ public class NuevoReporte extends AppCompatActivity {
     }
 
     @Override
-    public void onSaveInstanceState(Bundle outState) {
+    public void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
     }
 
@@ -123,6 +120,7 @@ public class NuevoReporte extends AppCompatActivity {
                 Request request = new Request.Builder().url(url).post(body).build();
 
                 try (Response response = client.newCall(request).execute()) {
+                    assert response.body() != null;
                     String result = response.body().string();
                     handler.post(() -> {
                         Log.d("NewReport", "Respuesta del servidor: " + result);
@@ -151,12 +149,9 @@ public class NuevoReporte extends AppCompatActivity {
     }
 
     // Método estático para crear un reporte de reserva
-    public static void crearReporteReserva(Context context, long userId, String nombreUsuario, List<Integer> numSombrillas, int cantidad) {
+    public static void crearReporte(Context context, long userId, String nombreUsuario, String titulo, String descripcion) {
         SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy HH:mm", Locale.getDefault());
         String fechaCreacion = sdf.format(Calendar.getInstance().getTime());
-
-        String titulo = "Creacion reserva";
-        String descripcion = "Sombrilla/s " + numSombrillas.toString() + " reservadas, cantidad: " + cantidad;
 
         try {
             OkHttpClient client = new OkHttpClient();
@@ -183,16 +178,16 @@ public class NuevoReporte extends AppCompatActivity {
                 }
 
                 @Override
-                public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
+                public void onResponse(@NonNull Call call, @NonNull Response response) {
                     if (!response.isSuccessful()) {
                         Log.e("NewReport", "Error al añadir reporte: " + response);
                     } else {
-                        Log.d("NewReport", "Reporte de reserva añadido con éxito.");
+                        Log.d("NewReport", "Reporte añadido con éxito.");
                     }
                 }
             });
         } catch (Exception e) {
-            Log.e("NewReport", "Excepción al crear reporte de reserva: " + e.getMessage(), e);
+            Log.e("NewReport", "Excepción al crear reporte: " + e.getMessage(), e);
         }
     }
 }

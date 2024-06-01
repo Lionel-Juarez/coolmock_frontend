@@ -1,28 +1,31 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:id="@+id/report_card"
-    android:layout_marginStart="5dp"
-    android:layout_marginEnd="5dp"
+    android:layout_marginStart="1dp"
+    android:layout_marginEnd="1dp"
     android:layout_marginVertical="1dp"
+    android:layout_marginBottom="2dp"
     app:cardCornerRadius="5dp"
     app:cardElevation="10dp">
 
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:padding="10dp">
+        android:padding="5dp">
 
         <TextView
             android:id="@+id/reportTitle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Título"
+            android:text="@string/title"
             android:textSize="18sp"
             android:textStyle="bold"
-            android:maxLength="20"/>
+            android:maxLength="20"
+            tools:ignore="RelativeOverlap" />
 
         <ImageView
             android:id="@+id/deleteIcon"
@@ -31,8 +34,8 @@
             android:layout_alignParentEnd="true"
             android:layout_alignParentTop="true"
             android:contentDescription="@string/delete_comment"
-            android:src="@drawable/borrar32"
-            android:layout_marginStart="10dp"/>
+            android:layout_margin="4dp"
+            android:src="@drawable/borrar32"/>
 
         <TextView
             android:id="@+id/reportDescription"
@@ -40,36 +43,24 @@
             android:layout_height="wrap_content"
             android:layout_below="@id/reportTitle"
             android:maxLines="2"
-            android:layout_marginRight="20dp"
+            android:layout_marginEnd="20dp"
             android:text="@string/description"
             android:textAlignment="textStart"
             android:textColor="@color/black"
             android:textSize="14sp" />
-
-        <TextView
-            android:id="@+id/reportState"
-            android:text="Estado"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textColor="@color/black"
-            android:textSize="12sp"
-            android:layout_below="@id/reportDescription"
-            android:maxLines="1"/>
-
         <LinearLayout
             android:id="@+id/expandable_view"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:visibility="gone"
             android:orientation="vertical"
-            android:layout_below="@id/reportState"
             android:paddingTop="10dp">
 
             <TextView
                 android:id="@+id/creationDate"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Fecha de Creación"
+                android:text="@string/fecha_reserva"
                 android:textSize="12sp"
                 android:layout_marginBottom="4dp"/>
 
@@ -78,7 +69,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textSize="12sp"
-                android:text="Creado por"/>
+                android:text="@string/created_by"/>
         </LinearLayout>
         <!-- Icono de expansión -->
         <ImageView
@@ -87,7 +78,7 @@
             android:layout_height="30dp"
             android:layout_alignParentEnd="true"
             android:layout_below="@id/reportTitle"
-            android:layout_marginTop="25dp"
+            android:layout_marginTop="10dp"
             android:contentDescription="@string/toggle_details"
             android:src="@drawable/abajo24" />
     </RelativeLayout>

@@ -1,8 +1,7 @@
 package com.example.hamacav1.entidades.sombrillas;
 
+import android.annotation.SuppressLint;
 import android.app.DatePickerDialog;
-import android.content.Context;
-import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -10,6 +9,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.Toast;
 
 
@@ -35,6 +35,7 @@ import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
+import java.util.Objects;
 
 
 import okhttp3.Call;
@@ -47,28 +48,29 @@ import okhttp3.Response;
 
 public class SombrillaFragment extends Fragment implements SombrillaDetalles.SombrillaUpdateListener {
 
-    private RecyclerView sombrillasRecyclerView;
     private SombrillaAdapter sombrillasAdapter;
-    private List<Sombrilla> todasLasSombrillas = new ArrayList<>();
-    private ImageView openDatePicker;
+    private final List<Sombrilla> todasLasSombrillas = new ArrayList<>();
+    private ProgressBar progressBar;
+
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_sombrilla, container, false);
         setupRecyclerView(view);
+        progressBar = view.findViewById(R.id.progressBar);
         cargarSombrillas(Calendar.getInstance().get(Calendar.YEAR), Calendar.getInstance().get(Calendar.MONTH), Calendar.getInstance().get(Calendar.DAY_OF_MONTH));
         setupOpenDatePicker(view);
         return view;
     }
 
     private void setupOpenDatePicker(View view) {
-        openDatePicker = view.findViewById(R.id.openDatePicker);
+        ImageView openDatePicker = view.findViewById(R.id.openDatePicker);
         openDatePicker.setOnClickListener(v -> showDatePickerDialog());
     }
 
     private void showDatePickerDialog() {
         Calendar c = Calendar.getInstance();
-        DatePickerDialog datePickerDialog = new DatePickerDialog(getContext(),
+        DatePickerDialog datePickerDialog = new DatePickerDialog(requireContext(),
                 (view, year, month, dayOfMonth) -> {
                     // Lógica para cargar las sombrillas con la fecha seleccionada...
                     cargarSombrillas(year, month, dayOfMonth);
@@ -77,7 +79,7 @@ public class SombrillaFragment extends Fragment implements SombrillaDetalles.Som
     }
 
     private void setupRecyclerView(View view) {
-        sombrillasRecyclerView = view.findViewById(R.id.sombrillasRecyclerView);
+        RecyclerView sombrillasRecyclerView = view.findViewById(R.id.sombrillasRecyclerView);
         sombrillasRecyclerView.setLayoutManager(new GridLayoutManager(getContext(), 9));
         sombrillasAdapter = new SombrillaAdapter(todasLasSombrillas, getContext(), getChildFragmentManager());
         sombrillasRecyclerView.setAdapter(sombrillasAdapter);
@@ -86,16 +88,13 @@ public class SombrillaFragment extends Fragment implements SombrillaDetalles.Som
         LocalDate today = LocalDate.of(year, month + 1, dayOfMonth);
         Log.d("SombrillaFragment", "Cargando sombrillas para la fecha actual: " + today);
 
-        String url = getResources().getString(R.string.url_sombrillas).concat("sombrillas");
-        HttpUrl urlWithParams = HttpUrl.parse(url).newBuilder().build();
+        progressBar.setVisibility(View.VISIBLE); // Mostrar ProgressBar al iniciar la carga
 
-//        // Obtener el token de SharedPreferences
-//        SharedPreferences sharedPreferences = getActivity().getSharedPreferences("MyAppPrefs", Context.MODE_PRIVATE);
-//        String idToken = sharedPreferences.getString("idToken", null);
+        String url = getResources().getString(R.string.url_sombrillas).concat("sombrillas");
+        HttpUrl urlWithParams = Objects.requireNonNull(HttpUrl.parse(url)).newBuilder().build();
 
         Request request = new Request.Builder()
                 .url(urlWithParams.toString())
-//                .addHeader("Authorization", "Bearer " + idToken) // Añadir el token aquí
                 .get()
                 .build();
 
@@ -104,39 +103,60 @@ public class SombrillaFragment extends Fragment implements SombrillaDetalles.Som
             @Override
             public void onFailure(@NotNull Call call, @NotNull IOException e) {
                 Log.e("SombrillaLoad", "Error al cargar sombrillas: " + e.getMessage(), e);
-                getActivity().runOnUiThread(() -> Toast.makeText(getContext(), "Error al cargar sombrillas", Toast.LENGTH_SHORT).show());
+                if (getActivity() != null) {
+                    getActivity().runOnUiThread(() -> {
+                        progressBar.setVisibility(View.GONE); // Ocultar ProgressBar en caso de fallo
+                        Toast.makeText(getContext(), "Error al cargar sombrillas", Toast.LENGTH_SHORT).show();
+                    });
+                }
             }
 
+            @SuppressLint("NotifyDataSetChanged")
             @Override
             public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
                 if (response.isSuccessful()) {
+                    assert response.body() != null;
                     String responseBody = response.body().string();
-                    getActivity().runOnUiThread(() -> {
-                        try {
-                            todasLasSombrillas.clear();
-                            JSONArray jsonArray = new JSONArray(responseBody);
-                            Log.d("SombrillaLoad", "Sombrillas cargadas correctamente: " + responseBody);
-                            for (int i = 0; i < jsonArray.length(); i++) {
-                                JSONObject jsonObject = jsonArray.getJSONObject(i);
-                                Sombrilla sombrilla = Sombrilla.fromJSON(jsonObject);
-                                JSONArray reservas = jsonObject.optJSONArray("reservas");
-                                if (reservas != null) {
-                                    Log.d("SombrillaFragment", "Verificando reservas para sombrilla ID: " + sombrilla.getIdSombrilla());
+                    if (getActivity() != null) {
+                        getActivity().runOnUiThread(() -> {
+                            try {
+                                todasLasSombrillas.clear();
+                                if (responseBody.isEmpty()) {
+                                    Log.e("SombrillaFragment", "El cuerpo de la respuesta está vacío");
+                                    Toast.makeText(getContext(), "No hay sombrillas disponibles", Toast.LENGTH_SHORT).show();
+                                } else {
+                                    JSONArray jsonArray = new JSONArray(responseBody);
+                                    Log.d("SombrillaLoad", "Sombrillas cargadas correctamente: " + responseBody);
+                                    for (int i = 0; i < jsonArray.length(); i++) {
+                                        JSONObject jsonObject = jsonArray.getJSONObject(i);
+                                        Sombrilla sombrilla = Sombrilla.fromJSON(jsonObject);
+                                        JSONArray reservas = jsonObject.optJSONArray("reservas");
+                                        if (reservas != null) {
+                                            Log.d("SombrillaFragment", "Verificando reservas para sombrilla ID: " + sombrilla.getIdSombrilla());
+                                        }
+                                        checkReservationsAndSetReserved(sombrilla, reservas, today);
+                                        todasLasSombrillas.add(sombrilla);
+                                    }
+                                    sombrillasAdapter.setSombrillas(todasLasSombrillas);
+                                    sombrillasAdapter.notifyDataSetChanged();
+                                    Log.d("SombrillaFragment", "Sombrillas cargadas y actualizadas en el adaptador.");
                                 }
-                                checkReservationsAndSetReserved(sombrilla, reservas, today);
-                                todasLasSombrillas.add(sombrilla);
+                            } catch (JSONException e) {
+                                Log.e("SombrillaFragment", "Error al procesar los datos de sombrillas", e);
+                                Toast.makeText(getContext(), "Error al procesar los datos", Toast.LENGTH_SHORT).show();
+                            } finally {
+                                progressBar.setVisibility(View.GONE); // Ocultar ProgressBar al completar la carga
                             }
-                            sombrillasAdapter.setSombrillas(todasLasSombrillas);
-                            sombrillasAdapter.notifyDataSetChanged();
-                            Log.d("SombrillaFragment", "Sombrillas cargadas y actualizadas en el adaptador.");
-                        } catch (JSONException e) {
-                            Log.e("SombrillaFragment", "Error al procesar los datos de sombrillas", e);
-                            Toast.makeText(getContext(), "Error al procesar los datos", Toast.LENGTH_SHORT).show();
-                        }
-                    });
+                        });
+                    }
                 } else {
                     Log.e("SombrillaLoad", "Respuesta no exitosa del servidor: " + response.code());
-                    getActivity().runOnUiThread(() -> Toast.makeText(getContext(), "Respuesta no exitosa del servidor", Toast.LENGTH_SHORT).show());
+                    if (getActivity() != null) {
+                        getActivity().runOnUiThread(() -> {
+                            progressBar.setVisibility(View.GONE);
+                            Toast.makeText(getContext(), "Respuesta no exitosa del servidor", Toast.LENGTH_SHORT).show();
+                        });
+                    }
                 }
             }
         });

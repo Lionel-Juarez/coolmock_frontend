@@ -1,5 +1,6 @@
 package com.example.hamacav1.entidades.reportes;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.transition.AutoTransition;
 import android.transition.TransitionManager;
@@ -10,6 +11,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.hamacav1.R;
@@ -19,14 +21,12 @@ import java.util.List;
 
 public class ReporteAdapter extends RecyclerView.Adapter<ReporteAdapter.ReportViewHolder> {
 
-    private List<Reporte> reportsList;
-    private Context context;
-    private ReportsAdapterCallback callback;
+    private final List<Reporte> reportsList;
+    private final Context context;
 
-    public ReporteAdapter(List<Reporte> reportsList, Context context, ReportsAdapterCallback callback) {
+    public ReporteAdapter(List<Reporte> reportsList, Context context) {
         this.reportsList = reportsList;
         this.context = context;
-        this.callback = callback;
         Collections.reverse(this.reportsList);
     }
 
@@ -38,55 +38,57 @@ public class ReporteAdapter extends RecyclerView.Adapter<ReporteAdapter.ReportVi
     }
 
 
+    @SuppressLint("SetTextI18n")
     @Override
     public void onBindViewHolder(@NonNull ReportViewHolder holder, int position) {
         Reporte reporte = reportsList.get(position);
         holder.title.setText(reporte.getTitulo());
-        holder.fullComment.setText(reporte.getComentarioCompleto());
 
+        // Colorea el título basado en su texto
+        if (reporte.getTitulo().equals(context.getString(R.string.titulo_ocupando_sombrilla))) {
+            holder.title.setTextColor(ContextCompat.getColor(context, R.color.colorOcupada));
+        } else if (reporte.getTitulo().equals(context.getString(R.string.titulo_liberando_sombrilla))) {
+            holder.title.setTextColor(ContextCompat.getColor(context, R.color.color_liberando_sombrilla));
+        } else if (reporte.getTitulo().equals(context.getString(R.string.titulo_reservando_sombrilla))){
+            holder.title.setTextColor(ContextCompat.getColor(context, R.color.colorReservada)); // Default color
+        }else{
+            holder.title.setTextColor(ContextCompat.getColor(context, R.color.black));
+        }
+
+        holder.fullComment.setText(reporte.getComentarioCompleto());
         holder.fullComment.setMaxLines(2);
-        holder.state.setText("Type: " + reporte.getEstado());
         holder.creationDate.setText(reporte.getFechaCreacion());
-        holder.createdBy.setText("Created by: " + reporte.getCreadoPor());
+        holder.createdBy.setText(R.id.createdBy + reporte.getCreadoPor());
 
         boolean isExpanded = holder.expandableView.getVisibility() == View.VISIBLE;
         holder.expandIcon.setImageResource(isExpanded ? R.drawable.arriba24 : R.drawable.abajo24);
 
-        holder.itemView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
+        holder.itemView.setOnClickListener(v -> {
+            boolean isExpanded1 = holder.expandableView.getVisibility() == View.VISIBLE;
 
-                boolean isExpanded = holder.expandableView.getVisibility() == View.VISIBLE;
+            AutoTransition transition = new AutoTransition();
+            transition.setDuration(300);
+            TransitionManager.beginDelayedTransition((ViewGroup) holder.itemView, transition);
 
-                AutoTransition transition = new AutoTransition();
-                transition.setDuration(300);
-                TransitionManager.beginDelayedTransition((ViewGroup) holder.itemView, transition);
-
-                if (isExpanded) {
-                    holder.expandableView.setVisibility(View.GONE);
-                    holder.fullComment.setMaxLines(2);
-                } else {
-                    holder.expandableView.setVisibility(View.VISIBLE);
-                    holder.fullComment.setMaxLines(Integer.MAX_VALUE);
-                }
-                holder.expandIcon.setImageResource(isExpanded ? R.drawable.abajo24 : R.drawable.arriba24);
+            if (isExpanded1) {
+                holder.expandableView.setVisibility(View.GONE);
+                holder.fullComment.setMaxLines(2);
+            } else {
+                holder.expandableView.setVisibility(View.VISIBLE);
+                holder.fullComment.setMaxLines(Integer.MAX_VALUE);
             }
+            holder.expandIcon.setImageResource(isExpanded1 ? R.drawable.abajo24 : R.drawable.arriba24);
         });
-
-        holder.delete.setOnClickListener(v -> callback.deletePressed(position));
     }
+
 
     @Override
     public int getItemCount() {
         return reportsList.size();
     }
-    public void updateReportsList(List<Reporte> newReportsList) {
-        this.reportsList = newReportsList;
-        Collections.reverse(this.reportsList);
-        notifyDataSetChanged();
-    }
+
     public static class ReportViewHolder extends RecyclerView.ViewHolder {
-        TextView title, fullComment, state, creationDate, createdBy;
+        TextView title, fullComment, creationDate, createdBy;
         ImageView delete, expandIcon;
         View expandableView;
 
@@ -94,10 +96,8 @@ public class ReporteAdapter extends RecyclerView.Adapter<ReporteAdapter.ReportVi
             super(itemView);
             title = itemView.findViewById(R.id.reportTitle);
             fullComment = itemView.findViewById(R.id.reportDescription);
-            state = itemView.findViewById(R.id.reportState);
             creationDate = itemView.findViewById(R.id.creationDate);
             createdBy = itemView.findViewById(R.id.createdBy);
-            delete = itemView.findViewById(R.id.deleteIcon);
             expandableView = itemView.findViewById(R.id.expandable_view);
             expandIcon = itemView.findViewById(R.id.expand_icon);
 
@@ -106,7 +106,6 @@ public class ReporteAdapter extends RecyclerView.Adapter<ReporteAdapter.ReportVi
     }
 
     public interface ReportsAdapterCallback {
-        void deletePressed(int position);
     }
 
 }

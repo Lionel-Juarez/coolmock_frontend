@@ -19,9 +19,16 @@
 
     <!-- Estilo para el botón de cancelar -->
     <style name="CancelButtonStyle">
-        <item name="android:background">#F44336</item> <!-- Rojo -->
+        <item name="android:backgroundTint">#F44336</item> <!-- Rojo -->
         <item name="android:textColor">#FFFFFF</item> <!-- Blanco -->
         <item name="android:padding">10dp</item>
         <item name="android:drawablePadding">10dp</item>
     </style>
+
+    <!-- Estilo personalizado para los botones -->
+    <style name="CustomButtonStyle" parent="Widget.MaterialComponents.Button">
+        <item name="android:backgroundTint">@color/accentColor</item>
+        <item name="android:textColor">@color/white</item>
+    </style>
+
 </resources>

@@ -4,31 +4,21 @@
     android:layout_height="match_parent"
     tools:context=".entidades.clientes.ClienteFragment">
 
-    <!-- Imagen de fondo -->
-    <ImageView
-        android:id="@+id/headerImage"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:scaleType="centerCrop"
-        android:background="@color/white"/>
-
-    <!-- Contenedor para el contenido encima de la imagen -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical"
-        android:background="@android:color/transparent">
+        android:background="@android:color/transparent"
+        tools:ignore="UselessParent">
 
-        <!-- Cuadro de título con transparencia -->
         <FrameLayout
             android:id="@+id/overlayContainer"
             android:layout_width="match_parent"
-            android:layout_height="120dp"
+            android:layout_height="100dp"
             android:background="@drawable/rounded_bottom_corners"
             android:padding="16dp"
             android:elevation="4dp">
 
-            <!-- Título principal -->
             <TextView
                 android:id="@+id/tvTitleCliente"
                 android:layout_width="wrap_content"
@@ -44,9 +34,9 @@
             <ImageView
                 android:id="@+id/fab_add_cliente"
                 android:layout_width="207dp"
-                android:layout_height="125dp"
+                android:layout_height="140dp"
                 android:layout_gravity="center_vertical|end"
-                android:layout_marginTop="30dp"
+                android:layout_marginTop="26dp"
                 android:clickable="true"
                 android:contentDescription="@string/fab_add_cliente"
                 android:scaleType="centerCrop"
@@ -54,7 +44,6 @@
                 android:translationZ="4dp" />
         </FrameLayout>
 
-        <!-- RecyclerView para mostrar la lista -->
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/clientesRecyclerView"
             android:layout_width="match_parent"

@@ -18,9 +18,9 @@
 
     <!-- Colores para estados de las sombrillas -->
     <color name="colorReservada">#0B710D</color>
-    <color name="colorOcupada">#9C0808</color>
+    <color name="colorOcupada">#C15400</color>
     <color name="colorDisponible">#1C1515</color>
-
+    <color name="color_liberando_sombrilla">#808080</color>
     <!-- Textos y UI -->
     <color name="textColorPrimary">#FFFFFF</color>
     <color name="textColorSecondary">#757575</color>

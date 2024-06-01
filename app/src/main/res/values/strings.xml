@@ -1,9 +1,9 @@
-<resources>
-    <string name="app_name">HamacaV1</string>
+<resources xmlns:tools="http://schemas.android.com/tools">
+    <string name="app_name" tools:ignore="Typos">HamacaV1</string>
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="singup">Sign up!</string>
     <string name="sunbed">Sunbed</string>
-    <string name="reportes">Reports</string>
+    <string name="reportes">Historial y Reportes</string>
     <string name="calcs">Payments</string>
     <string name="user">User</string>
     <string name="logout">Log out</string>
@@ -14,7 +14,7 @@
     <string name="write_here">Write here</string>
     <string name="accept">Accept</string>
     <string name="full_comment_hint">Full comment hint</string>
-    <string name="description">This is the description of the report, it will have a maximum of 2 lines...</string>
+    <string name="description">This is the description of the report, it will have a maximum of 2 lines…</string>
     <string name="delete_comment">Delete report</string>
     <string name="url_reportes">http://10.0.2.2:8080/api/reportes/</string>
     <string name="url_sombrillas">http://10.0.2.2:8080/api/sombrillas/</string>
@@ -120,6 +120,25 @@
     <string name="_1">1</string>
     <string name="_2">2</string>
     <string name="logouticon">logouticon</string>
+    <string name="calendar_description">Calendar icon</string>
+    <string name="historial_pagos">Payment history</string>
+    <string name="titulo_ocupando_sombrilla">Ocupando sombrilla</string>
+    <string name="descripcion_ocupando_sombrilla">La sombrilla #%1$d ha sido ocupada, Cantidad de Hamacas: %2$s</string>
+    <string name="titulo_liberando_sombrilla">Liberando sombrilla</string>
+    <string name="descripcion_liberando_sombrilla">La sombrilla #%1$d ha sido liberada, Cantidad de Hamacas: %2$s</string>
+    <string name="titulo_reservando_sombrilla">Reservando sombrilla</string>
+    <string name="new_hint">New</string>
+    <string name="filter">Filter</string>
+    <string name="content_graph">graph img</string>
+    <string name="content_savings">img savings</string>
+    <string name="content_payment">img payment</string>
+    <string name="content_calendar">img calendar</string>
+    <string name="fecha_ejemplo">07/06/24</string>
+    <string name="content_customer">img customer</string>
+    <string name="content_user">img user</string>
+    <string name="content_logout">img logout</string>
+    <string name="created_by">Created By:</string>
+    <string name="title">Title</string>
 
 
     //Spinners

@@ -1,8 +1,8 @@
 package com.example.hamacav1.entidades.reservas;
 
+import android.annotation.SuppressLint;
 import android.app.DatePickerDialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.os.Bundle;
 import android.text.InputType;
 import android.util.Log;
@@ -42,8 +42,7 @@ public class ReservaFragment extends Fragment implements ReservaAdapter.Reservas
     private ReservasViewModel viewModel;
     private TextView tvNoReservas;
     private Long reservaId;
-    private static final int ICON_MARGIN = 8; // Define the icon margin in dp
-    private ProgressBar progressBar; // Añade un ProgressBar para indicar la carga
+    private ProgressBar progressBar;
 
 
 
@@ -60,6 +59,7 @@ public class ReservaFragment extends Fragment implements ReservaAdapter.Reservas
         }
     }
 
+    @SuppressLint("NotifyDataSetChanged")
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -108,7 +108,7 @@ public class ReservaFragment extends Fragment implements ReservaAdapter.Reservas
             }
         });
 
-        view.findViewById(R.id.fab_add_reserva).setOnClickListener(v -> irSombrillas());
+        view.findViewById(R.id.btnNew).setOnClickListener(v -> irSombrillas());
         setupFilterMenu(view);
         return view;
     }
@@ -142,12 +142,12 @@ public class ReservaFragment extends Fragment implements ReservaAdapter.Reservas
     }
     private void setupFilterMenu(View view) {
         ImageView filterButton = view.findViewById(R.id.btnFilter);
-        filterButton.setOnClickListener(v -> showFilterPopup(v));
+        filterButton.setOnClickListener(this::showFilterPopup);
     }
 
     private void showFilterPopup(View view) {
         LayoutInflater inflater = (LayoutInflater) view.getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        View popupView = inflater.inflate(R.layout.popup_menu_layout, null);
+        @SuppressLint("InflateParams") View popupView = inflater.inflate(R.layout.popup_menu_layout, null);
 
         int width = LinearLayout.LayoutParams.WRAP_CONTENT;
         int height = LinearLayout.LayoutParams.WRAP_CONTENT;
@@ -179,7 +179,7 @@ public class ReservaFragment extends Fragment implements ReservaAdapter.Reservas
 
     private void showDatePickerDialog() {
         Calendar c = Calendar.getInstance();
-        DatePickerDialog datePickerDialog = new DatePickerDialog(getContext(),
+        DatePickerDialog datePickerDialog = new DatePickerDialog(requireContext(),
                 (view, year, month, dayOfMonth) -> {
                     Calendar selectedDate = Calendar.getInstance();
                     selectedDate.set(Calendar.YEAR, year);
@@ -190,33 +190,27 @@ public class ReservaFragment extends Fragment implements ReservaAdapter.Reservas
         datePickerDialog.show();
     }
     private void showNameSearchDialog() {
-        AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+        AlertDialog.Builder builder = new AlertDialog.Builder(requireContext());
         builder.setTitle("Filtrar por nombre");
 
         final EditText input = new EditText(getContext());
         input.setInputType(InputType.TYPE_CLASS_TEXT);
         builder.setView(input);
 
-        builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                String name = input.getText().toString().trim();
-                if (!name.isEmpty()) {
-                    Log.d("DialogInterface", "Filtrando por nombre: " + name);
-                    viewModel.filterReservasByName(name);
-                } else {
-                    Log.d("DialogInterface", "Intento de filtrado sin nombre");
-                    Toast.makeText(getContext(), "Por favor, introduce un nombre.", Toast.LENGTH_SHORT).show();
-                }
+        builder.setPositiveButton("OK", (dialog, which) -> {
+            String name = input.getText().toString().trim();
+            if (!name.isEmpty()) {
+                Log.d("DialogInterface", "Filtrando por nombre: " + name);
+                viewModel.filterReservasByName(name);
+            } else {
+                Log.d("DialogInterface", "Intento de filtrado sin nombre");
+                Toast.makeText(getContext(), "Por favor, introduce un nombre.", Toast.LENGTH_SHORT).show();
             }
         });
 
-        builder.setNegativeButton("Cancelar", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                Log.d("DialogInterface", "Filtrado por nombre cancecantidadHamacas");
-                dialog.cancel();
-            }
+        builder.setNegativeButton("Cancelar", (dialog, which) -> {
+            Log.d("DialogInterface", "Filtrado por nombre cancecantidadHamacas");
+            dialog.cancel();
         });
 
         builder.show();
@@ -225,7 +219,7 @@ public class ReservaFragment extends Fragment implements ReservaAdapter.Reservas
 
 
     private void showStateSelectionDialog() {
-        AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+        AlertDialog.Builder builder = new AlertDialog.Builder(requireContext());
         builder.setTitle("Seleccionar Estado");
         String[] states = {"Pendiente", "Ha llegado", "Cancelada"};
         builder.setItems(states, (dialog, which) -> {

@@ -10,12 +10,13 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@android:color/transparent"
-        android:orientation="vertical">
+        android:orientation="vertical"
+        tools:ignore="UselessParent">
 
         <RelativeLayout
             android:id="@+id/overlayContainer"
             android:layout_width="match_parent"
-            android:layout_height="120dp"
+            android:layout_height="70dp"
             android:background="@drawable/rounded_bottom_corners"
             android:elevation="4dp"
             android:padding="16dp">
@@ -27,7 +28,7 @@
                 android:layout_alignParentStart="true"
                 android:text="@string/gestion_cuentas"
                 android:textColor="@color/black"
-                android:textSize="28sp"
+                android:textSize="24sp"
                 android:textStyle="bold" />
         </RelativeLayout>
 
@@ -66,6 +67,7 @@
                         android:layout_height="0dp"
                         android:layout_gravity="center_horizontal"
                         android:layout_weight="1"
+                        android:contentDescription="@string/content_customer"
                         android:scaleType="centerInside"
                         android:src="@drawable/customer" />
 
@@ -102,6 +104,7 @@
                         android:layout_height="0dp"
                         android:layout_gravity="center_horizontal"
                         android:layout_weight="1"
+                        android:contentDescription="@string/content_user"
                         android:scaleType="centerInside"
                         android:src="@drawable/worker" />
 
@@ -122,13 +125,15 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:orientation="horizontal"
-                android:padding="16dp">
+                android:padding="16dp"
+                tools:ignore="UseCompoundDrawables">
 
                 <ImageView
                     android:layout_width="40dp"
                     android:layout_height="40dp"
                     android:layout_gravity="center_vertical"
                     android:layout_marginEnd="16dp"
+                    android:contentDescription="@string/content_logout"
                     android:src="@drawable/baseline_logout_24" />
 
                 <TextView
