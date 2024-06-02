@@ -145,6 +145,9 @@
     <string name="created_by">Created By:</string>
     <string name="title">Title</string>
 
+    <string name="cliente_desconocido">Cliente desconocido</string>
+    <string name="content_fondo">img fondo</string>
+
     //Spinners
     <string-array name="hour_array">
         <item>08:00 AM</item>

@@ -18,17 +18,22 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.ViewModel;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.hamacav1.MainActivity;
 import com.example.hamacav1.R;
+import com.example.hamacav1.entidades.reportes.NuevoReporte;
+import com.example.hamacav1.entidades.sombrillas.Sombrilla;
 
 import org.jetbrains.annotations.Nullable;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -43,8 +48,6 @@ public class ReservaFragment extends Fragment implements ReservaAdapter.Reservas
     private TextView tvNoReservas;
     private Long reservaId;
     private ProgressBar progressBar;
-
-
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -61,22 +64,30 @@ public class ReservaFragment extends Fragment implements ReservaAdapter.Reservas
 
     @SuppressLint("NotifyDataSetChanged")
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_reservas, container, false);
         reservasRecyclerView = view.findViewById(R.id.reservasRecyclerView);
         tvNoReservas = view.findViewById(R.id.tvNoReservas);
-        progressBar = view.findViewById(R.id.progressBar); // Suponiendo que has añadido un ProgressBar en tu layout
+        progressBar = view.findViewById(R.id.progressBar);
 
         reservasRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         reservasAdapter = new ReservaAdapter(new ArrayList<>(), getContext(), this, reservaId);
         reservasRecyclerView.setAdapter(reservasAdapter);
 
-        viewModel = new ViewModelProvider(this).get(ReservasViewModel.class);
-        Date today = Calendar.getInstance().getTime();
-        viewModel.loadReservasByDate(today);
+        viewModel = new ViewModelProvider(this, new ViewModelProvider.Factory() {
+            @NonNull
+            @Override
+            public <T extends ViewModel> T create(@NonNull Class<T> modelClass) {
+                if (modelClass.isAssignableFrom(ReservasViewModel.class)) {
+                    return (T) new ReservasViewModel(getActivity().getApplicationContext());
+                }
+                throw new IllegalArgumentException("Unknown ViewModel class");
+            }
+        }).get(ReservasViewModel.class);
 
-        // Observar el estado de carga
+        Date today = Calendar.getInstance().getTime();
+        viewModel.loadReservasByDateAndState(today, "Pendiente");
+
         viewModel.getLoading().observe(getViewLifecycleOwner(), isLoading -> {
             if (isLoading != null && isLoading) {
                 progressBar.setVisibility(View.VISIBLE);
@@ -85,7 +96,6 @@ public class ReservaFragment extends Fragment implements ReservaAdapter.Reservas
             }
         });
 
-        // Observar los mensajes de error
         viewModel.getErrorMessages().observe(getViewLifecycleOwner(), errorMessage -> {
             if (errorMessage != null && !errorMessage.isEmpty()) {
                 Toast.makeText(getContext(), errorMessage, Toast.LENGTH_LONG).show();
@@ -112,6 +122,7 @@ public class ReservaFragment extends Fragment implements ReservaAdapter.Reservas
         setupFilterMenu(view);
         return view;
     }
+
 
 
     private void irSombrillas() {
@@ -216,8 +227,6 @@ public class ReservaFragment extends Fragment implements ReservaAdapter.Reservas
         builder.show();
     }
 
-
-
     private void showStateSelectionDialog() {
         AlertDialog.Builder builder = new AlertDialog.Builder(requireContext());
         builder.setTitle("Seleccionar Estado");
@@ -230,21 +239,67 @@ public class ReservaFragment extends Fragment implements ReservaAdapter.Reservas
         AlertDialog dialog = builder.create();
         dialog.show();
     }
-
-    @Override
-    public void deletePressed(int position) {
-
-    }
-    @Override
-    public void editPressed(int position) {
-
-    }
     @Override
     public void detailExpanded(int position) {
 
     }
     @Override
     public void detailCollapsed(int position) {
+
+    }
+
+    @Override
+    public void onPagarClicked(Reserva reserva) {
+        showPaymentMethodDialog(reserva);
+    }
+
+    private void showPaymentMethodDialog(Reserva reserva) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(requireContext());
+        builder.setTitle("Seleccionar Método de Pago");
+
+        String[] paymentMethods = {"Tarjeta", "Efectivo"};
+        builder.setItems(paymentMethods, (dialog, which) -> {
+            String selectedMethod = paymentMethods[which];
+            processPayment(reserva, selectedMethod);
+        });
+
+        AlertDialog dialog = builder.create();
+        dialog.show();
+    }
+
+    private void processPayment(Reserva reserva, String metodoPago) {
+        reserva.setPagada(true);
+        reserva.setEstado("Ha llegado");
+        reserva.setMetodoPago(metodoPago);
+        reserva.setFechaPago(LocalDateTime.now());
+
+        // Actualizar las sombrillas asociadas
+        for (Sombrilla sombrilla : reserva.getSombrillas()) {
+            sombrilla.setReservada(false);
+            sombrilla.setOcupada(true);
+        }
+
+        // Llamar al backend para actualizar la reserva y las sombrillas
+        viewModel.updateReserva(reserva, (success) -> {
+            if (success) {
+                // Crear el reporte solo si la actualización fue exitosa
+                String titulo = "Pago de Reserva";
+                String descripcion = "La reserva con ID " + reserva.getIdReserva() + " ha sido pagada utilizando " + metodoPago + ".";
+                NuevoReporte.crearReporte(getContext(), titulo, descripcion);
+            } else {
+                Toast.makeText(getContext(), "Error al actualizar la reserva", Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+
+    @Override
+    public void onCambiarEstadoClicked(Reserva reserva) {
+
+    }
+
+    @Override
+    public void onModificarClicked(Reserva reserva) {
 
     }
 }

@@ -145,6 +145,8 @@
     <string name="content_logout">img logout</string>
     <string name="created_by">Created By:</string>
     <string name="title">Title</string>
+    <string name="cliente_desconocido">Unknown client\n</string>
+    <string name="content_fondo">img fondo</string>
 
     //Spinners
     <string-array name="hour_array">

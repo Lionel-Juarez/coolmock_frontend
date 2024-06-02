@@ -1,10 +1,12 @@
 package com.example.hamacav1.entidades.reservas;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.util.SparseBooleanArray;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -23,15 +25,15 @@ import java.util.List;
 public class ReservaAdapter extends RecyclerView.Adapter<ReservaAdapter.ReservaViewHolder> {
 
     private List<Reserva> reservaList;
-    private Context context;
-    private ReservasAdapterCallback callback;
-    private SparseBooleanArray expandedState = new SparseBooleanArray();
-    private Long targetReservaId;
+    private final Context context;
+    private final ReservasAdapterCallback callback;
+    private final SparseBooleanArray expandedState = new SparseBooleanArray();
+    private final Long targetReservaId;
+
     public void expandItem(int position) {
         if (position < 0 || position >= reservaList.size()) {
-            return; // posición inválida
+            return;
         }
-        // Cambia el estado de expansión
         boolean isExpanded = expandedState.get(position, false);
         expandedState.put(position, !isExpanded);
         notifyItemChanged(position);
@@ -42,12 +44,13 @@ public class ReservaAdapter extends RecyclerView.Adapter<ReservaAdapter.ReservaV
         this.reservaList = reservaList;
         this.context = context;
         this.callback = callback;
-        this.targetReservaId = targetReservaId; // Guardar el ID de la reserva objetivo
+        this.targetReservaId = targetReservaId;
     }
 
+    @SuppressLint("NotifyDataSetChanged")
     public void setReservas(List<Reserva> newReservas) {
         this.reservaList = newReservas;
-        notifyDataSetChanged();  // Notifica al adaptador que los datos han cambiado
+        notifyDataSetChanged();
     }
 
     @NonNull
@@ -64,7 +67,7 @@ public class ReservaAdapter extends RecyclerView.Adapter<ReservaAdapter.ReservaV
         if (reserva.getCliente() != null) {
             holder.clienteNombre.setText(reserva.getCliente().getNombreCompleto());
         } else {
-            holder.clienteNombre.setText("Cliente desconocido");
+            holder.clienteNombre.setText(context.getString(R.string.cliente_desconocido));
         }
 
         if (reserva.getFechaReserva() != null) {
@@ -84,9 +87,17 @@ public class ReservaAdapter extends RecyclerView.Adapter<ReservaAdapter.ReservaV
             holder.fechaPago.setVisibility(View.VISIBLE);
             holder.metodoPago.setText(context.getString(R.string.metodo_pago, reserva.getMetodoPago()));
             holder.metodoPago.setVisibility(View.VISIBLE);
+
+            // Deshabilitar botón de pago y cambiar color
+            holder.btnPagar.setEnabled(false);
+            holder.btnPagar.setBackgroundColor(ContextCompat.getColor(context, R.color.colorBotonDeshabilitado));
         } else {
             holder.fechaPago.setVisibility(View.GONE);
             holder.metodoPago.setVisibility(View.GONE);
+
+            // Habilitar botón de pago y restaurar color
+            holder.btnPagar.setEnabled(true);
+            holder.btnPagar.setBackgroundColor(ContextCompat.getColor(context, R.color.principalButtonColor));
         }
 
         if (reserva.getCreadaPor() != null && reserva.getCreadaPor().getUsername() != null) {
@@ -95,16 +106,15 @@ public class ReservaAdapter extends RecyclerView.Adapter<ReservaAdapter.ReservaV
             holder.creadaPor.setText(context.getString(R.string.creado_por, "Información no disponible"));
         }
 
-        // Construir una cadena con todos los números de sombrilla
         StringBuilder numerosSombrillasBuilder = new StringBuilder();
         for (Sombrilla sombrilla : reserva.getSombrillas()) {
-            if (numerosSombrillasBuilder.length() <= 0){ //Añadir aqui el caso de null
+            if (numerosSombrillasBuilder.length() <= 0) {
 
             }
             if (numerosSombrillasBuilder.length() > 0) {
-                numerosSombrillasBuilder.append(", "); // Añade una coma si ya hay contenido en el StringBuilder
+                numerosSombrillasBuilder.append(", ");
             }
-            numerosSombrillasBuilder.append(sombrilla.getNumeroSombrilla()); // Asume que este método o campo existe en tu clase Sombrilla
+            numerosSombrillasBuilder.append(sombrilla.getNumeroSombrilla());
         }
 
         String numerosSombrillas = numerosSombrillasBuilder.toString();
@@ -115,11 +125,19 @@ public class ReservaAdapter extends RecyclerView.Adapter<ReservaAdapter.ReservaV
         holder.expandableView.setVisibility(isExpanded ? View.VISIBLE : View.GONE);
         holder.expandIcon.setImageResource(isExpanded ? R.drawable.arriba24 : R.drawable.abajo24);
 
-        holder.expandIcon.setOnClickListener(v -> {
-            expandItem(position, holder); // Actualiza para incluir holder como parámetro
+        holder.expandIcon.setOnClickListener(v -> expandItem(position, holder));
+        holder.btnPagar.setOnClickListener(v -> callback.onPagarClicked(reserva));
+
+        holder.btnCambiarEstado.setOnClickListener(v -> {
+            // Manejar acción de cambiar estado
+            callback.onCambiarEstadoClicked(reserva);
         });
 
-        // Determinar el drawable correcto basado en si está expandido y/o seleccionado
+        holder.btnModificar.setOnClickListener(v -> {
+            // Manejar acción de modificar
+            callback.onModificarClicked(reserva);
+        });
+
         if (reserva.getIdReserva().equals(targetReservaId) && isExpanded) {
             holder.cardView.setBackground(ContextCompat.getDrawable(context, R.drawable.card_border_selected_expanded));
         } else if (reserva.getIdReserva().equals(targetReservaId)) {
@@ -140,19 +158,15 @@ public class ReservaAdapter extends RecyclerView.Adapter<ReservaAdapter.ReservaV
         if (!isExpanded) {
             callback.detailExpanded(position);
             if (reserva.getIdReserva().equals(targetReservaId)) {
-                // Si está seleccionado y ahora expandiéndose
                 holder.cardView.setBackground(ContextCompat.getDrawable(context, R.drawable.card_border_selected_expanded));
             } else {
-                // Si solo se está expandiendo
                 holder.cardView.setBackground(ContextCompat.getDrawable(context, R.drawable.card_border_expanded));
             }
         } else {
             callback.detailCollapsed(position);
             if (reserva.getIdReserva().equals(targetReservaId)) {
-                // Si está seleccionado y ahora colapsándose
                 holder.cardView.setBackground(ContextCompat.getDrawable(context, R.drawable.card_border_selected));
             } else {
-                // Si solo se está colapsando
                 holder.cardView.setBackground(ContextCompat.getDrawable(context, R.drawable.card_border));
             }
         }
@@ -167,11 +181,10 @@ public class ReservaAdapter extends RecyclerView.Adapter<ReservaAdapter.ReservaV
 
     public static class ReservaViewHolder extends RecyclerView.ViewHolder {
         TextView clienteNombre, fechaReserva, estado, metodoPago, pagada, fechaPago, creadaPor, sombrillasReservadas, horaLlegada;
-        ImageView delete, expandIcon;
+        ImageView expandIcon;
         LinearLayout expandableView;
         CardView cardView;
-
-
+        Button btnPagar, btnCambiarEstado, btnModificar;
         public ReservaViewHolder(@NonNull View itemView) {
             super(itemView);
             clienteNombre = itemView.findViewById(R.id.tvReservaCliente);
@@ -182,21 +195,21 @@ public class ReservaAdapter extends RecyclerView.Adapter<ReservaAdapter.ReservaV
             pagada = itemView.findViewById(R.id.tvPagada);
             fechaPago = itemView.findViewById(R.id.tvFechaPago);
             creadaPor = itemView.findViewById(R.id.tvCreadoPor);
-            delete = itemView.findViewById(R.id.deleteIcon);
             expandIcon = itemView.findViewById(R.id.expand_icon);
             expandableView = itemView.findViewById(R.id.expandable_view);
             cardView = itemView.findViewById(R.id.reserva_card);
             sombrillasReservadas = itemView.findViewById(R.id.tvSombrillas);
-
-
+            btnPagar = itemView.findViewById(R.id.btnPagar);
+            btnCambiarEstado = itemView.findViewById(R.id.btnCambiarEstado);
+            btnModificar = itemView.findViewById(R.id.btnModificar);
         }
     }
 
     public interface ReservasAdapterCallback {
-        void deletePressed(int position);
-        void editPressed(int position);
         void detailExpanded(int position);
         void detailCollapsed(int position);
+        void onPagarClicked(Reserva reserva);
+        void onCambiarEstadoClicked(Reserva reserva);
+        void onModificarClicked(Reserva reserva);
     }
-
 }

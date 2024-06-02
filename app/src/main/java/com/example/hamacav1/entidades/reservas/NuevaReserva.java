@@ -81,6 +81,7 @@ public class NuevaReserva extends AppCompatActivity {
         initializeUIComponents();
         loadData();
     }
+
     @Override
     public void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
@@ -123,6 +124,14 @@ public class NuevaReserva extends AppCompatActivity {
 
     public void addReserva(View view) {
         String fechaReserva = fechaReservaSeleccionada;
+
+        // Si la fecha de reserva no está seleccionada o es null, se asigna la fecha actual
+        if (fechaReserva == null || fechaReserva.isEmpty()) {
+            Calendar calendarNow = Calendar.getInstance();
+            SimpleDateFormat sdfNow = new SimpleDateFormat("dd-MM-yyyy HH:mm", Locale.getDefault());
+            fechaReserva = sdfNow.format(calendarNow.getTime());
+        }
+
         String estado = "Pendiente";
         String metodoPago = spMetodoPago.getSelectedItem().toString();
         boolean pagada = cbPagada.isChecked();
@@ -142,15 +151,16 @@ public class NuevaReserva extends AppCompatActivity {
             return;
         }
 
-        if (validateInput(fechaReserva, cliente, idsSombrillas, fechaReservaRealizada, horaLlegada, cantidadHamacas)) {
+        if (validateInput(cliente, idsSombrillas, horaLlegada, cantidadHamacas)) {
             if (Internetop.getInstance(getApplicationContext()).isNetworkAvailable()) {
                 String url = getResources().getString(R.string.url_reservas) + "nuevaReserva";
                 sendTask(url, fechaReserva, fechaReservaRealizada, estado, pagada, metodoPago, cliente.getIdCliente(), idsSombrillas, cantidadHamacas, horaLlegada);
             } else {
-                Utils.showError(getApplicationContext(),"No hay conexión a Internet.");
+                Utils.showError(getApplicationContext(), "No hay conexión a Internet.");
             }
         }
     }
+
 
     private void sendTask(String url, String fechaReserva, String fechaReservaRealizada, String estado, boolean pagada, String metodoPago, long idCliente, List<Long> idsSombrillas, String cantidadHamacas, String horaLlegada) {
         ExecutorService executor = Executors.newSingleThreadExecutor();
@@ -171,8 +181,8 @@ public class NuevaReserva extends AppCompatActivity {
                 String uidUsuario = user.getUid();
                 String nombreUsuario = user.getDisplayName() != null ? user.getDisplayName() : "Usuario desconocido";
 
-                json.put("fechaReserva", convertToIso8601(fechaReserva));  // Asegurarse de que la fecha está en formato ISO-8601
-                json.put("fechaReservaRealizada", convertToIso8601(fechaReservaRealizada));  // Asegurarse de que la fecha está en formato ISO-8601
+                json.put("fechaReserva", Utils.convertToIso8601(fechaReserva));  // Asegurarse de que la fecha está en formato ISO-8601
+                json.put("fechaReservaRealizada", Utils.convertToIso8601(fechaReservaRealizada));  // Asegurarse de que la fecha está en formato ISO-8601
                 json.put("estado", estado);
                 json.put("pagada", pagada);
                 json.put("metodoPago", metodoPago);
@@ -181,7 +191,7 @@ public class NuevaReserva extends AppCompatActivity {
                 json.put("idUsuario", uidUsuario);  // Pasar el UID del usuario desde Firebase
                 json.put("idSombrillas", new JSONArray(idsSombrillas));
                 if (pagada) {
-                    json.put("fechaPago", convertToIso8601(fechaReserva));  // Usar la misma fecha de reserva para la fecha de pago
+                    json.put("fechaPago", Utils.convertToIso8601(fechaReserva));  // Usar la misma fecha de reserva para la fecha de pago
                 }
 
                 SharedPreferences sharedPreferences = getSharedPreferences("MyAppPrefs", Context.MODE_PRIVATE);
@@ -233,6 +243,7 @@ public class NuevaReserva extends AppCompatActivity {
             }
         });
     }
+
     private void updateSombrillasAsReserved(List<Long> idsSombrillas, long idReserva, String cantidadHamacas) {
         Log.e("UpdateSombrilla", "dentro de la funcion updateSombrillas");
 
@@ -278,6 +289,7 @@ public class NuevaReserva extends AppCompatActivity {
         }
         return null;
     }
+
     private void updateClientsAutoComplete(List<Cliente> clientsList) {
         this.clientsList = clientsList;
         clienteAdapter = new ArrayAdapter<>(this, android.R.layout.simple_dropdown_item_1line, clientsList);
@@ -336,6 +348,7 @@ public class NuevaReserva extends AppCompatActivity {
             }
         });
     }
+
     public void openNuevoCliente(View view) {
         Intent intent = new Intent(this, NuevoCliente.class);
         startActivityForResult(intent, 1);
@@ -353,6 +366,7 @@ public class NuevaReserva extends AppCompatActivity {
             }
         }
     }
+
     private String getSelectedSide() {
         radioOne = findViewById(R.id.radioOne);
         radioTwo = findViewById(R.id.radioTwo);
@@ -367,27 +381,23 @@ public class NuevaReserva extends AppCompatActivity {
         }
     }
 
-    private boolean validateInput(String fechaReserva, Cliente cliente, List<Long> idsSombrillas, String fechaReservaSeleccionada, String horaLlegada, String cantidadHamacas) {
+    private boolean validateInput(Cliente cliente, List<Long> idsSombrillas, String horaLlegada, String cantidadHamacas) {
         boolean isValid = true;
-        if (fechaReserva == null || fechaReserva.isEmpty() || fechaReservaSeleccionada == null || fechaReservaSeleccionada.isEmpty()) {
-            Utils.showError(getApplicationContext(),"Fecha de reserva no seleccionada.");
-            isValid = false;
-        }
         if (cliente == null || cliente.getIdCliente() <= 0 || idsSombrillas == null || idsSombrillas.isEmpty()) {
-            Utils.showError(getApplicationContext(),"Información crítica de la reserva está incompleta o incorrecta.");
+            Utils.showError(getApplicationContext(), "Información crítica de la reserva está incompleta o incorrecta.");
             isValid = false;
         }
-
-        if(horaLlegada == null) {
-            Utils.showError(getApplicationContext(),"Hora de llegada no seleccionada.");
+        if (horaLlegada == null) {
+            Utils.showError(getApplicationContext(), "Hora de llegada no seleccionada.");
             isValid = false;
         }
-        if(cantidadHamacas == null) {
-            Utils.showError(getApplicationContext(),"Cantidad de hamacas no seleccionada.");
+        if (cantidadHamacas == null) {
+            Utils.showError(getApplicationContext(), "Cantidad de hamacas no seleccionada.");
             isValid = false;
         }
         return isValid;
     }
+
     private void showDatePickerDialog() {
         Calendar c = Calendar.getInstance();
         DatePickerDialog datePickerDialog = new DatePickerDialog(this,
@@ -399,28 +409,11 @@ public class NuevaReserva extends AppCompatActivity {
                 }, c.get(Calendar.YEAR), c.get(Calendar.MONTH), c.get(Calendar.DAY_OF_MONTH));
         datePickerDialog.show();
     }
-//    private Usuario obtenerUsuarioCreador() {
-//        // Debes implementar la lógica para obtener el usuario que crea la reserva
-//        // Puede ser un usuario actualmente logueado o similar
-//        return new Usuario();  // Retorna un objeto usuario adecuado
-//    }
-
 
     //Funciones extra
     public void cancel(View view) {
         finish();
     }
-    // Función para convertir la fecha al formato ISO-8601
-    private String convertToIso8601(String dateTimeStr) {
-        try {
-            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm");
-            LocalDateTime dateTime = LocalDateTime.parse(dateTimeStr, formatter);
-            return dateTime.format(DateTimeFormatter.ISO_LOCAL_DATE_TIME);
-        } catch (DateTimeParseException e) {
-            Log.e("convertToIso8601", "Error parsing date: " + e.getMessage());
-            return null;
-        }
-    }
-    
+
 }
 

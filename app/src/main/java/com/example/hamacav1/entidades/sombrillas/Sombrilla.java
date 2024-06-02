@@ -88,7 +88,6 @@ public class Sombrilla implements Parcelable {
         return sombrilla;
     }
 
-    // Método para determinar si la sombrilla está reservada
     public boolean isReservada() {
         return reservaIds != null && !reservaIds.isEmpty();
     }

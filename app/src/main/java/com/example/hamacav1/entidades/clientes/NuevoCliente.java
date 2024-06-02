@@ -21,10 +21,7 @@ import com.example.hamacav1.R;
 import com.example.hamacav1.entidades.reportes.NuevoReporte;
 import com.example.hamacav1.util.Internetop;
 import com.example.hamacav1.util.Utils;
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
 
-import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;

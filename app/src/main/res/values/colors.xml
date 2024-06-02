@@ -32,4 +32,10 @@
     <!-- Bordes y elementos de UI expandibles -->
     <color name="expandedBorderColor">#16133C</color> <!-- Amarillo suave para bordes expandibles -->
     <color name="selectedExpandedBorderColor">#7C4215</color>
+
+    <color name="colorBotonHabilitado">#FF6200EE</color> <!-- Color original del botón habilitado -->
+    <color name="colorBotonDeshabilitado">#FFCCCCCC</color>
+    <color name="principalButtonColor">#336DFF</color>
+
+
 </resources>

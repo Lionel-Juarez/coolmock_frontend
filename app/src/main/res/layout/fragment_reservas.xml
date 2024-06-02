@@ -6,16 +6,6 @@
     android:layout_height="match_parent"
     tools:context=".entidades.reservas.ReservaFragment">
 
-    <ImageView
-        android:id="@+id/headerImage"
-        android:layout_width="200dp"
-        android:layout_height="200dp"
-        android:contentDescription="@string/filter"
-        android:src="@drawable/undraw_chore_list_re_2lq8"
-        android:layout_alignParentBottom="true"
-        android:layout_alignParentEnd="true"
-        android:layout_marginBottom="60dp"/>
-
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -37,7 +27,7 @@
                 android:layout_alignParentStart="true"
                 android:text="@string/reservas"
                 android:textColor="@color/black"
-                android:textSize="24sp"/>
+                android:textSize="24sp" />
 
             <TextView
                 android:id="@+id/tvSubTitle"
@@ -51,16 +41,16 @@
 
             <Button
                 android:id="@+id/btnNew"
+                style="@style/CustomButtonStyle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:hint="@string/new_hint"
-                android:layout_toEndOf="@id/tvTitleReservas"
                 android:layout_alignParentTop="true"
                 android:layout_marginStart="50dp"
-                style="@style/CustomButtonStyle"
+                android:layout_marginTop="8dp"
+                android:layout_toEndOf="@id/tvTitleReservas"
+                android:hint="@string/new_hint"
                 android:onClick="irSombrillas"
                 android:textSize="20sp"
-                android:layout_marginTop="8dp"
                 tools:ignore="RelativeOverlap" />
 
             <ImageView
@@ -68,8 +58,8 @@
                 android:layout_width="46dp"
                 android:layout_height="46dp"
                 android:layout_alignParentEnd="true"
-                android:layout_marginEnd="22dp"
                 android:layout_marginTop="8dp"
+                android:layout_marginEnd="22dp"
                 android:contentDescription="@string/filter"
                 android:src="@drawable/filtrar" />
         </RelativeLayout>
@@ -81,22 +71,38 @@
             android:layout_gravity="center_horizontal"
             android:gravity="center"
             android:padding="16dp"
+            android:paddingBottom="10dp"
             android:text="@string/no_reservas"
             android:textColor="#616161"
             android:textSize="20sp"
             android:textStyle="bold"
-            android:paddingBottom="10dp"
             android:visibility="gone" />
 
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/reservasRecyclerView"
+        <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="342dp"
-            android:layout_marginHorizontal="8dp"
-            android:layout_marginTop="20dp"
-            android:clipToPadding="false"
-            android:scrollbars="vertical" />
+            android:layout_height="0dp"
+            android:layout_weight="1">
 
+            <ImageView
+                android:id="@+id/headerImage"
+                android:layout_width="200dp"
+                android:layout_height="200dp"
+                android:layout_alignParentEnd="true"
+                android:layout_alignParentBottom="true"
+                android:layout_marginBottom="60dp"
+                android:contentDescription="@string/filter"
+                android:src="@drawable/undraw_chore_list_re_2lq8" />
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/reservasRecyclerView"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginHorizontal="8dp"
+                android:layout_marginTop="20dp"
+                android:clipToPadding="false"
+                android:scrollbars="vertical" />
+
+        </RelativeLayout>
     </LinearLayout>
 
     <ProgressBar

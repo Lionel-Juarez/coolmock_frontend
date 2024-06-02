@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
@@ -11,18 +10,19 @@
         android:id="@+id/backgroundImage"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:contentDescription="@string/content_fondo"
         android:scaleType="centerCrop"
         android:src="@drawable/fondo1" />
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:gravity="center"
         android:layout_centerInParent="true"
-        android:padding="24dp"
-        android:layout_margin="20dp"
-        android:background="@drawable/new_rounded_corners">
+        android:layout_margin="15dp"
+        android:background="@drawable/new_rounded_corners"
+        android:gravity="center"
+        android:orientation="vertical"
+        android:padding="24dp">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -35,8 +35,8 @@
                 android:layout_height="wrap_content"
                 android:text="@string/create_new_reservation"
                 android:textAlignment="center"
-                android:textSize="24sp"
                 android:textColor="@color/black"
+                android:textSize="24sp"
                 android:textStyle="bold" />
 
             <com.google.android.material.divider.MaterialDivider
@@ -48,26 +48,27 @@
                 android:layout_height="wrap_content"
                 android:paddingTop="20dp"
                 android:text="@string/select_date"
-                android:textColor="@color/black"
                 android:textAlignment="center"
+                android:textColor="@color/black"
                 android:textSize="18sp" />
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:gravity="center">
+                android:gravity="center"
+                android:orientation="horizontal">
 
                 <ImageView
                     android:id="@+id/btnOpenCalendar"
-                    android:layout_width="150dp"
+                    android:layout_width="130dp"
                     android:layout_height="150dp"
-                    android:background="?attr/selectableItemBackground"
-                    android:src="@drawable/calendario1"
-                    android:onClick="showDatePickerDialog"
                     android:layout_marginEnd="30dp"
-                    android:textColor="@color/black"
-                    android:textAlignment="textStart"/>
+                    android:background="?attr/selectableItemBackground"
+                    android:contentDescription="@string/content_calendar"
+                    android:onClick="showDatePickerDialog"
+                    android:src="@drawable/calendario1"
+                    android:textAlignment="textStart"
+                    android:textColor="@color/black" />
 
 
                 <NumberPicker
@@ -76,20 +77,55 @@
                     android:layout_height="100dp"
                     android:layout_gravity="center_vertical" />
 
-          </LinearLayout>
+            </LinearLayout>
+
+            <com.google.android.material.divider.MaterialDivider
+                android:layout_width="match_parent"
+                android:layout_height="3dp"/>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="15dp"
+                android:orientation="horizontal">
+
+                <AutoCompleteTextView
+                    android:id="@+id/actv_cliente"
+                    android:layout_width="0dp"
+                    android:layout_height="40dp"
+                    android:layout_marginEnd="20dp"
+                    android:layout_weight="1"
+                    android:background="@drawable/selector_button_background"
+                    android:drawableStart="@drawable/nombrefiltro"
+                    android:drawablePadding="10dp"
+                    android:gravity="start|center_vertical"
+                    android:hint="@string/sp_clientes"
+                    android:inputType="text"
+                    android:padding="10dp"
+                    android:textSize="14sp" />
+
+                <Button
+                    android:id="@+id/btn_add_cliente"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:onClick="openNuevoCliente"
+                    android:padding="10dp"
+                    android:text="@string/nueva" />
+            </LinearLayout>
+
 
             <com.google.android.material.divider.MaterialDivider
                 android:layout_width="match_parent"
                 android:layout_height="3dp"
-                android:layout_marginTop="20dp"/>
+                android:layout_marginTop="20dp" />
 
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:paddingTop="10dp"
                 android:text="@string/select_sunbed"
-                android:textColor="@color/black"
                 android:textAlignment="center"
+                android:textColor="@color/black"
                 android:textSize="18sp" />
 
             <LinearLayout
@@ -134,44 +170,13 @@
             <com.google.android.material.divider.MaterialDivider
                 android:layout_width="match_parent"
                 android:layout_height="3dp"
-                android:layout_marginTop="15dp"/>
+                android:layout_marginTop="15dp" />
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:layout_marginTop="15dp">
-
-                <AutoCompleteTextView
-                    android:id="@+id/actv_cliente"
-                    android:layout_width="0dp"
-                    android:layout_height="40dp"
-                    android:layout_weight="1"
-                    android:hint="@string/sp_clientes"
-                    android:inputType="text"
-                    android:textSize="14sp"
-                    android:background="@drawable/selector_button_background"
-                    android:padding="10dp"
-                    android:drawableStart="@drawable/nombrefiltro"
-                    android:drawablePadding="10dp"
-                    android:layout_marginEnd="20dp"
-                    android:gravity="start|center_vertical"/>
-
-                <Button
-                    android:id="@+id/btn_add_cliente"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/nueva"
-                    android:padding="10dp"
-                    android:onClick="openNuevoCliente"/>
-            </LinearLayout>
-
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:layout_marginTop="20dp">
+                android:layout_marginTop="20dp"
+                android:orientation="horizontal">
 
                 <CheckBox
                     android:id="@+id/cb_reserva_pagada"
@@ -182,39 +187,37 @@
                 <Spinner
                     android:id="@+id/sp_metodo_pago"
                     android:layout_width="0dp"
-                    android:layout_height="40dp"
-                    android:layout_weight="1"
+                    android:layout_height="50dp"
                     android:layout_marginStart="10dp"
-                    android:entries="@array/payment_array"
-                    android:hint="@string/metodo_pago"
+                    android:layout_weight="1"
                     android:background="@drawable/selector_button_background"
-                    android:gravity="center_vertical"/>
+                    android:entries="@array/payment_array"
+                    android:gravity="center_vertical"
+                    android:hint="@string/metodo_pago" />
             </LinearLayout>
-
 
 
             <com.google.android.material.divider.MaterialDivider
                 android:layout_width="match_parent"
                 android:layout_height="3dp"
-                android:layout_marginTop="20dp"/>
+                android:layout_marginTop="20dp" />
 
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:paddingTop="20dp">
+                android:orientation="horizontal">
 
                 <Button
                     android:id="@+id/btn_save_reserva"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_marginEnd="10dp"
-                    android:drawableStart="@drawable/check32"
                     android:layout_weight="1"
+                    android:drawableStart="@drawable/check32"
                     android:onClick="addReserva"
                     android:text="@string/save"
-                    app:cornerRadius="10dp" />
+                    app:cornerRadius="5dp" />
 
 
                 <Button
@@ -222,10 +225,10 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:onClick="cancel"
                     android:drawableStart="@drawable/cancel32"
+                    android:onClick="cancel"
                     android:text="@string/cancel"
-                    app:cornerRadius="10dp" />
+                    app:cornerRadius="5dp" />
 
             </LinearLayout>
         </LinearLayout>

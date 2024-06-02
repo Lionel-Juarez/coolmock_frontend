@@ -4,7 +4,6 @@ import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -12,20 +11,17 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.hamacav1.R;
-import com.example.hamacav1.entidades.pagos.Pago;
 
 import java.util.List;
 
 public class PagoAdapter extends RecyclerView.Adapter<PagoAdapter.PagoViewHolder> {
 
-    private List<Pago> pagoList;
-    private Context context;
-    private PagoAdapterCallback callback;
+    private final List<Pago> pagoList;
+    private final Context context;
 
     public PagoAdapter(List<Pago> pagoList, Context context, PagoAdapterCallback callback) {
         this.pagoList = pagoList;
         this.context = context;
-        this.callback = callback;
     }
 
     @NonNull
@@ -46,13 +42,13 @@ public class PagoAdapter extends RecyclerView.Adapter<PagoAdapter.PagoViewHolder
         return pagoList.size();
     }
 
-    class PagoViewHolder extends RecyclerView.ViewHolder {
+    static class PagoViewHolder extends RecyclerView.ViewHolder {
 
-        private TextView nombreCliente;
-        private TextView cantidad;
-        private TextView fecha;
-        private TextView metodoPago;
-        private ImageView metodoPagoIcon;
+        private final TextView nombreCliente;
+        private final TextView cantidad;
+        private final TextView fecha;
+        private final TextView metodoPago;
+        private final ImageView metodoPagoIcon;
 
         public PagoViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -67,7 +63,7 @@ public class PagoAdapter extends RecyclerView.Adapter<PagoAdapter.PagoViewHolder
             if (pago.getReserva() != null && pago.getReserva().getCliente() != null) {
                 nombreCliente.setText(pago.getReserva().getCliente().getNombreCompleto());
             } else {
-                nombreCliente.setText("Cliente desconocido");  // O algún valor predeterminado
+                nombreCliente.setText("Cliente desconocido");
             }
             cantidad.setText("€" + pago.getCantidad());
             fecha.setText(pago.getFechaPago().toString());
