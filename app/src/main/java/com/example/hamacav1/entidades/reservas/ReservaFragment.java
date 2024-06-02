@@ -28,6 +28,8 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.hamacav1.MainActivity;
 import com.example.hamacav1.R;
+import com.example.hamacav1.entidades.pagos.Pago;
+import com.example.hamacav1.entidades.pagos.PagoViewModel;
 import com.example.hamacav1.entidades.reportes.NuevoReporte;
 import com.example.hamacav1.entidades.sombrillas.Sombrilla;
 
@@ -45,6 +47,8 @@ public class ReservaFragment extends Fragment implements ReservaAdapter.Reservas
     private ReservaAdapter reservasAdapter;
     private List<Reserva> reservasList;
     private ReservasViewModel viewModel;
+    private PagoViewModel pagoViewModel;
+
     private TextView tvNoReservas;
     private Long reservaId;
     private ProgressBar progressBar;
@@ -84,6 +88,17 @@ public class ReservaFragment extends Fragment implements ReservaAdapter.Reservas
                 throw new IllegalArgumentException("Unknown ViewModel class");
             }
         }).get(ReservasViewModel.class);
+
+        pagoViewModel = new ViewModelProvider(this, new ViewModelProvider.Factory() {
+            @NonNull
+            @Override
+            public <T extends ViewModel> T create(@NonNull Class<T> modelClass) {
+                if (modelClass.isAssignableFrom(PagoViewModel.class)) {
+                    return (T) new PagoViewModel(getActivity().getApplicationContext());
+                }
+                throw new IllegalArgumentException("Unknown ViewModel class");
+            }
+        }).get(PagoViewModel.class);
 
         Date today = Calendar.getInstance().getTime();
         viewModel.loadReservasByDateAndState(today, "Pendiente");
@@ -279,20 +294,32 @@ public class ReservaFragment extends Fragment implements ReservaAdapter.Reservas
             sombrilla.setOcupada(true);
         }
 
-        // Llamar al backend para actualizar la reserva y las sombrillas
         viewModel.updateReserva(reserva, (success) -> {
             if (success) {
-                // Crear el reporte solo si la actualización fue exitosa
-                String titulo = "Pago de Reserva";
-                String descripcion = "La reserva con ID " + reserva.getIdReserva() + " ha sido pagada utilizando " + metodoPago + ".";
-                NuevoReporte.crearReporte(getContext(), titulo, descripcion);
+                Pago pago = new Pago();
+                pago.setReserva(reserva);
+                pago.setCantidad(reserva.getTotal());
+                pago.setMetodoPago(metodoPago);
+                pago.setPagado(true);
+                pago.setFechaPago(LocalDateTime.now());
+                pago.setDetallesPago("Pago realizado para la reserva con ID " + reserva.getIdReserva());
+                pago.setTipoHamaca("Standard"); // Modificar según sea necesario
+
+                pagoViewModel.createPago(pago, (pagoSuccess) -> {
+                    if (pagoSuccess) {
+                        // Crear el reporte solo si la creación del pago fue exitosa
+                        String titulo = "Pago de Reserva";
+                        String descripcion = "La reserva con ID " + reserva.getIdReserva() + " ha sido pagada utilizando " + metodoPago + ".";
+                        NuevoReporte.crearReporte(getContext(), titulo, descripcion);
+                    } else {
+                        Toast.makeText(getContext(), "Error al crear el pago", Toast.LENGTH_SHORT).show();
+                    }
+                });
             } else {
                 Toast.makeText(getContext(), "Error al actualizar la reserva", Toast.LENGTH_SHORT).show();
             }
         });
     }
-
-
     @Override
     public void onCambiarEstadoClicked(Reserva reserva) {
 

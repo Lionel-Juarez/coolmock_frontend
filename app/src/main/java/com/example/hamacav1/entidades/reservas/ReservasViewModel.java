@@ -318,7 +318,7 @@ public class ReservasViewModel extends ViewModel {
                     if (response.isSuccessful()) {
                         handler.post(() -> {
                             Toast.makeText(context, "Reserva actualizada con éxito", Toast.LENGTH_SHORT).show();
-                            loadReservasByDateAndState(new Date(), "Pendinte");
+                            loadReservasByDateAndState(new Date(), "Pendiente");
                             callback.accept(true);
                         });
                     } else {

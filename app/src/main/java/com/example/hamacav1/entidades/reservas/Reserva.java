@@ -1,9 +1,6 @@
 package com.example.hamacav1.entidades.reservas;
 
-import android.os.Build;
 import android.util.Log;
-
-import androidx.annotation.RequiresApi;
 
 import com.example.hamacav1.entidades.clientes.Cliente;
 import com.example.hamacav1.entidades.sombrillas.Sombrilla;
@@ -86,6 +83,16 @@ public class Reserva implements Serializable {
             Log.e("parseDateTime", "Error parsing date: " + dateTimeStr, e);
         }
         return null;
+    }
+
+    public double getTotal() {
+        double total = 0.0;
+        for (Sombrilla sombrilla : sombrillas) {
+            double precioSombrilla = sombrilla.getPrecio();
+            int cantidadHamacas = Integer.parseInt(sombrilla.getCantidadHamacas());
+            total += precioSombrilla * cantidadHamacas;
+        }
+        return total;
     }
 
 }
