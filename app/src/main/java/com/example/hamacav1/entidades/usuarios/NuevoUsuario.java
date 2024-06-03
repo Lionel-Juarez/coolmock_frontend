@@ -12,6 +12,7 @@ import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.hamacav1.R;
@@ -46,7 +47,7 @@ public class NuevoUsuario extends AppCompatActivity {
     }
 
     @Override
-    public void onSaveInstanceState(Bundle outState) {
+    public void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
     }
 
@@ -110,6 +111,7 @@ public class NuevoUsuario extends AppCompatActivity {
                 Request request = new Request.Builder().url(url).post(body).build();
 
                 try (Response response = client.newCall(request).execute()) {
+                    assert response.body() != null;
                     String result = response.body().string();
                     handler.post(() -> {
                         Log.d("Newusuario", "Respuesta del servidor: " + result);

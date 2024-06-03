@@ -39,9 +39,6 @@ import org.json.JSONObject;
 
 import java.io.IOException;
 import java.text.SimpleDateFormat;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
-import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
@@ -338,7 +335,8 @@ public class NuevaReserva extends AppCompatActivity {
                             String nombre = jsonObject.getString("nombreCompleto");
                             String telefono = jsonObject.optString("numeroTelefono");
                             String email = jsonObject.optString("email");
-                            clientsList.add(new Cliente(id, nombre, telefono, email));
+                            String rol = jsonObject.optString("rol");
+                            clientsList.add(new Cliente(id, nombre, telefono, email, rol));
                         }
                         updateClientsAutoComplete(clientsList);
                     } catch (JSONException e) {

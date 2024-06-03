@@ -7,22 +7,16 @@ import android.net.NetworkCapabilities;
 import android.net.NetworkInfo;
 import android.os.Build;
 
-import org.json.JSONException;
-import org.json.JSONObject;
 
 import java.io.IOException;
-import java.util.List;
-
-import okhttp3.MediaType;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
-import okhttp3.RequestBody;
 import okhttp3.Response;
 
 public class Internetop {
 
-    private static Internetop me = null;
-    private Context context;
+    private static volatile Internetop me = null;
+    private final Context context;
 
     private Internetop(Context context) {
         this.context = context.getApplicationContext();
@@ -39,33 +33,34 @@ public class Internetop {
         return me;
     }
 
-    private String okPostText(String urlo, List<Parametro> params) {
-        try {
-            OkHttpClient client = OkHttpProvider.getInstance(context);
-            JSONObject jsonObject = new JSONObject();
-            for (Parametro pair : params) {
-                jsonObject.put(pair.getLlave(), pair.getValor());
-            }
-            RequestBody body = RequestBody.create(jsonObject.toString(),
-                    MediaType.parse("application/json"));
-            Request request = new Request.Builder()
-                    .url(urlo)
-                    .post(body)
-                    .build();
-            Response response = client.newCall(request).execute();
-            if (!response.isSuccessful()) {
-                return "error.OKHttp";
-            } else {
-                return response.body().string();
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-            return "error.PIPE";
-        } catch (JSONException e) {
-            e.printStackTrace();
-            return "error.JSONException";
-        }
-    }
+//    private String okPostText(String urlo, List<Parametro> params) {
+//        try {
+//            OkHttpClient client = OkHttpProvider.getInstance(context);
+//            JSONObject jsonObject = new JSONObject();
+//            for (Parametro pair : params) {
+//                jsonObject.put(pair.getLlave(), pair.getValor());
+//            }
+//            RequestBody body = RequestBody.create(jsonObject.toString(),
+//                    MediaType.parse("application/json"));
+//            Request request = new Request.Builder()
+//                    .url(urlo)
+//                    .post(body)
+//                    .build();
+//            Response response = client.newCall(request).execute();
+//            if (!response.isSuccessful()) {
+//                return "error.OKHttp";
+//            } else {
+//                assert response.body() != null;
+//                return response.body().string();
+//            }
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//            return "error.PIPE";
+//        } catch (JSONException e) {
+//            e.printStackTrace();
+//            return "error.JSONException";
+//        }
+//    }
     public boolean isNetworkAvailable() {
         ConnectivityManager connectivityManager = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
@@ -78,38 +73,40 @@ public class Internetop {
                         actNw.hasTransport(NetworkCapabilities.TRANSPORT_CELLULAR));
             }
         } else {
-            @SuppressWarnings("deprecation")
             NetworkInfo nwInfo = connectivityManager.getActiveNetworkInfo();
             return nwInfo != null && nwInfo.isConnected();
         }
     }
-    private String okPutText(String urlo, List<Parametro> params) {
-        try {
-            OkHttpClient client = OkHttpProvider.getInstance(context);
-            JSONObject jsonObject = new JSONObject();
-            for (Parametro pair : params) {
-                jsonObject.put(pair.getLlave(), pair.getValor());
-            }
-            RequestBody body = RequestBody.create(jsonObject.toString(),
-                    MediaType.parse("application/json"));
-            Request request = new Request.Builder()
-                    .url(urlo)
-                    .put(body)
-                    .build();
-            Response response = client.newCall(request).execute();
-            if (!response.isSuccessful()) {
-                return "error.OKHttp";
-            } else {
-                return response.body().string();
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-            return "error.PIPE";
-        } catch (JSONException e) {
-            e.printStackTrace();
-            return "error.JSONException";
-        }
-    }
+
+
+//    private String okPutText(String urlo, List<Parametro> params) {
+//        try {
+//            OkHttpClient client = OkHttpProvider.getInstance(context);
+//            JSONObject jsonObject = new JSONObject();
+//            for (Parametro pair : params) {
+//                jsonObject.put(pair.getLlave(), pair.getValor());
+//            }
+//            RequestBody body = RequestBody.create(jsonObject.toString(),
+//                    MediaType.parse("application/json"));
+//            Request request = new Request.Builder()
+//                    .url(urlo)
+//                    .put(body)
+//                    .build();
+//            Response response = client.newCall(request).execute();
+//            if (!response.isSuccessful()) {
+//                return "error.OKHttp";
+//            } else {
+//                assert response.body() != null;
+//                return response.body().string();
+//            }
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//            return "error.PIPE";
+//        } catch (JSONException e) {
+//            e.printStackTrace();
+//            return "error.JSONException";
+//        }
+//    }
 
     public String getString(String myurl) {
         int cont = 0;
@@ -131,6 +128,7 @@ public class Internetop {
             if (!response.isSuccessful()) {
                 return "error.OKHttp";
             } else {
+                assert response.body() != null;
                 return response.body().string();
             }
         } catch (IOException e) {
@@ -160,6 +158,7 @@ public class Internetop {
             if (!response.isSuccessful()) {
                 return "error.OKHttp";
             } else {
+                assert response.body() != null;
                 return response.body().string();
             }
         } catch (IOException e) {
@@ -168,43 +167,45 @@ public class Internetop {
         }
     }
 
-    public String sendPostRequest(String url, JSONObject json) throws IOException {
-        OkHttpClient client = new OkHttpClient();
-        MediaType MEDIA_TYPE_JSON = MediaType.parse("application/json; charset=utf-8");
+//    public String sendPostRequest(String url, JSONObject json) throws IOException {
+//        OkHttpClient client = new OkHttpClient();
+//        MediaType MEDIA_TYPE_JSON = MediaType.parse("application/json; charset=utf-8");
+//
+//        RequestBody body = RequestBody.create(json.toString(), MEDIA_TYPE_JSON);
+//        Request request = new Request.Builder()
+//                .url(url)
+//                .post(body)
+//                .build();
+//
+//        try (Response response = client.newCall(request).execute()) {
+//            if (!response.isSuccessful()) {
+//                return "error.OKHttp";
+//            } else {
+//                assert response.body() != null;
+//                return response.body().string();
+//            }
+//        }
+//    }
 
-        RequestBody body = RequestBody.create(json.toString(), MEDIA_TYPE_JSON);
-        Request request = new Request.Builder()
-                .url(url)
-                .post(body)
-                .build();
-
-        try (Response response = client.newCall(request).execute()) {
-            if (!response.isSuccessful()) {
-                return "error.OKHttp";
-            } else {
-                return response.body().string();
-            }
-        }
-    }
-
-    public String sendPutRequest(String url, JSONObject json) throws IOException {
-        OkHttpClient client = new OkHttpClient();
-        MediaType MEDIA_TYPE_JSON = MediaType.parse("application/json; charset=utf-8");
-
-        RequestBody body = RequestBody.create(json.toString(), MEDIA_TYPE_JSON);
-        Request request = new Request.Builder()
-                .url(url)
-                .put(body)
-                .build();
-
-        try (Response response = client.newCall(request).execute()) {
-            if (!response.isSuccessful()) {
-                return "error.OKHttp";
-            } else {
-                return response.body().string();
-            }
-        }
-    }
+//    public String sendPutRequest(String url, JSONObject json) throws IOException {
+//        OkHttpClient client = new OkHttpClient();
+//        MediaType MEDIA_TYPE_JSON = MediaType.parse("application/json; charset=utf-8");
+//
+//        RequestBody body = RequestBody.create(json.toString(), MEDIA_TYPE_JSON);
+//        Request request = new Request.Builder()
+//                .url(url)
+//                .put(body)
+//                .build();
+//
+//        try (Response response = client.newCall(request).execute()) {
+//            if (!response.isSuccessful()) {
+//                return "error.OKHttp";
+//            } else {
+//                assert response.body() != null;
+//                return response.body().string();
+//            }
+//        }
+//    }
 
 
 }

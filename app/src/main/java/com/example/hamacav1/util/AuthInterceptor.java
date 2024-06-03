@@ -3,6 +3,8 @@ package com.example.hamacav1.util;
 import android.content.Context;
 import android.content.SharedPreferences;
 
+import androidx.annotation.NonNull;
+
 import java.io.IOException;
 
 import okhttp3.Interceptor;
@@ -11,12 +13,13 @@ import okhttp3.Response;
 
 public class AuthInterceptor implements Interceptor {
 
-    private Context context;
+    private final Context context;
 
     public AuthInterceptor(Context context) {
         this.context = context;
     }
 
+    @NonNull
     @Override
     public Response intercept(Chain chain) throws IOException {
         SharedPreferences sharedPreferences = context.getSharedPreferences("MyAppPrefs", Context.MODE_PRIVATE);

@@ -17,9 +17,9 @@ import java.util.List;
 
 public class UsuarioAdapter extends RecyclerView.Adapter<UsuarioAdapter.UsuarioViewHolder> {
 
-    private List<Usuario> usuarioList;
-    private Context context;
-    private UsuarioAdapterCallback callback; // Asegúrate de tener esta interfaz definida y de establecer el callback
+    private final List<Usuario> usuarioList;
+    private final Context context;
+    private final UsuarioAdapterCallback callback; // Asegúrate de tener esta interfaz definida y de establecer el callback
 
     public UsuarioAdapter(List<Usuario> UsuariosList, Context context, UsuarioAdapterCallback callback) {
         this.usuarioList = UsuariosList;

@@ -1,5 +1,6 @@
 package com.example.hamacav1.entidades.pagos;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -19,7 +20,7 @@ public class PagoAdapter extends RecyclerView.Adapter<PagoAdapter.PagoViewHolder
     private final List<Pago> pagoList;
     private final Context context;
 
-    public PagoAdapter(List<Pago> pagoList, Context context, PagoAdapterCallback callback) {
+    public PagoAdapter(List<Pago> pagoList, Context context) {
         this.pagoList = pagoList;
         this.context = context;
     }
@@ -59,6 +60,7 @@ public class PagoAdapter extends RecyclerView.Adapter<PagoAdapter.PagoViewHolder
             metodoPagoIcon = itemView.findViewById(R.id.iconoMetodoPago);
         }
 
+        @SuppressLint("SetTextI18n")
         public void bind(Pago pago) {
             if (pago.getReserva() != null && pago.getReserva().getCliente() != null) {
                 nombreCliente.setText(pago.getReserva().getCliente().getNombreCompleto());

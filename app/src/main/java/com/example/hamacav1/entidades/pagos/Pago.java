@@ -41,8 +41,7 @@ public class Pago {
                 this.reserva = new Reserva();
                 this.reserva.fromJSON(reservaJson);
             }
-        } catch (JSONException e) {
-            e.printStackTrace();
+        } catch (JSONException ignored) {
         }
     }
 
@@ -52,8 +51,7 @@ public class Pago {
                 DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss");
                 return LocalDateTime.parse(dateTimeStr, formatter);
             }
-        } catch (Exception e) {
-            e.printStackTrace();
+        } catch (Exception ignored) {
         }
         return null;
     }

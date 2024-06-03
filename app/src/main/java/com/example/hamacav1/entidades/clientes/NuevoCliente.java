@@ -130,6 +130,7 @@ public class NuevoCliente extends AppCompatActivity {
                 json.put("nombreCompleto", nombreCompleto);
                 json.put("numeroTelefono", numeroTelefono);
                 json.put("email", email);
+                json.put("rol", "CLIENTE");
 
                 SharedPreferences sharedPreferences = getSharedPreferences("MyAppPrefs", Context.MODE_PRIVATE);
                 String idToken = sharedPreferences.getString("idToken", null);
@@ -148,10 +149,9 @@ public class NuevoCliente extends AppCompatActivity {
                             String responseData = responseBody.string();
                             JSONObject responseObject = new JSONObject(responseData);
                             long idCliente = responseObject.getLong("idCliente");
-                            Cliente newClient = new Cliente(idCliente, nombreCompleto, numeroTelefono, email);
+                            Cliente newClient = new Cliente(idCliente, nombreCompleto, numeroTelefono, email, "CLIENTE");
                             Log.d("NuevoCliente", "Cliente creado con éxito, ID: " + idCliente);
 
-                            // Crear el reporte de la nueva creación de cliente
                             handler.post(() -> {
                                 String titulo = "Creación de Cliente";
                                 String descripcion = "Cliente " + nombreCompleto + " creado con éxito.";

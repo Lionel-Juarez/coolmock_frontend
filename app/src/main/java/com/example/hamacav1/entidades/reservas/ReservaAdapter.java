@@ -108,9 +108,7 @@ public class ReservaAdapter extends RecyclerView.Adapter<ReservaAdapter.ReservaV
 
         StringBuilder numerosSombrillasBuilder = new StringBuilder();
         for (Sombrilla sombrilla : reserva.getSombrillas()) {
-            if (numerosSombrillasBuilder.length() <= 0) {
-
-            }
+            numerosSombrillasBuilder.length();
             if (numerosSombrillasBuilder.length() > 0) {
                 numerosSombrillasBuilder.append(", ");
             }

@@ -1,5 +1,6 @@
 package com.example.hamacav1.entidades.sombrillas;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.graphics.PorterDuff;
 import android.view.LayoutInflater;
@@ -18,9 +19,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class SombrillaAdapter extends RecyclerView.Adapter<SombrillaAdapter.SombrillaViewHolder> {
-    private List<Sombrilla> listaSombrillas = new ArrayList<>();
-    private Context context;
-    private FragmentManager fragmentManager;
+    private List<Sombrilla> listaSombrillas;
+    private final Context context;
+    private final FragmentManager fragmentManager;
 
 
     // Constructor
@@ -47,9 +48,7 @@ public class SombrillaAdapter extends RecyclerView.Adapter<SombrillaAdapter.Somb
             int adapterPosition = holder.getAdapterPosition(); // Obtiene la posición actualizada
             if (adapterPosition != RecyclerView.NO_POSITION) {
                 Sombrilla currentSombrilla = listaSombrillas.get(adapterPosition);
-                SombrillaDetalles dialogFragment = SombrillaDetalles.newInstance(currentSombrilla, updatedSombrilla -> {
-                    notifyItemChanged(adapterPosition);
-                });
+                SombrillaDetalles dialogFragment = SombrillaDetalles.newInstance(currentSombrilla, updatedSombrilla -> notifyItemChanged(adapterPosition));
                 dialogFragment.show(fragmentManager, "sombrilla_details");
             }
         });
@@ -83,6 +82,7 @@ public class SombrillaAdapter extends RecyclerView.Adapter<SombrillaAdapter.Somb
         }
     }
 
+    @SuppressLint("NotifyDataSetChanged")
     public void setSombrillas(List<Sombrilla> sombrillas) {
         this.listaSombrillas = sombrillas;
         notifyDataSetChanged();

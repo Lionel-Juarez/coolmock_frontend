@@ -1,7 +1,7 @@
 package com.example.hamacav1.entidades.usuarios;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.res.Resources;
 import android.os.Bundle;
@@ -12,8 +12,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import androidx.activity.result.ActivityResult;
-import androidx.activity.result.ActivityResultCallback;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AlertDialog;
@@ -49,12 +47,9 @@ public class UsuarioFragment extends Fragment implements UsuarioAdapter.UsuarioA
     private List<Usuario> usuarioList;
     ActivityResultLauncher<Intent> nuevoResultLauncher = registerForActivityResult(
             new ActivityResultContracts.StartActivityForResult(),
-            new ActivityResultCallback<ActivityResult>() {
-                @Override
-                public void onActivityResult(ActivityResult result) {
-                    if (result.getResultCode() == Activity.RESULT_OK) {
-                        cargarUsuarios();
-                    }
+            result -> {
+                if (result.getResultCode() == Activity.RESULT_OK) {
+                    cargarUsuarios();
                 }
             });
 
@@ -106,6 +101,7 @@ public class UsuarioFragment extends Fragment implements UsuarioAdapter.UsuarioA
                 // Aquí puedes añadir un mensaje de UI para informar al usuario
             }
 
+            @SuppressLint("NotifyDataSetChanged")
             @Override
             public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
                 if (!response.isSuccessful()) {
@@ -113,26 +109,24 @@ public class UsuarioFragment extends Fragment implements UsuarioAdapter.UsuarioA
                     throw new IOException("Código inesperado " + response);
                 }
 
+                assert response.body() != null;
                 final String responseData = response.body().string();
                 Log.d("UsuariosFragment", "Usuarios cargados correctamente: " + responseData);
 
-                getActivity().runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        try {
-                            JSONArray jsonArray = new JSONArray(responseData);
-                            usuarioList.clear();
-                            for (int i = 0; i < jsonArray.length(); i++) {
-                                JSONObject jsonObject = jsonArray.getJSONObject(i);
-                                Usuario Usuario = new Usuario();
-                                Usuario.fromJSON(jsonObject);
-                                usuarioList.add(Usuario);
-                            }
-                            usuario.notifyDataSetChanged();
-                            Log.d("UsuariosFragment", "Usuarios actualizados en la interfaz de usuario.");
-                        } catch (JSONException e) {
-                            Log.e("UsuariosFragment", "Error al parsear Usuarios: ", e);
+                requireActivity().runOnUiThread(() -> {
+                    try {
+                        JSONArray jsonArray = new JSONArray(responseData);
+                        usuarioList.clear();
+                        for (int i = 0; i < jsonArray.length(); i++) {
+                            JSONObject jsonObject = jsonArray.getJSONObject(i);
+                            Usuario Usuario = new Usuario();
+                            Usuario.fromJSON(jsonObject);
+                            usuarioList.add(Usuario);
                         }
+                        usuario.notifyDataSetChanged();
+                        Log.d("UsuariosFragment", "Usuarios actualizados en la interfaz de usuario.");
+                    } catch (JSONException e) {
+                        Log.e("UsuariosFragment", "Error al parsear Usuarios: ", e);
                     }
                 });
             }
@@ -146,23 +140,16 @@ public class UsuarioFragment extends Fragment implements UsuarioAdapter.UsuarioA
         diaBox.show();//Mostramos un diálogo de confirmación
     }
     private AlertDialog AskOption(final int position) {
-        AlertDialog myQuittingDialogBox = new AlertDialog.Builder(getActivity())
+        return new AlertDialog.Builder(requireActivity())
 
                 .setTitle(R.string.eliminar_Usuario)
                 .setMessage(R.string.are_you_sure)
-                .setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int whichButton) {
-                        eliminarUsuario(position);
-                        dialog.dismiss();
-                    }
+                .setPositiveButton(R.string.yes, (dialog, whichButton) -> {
+                    eliminarUsuario(position);
+                    dialog.dismiss();
                 })
-                .setNegativeButton(R.string.no, new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int which) {
-                        dialog.dismiss();
-                    }
-                })
+                .setNegativeButton(R.string.no, (dialog, which) -> dialog.dismiss())
                 .create();
-        return myQuittingDialogBox;
     }
 
     private void eliminarUsuario(int position){
@@ -175,46 +162,33 @@ public class UsuarioFragment extends Fragment implements UsuarioAdapter.UsuarioA
                 eliminarTask(url);
             } else {
                 Log.e("UsuariosFragment", "Conexión de red no disponible para eliminar Usuario.");
-                Utils.showError(getContext(),"error.IOException");
+                Utils.showError(requireContext(),"error.IOException");
             }
         } else {
             Log.e("UsuariosFragment", "Posición de Usuario no válida o lista de Usuarios vacía.");
-            Utils.showError(getContext(),"error.desconocido");
+            Utils.showError(requireContext(),"error.desconocido");
         }
     }
 
     private void eliminarTask(String url){
-        //La clase Executor será la encargada de lanzar un nuevo hilo en background con la tarea
         ExecutorService executor = Executors.newSingleThreadExecutor();
-        //Handler es la clase encargada de manejar el resultado de la tarea ejecutada en segundo plano
         Handler handler = new Handler(Looper.getMainLooper());
-        executor.execute(new Runnable() {//Ejecutamos el nuevo hilo
-            @Override
-            public void run() {
-                /*Aquí ejecutamos el código en segundo plano, que consiste en obtener del servidor
-                 * la lista de alumnos*/
-                Internetop internetop = Internetop.getInstance(getContext());
-                String result = internetop.deleteTask(url);
-                handler.post(new Runnable() {/*Una vez handler recoge el resultado de la tarea en
-                segundo plano, hacemos los cambios pertinentes en la interfaz de usuario en función
-                del resultado obtenido*/
-                    @Override
-                    public void run() {
-                        if(result.equalsIgnoreCase("error.IOException")||
-                                result.equals("error.OKHttp")) {//Controlamos los posibles errores
-                            Utils.showError(getContext(),result);
-                        }
-                        else if(result.equalsIgnoreCase("null")){
-                            Utils.showError(getContext(),"error.desconocido");
-                        }
-                        else{
-//                            ProgressBar pbMain = (ProgressBar) findViewById(R.id.pb_main);
-//                            pbMain.setVisibility(View.GONE);
-                            cargarUsuarios();
-                        }
-                    }
-                });
-            }
+        executor.execute(() -> {
+
+            Internetop internetop = Internetop.getInstance(getContext());
+            String result = internetop.deleteTask(url);
+            handler.post(() -> {
+                if(result.equalsIgnoreCase("error.IOException")||
+                        result.equals("error.OKHttp")) {//Controlamos los posibles errores
+                    Utils.showError(requireContext(),result);
+                }
+                else if(result.equalsIgnoreCase("null")){
+                    Utils.showError(requireContext(),"error.desconocido");
+                }
+                else{
+                    cargarUsuarios();
+                }
+            });
         });
     }
 
@@ -223,10 +197,6 @@ public class UsuarioFragment extends Fragment implements UsuarioAdapter.UsuarioA
         if (Internetop.getInstance(requireContext()).isNetworkAvailable()) {
             Log.d("UsuariosFragment", "Conexión de red disponible. Cargando Usuarios...");
 
-            // Aquí podría ir el código para mostrar una barra de progreso si es necesario
-            // ProgressBar pbMain = (ProgressBar) findViewById(R.id.pb_main);
-            // pbMain.setVisibility(View.VISIBLE);
-
             Resources res = getResources();
             String url = res.getString(R.string.url_usuarios);
             Log.d("UsuariosFragment", "URL de carga de Usuarios: " + url);
@@ -234,7 +204,7 @@ public class UsuarioFragment extends Fragment implements UsuarioAdapter.UsuarioA
             getListaTask(url);
         } else {
             Log.e("UsuariosFragment", "Conexión de red no disponible.");
-            Utils.showError(getContext(),"error.IOException");
+            Utils.showError(requireContext(),"error.IOException");
         }
     }
 
@@ -242,30 +212,25 @@ public class UsuarioFragment extends Fragment implements UsuarioAdapter.UsuarioA
     private void getListaTask(String url) {
         ExecutorService executor = Executors.newSingleThreadExecutor();
         Handler handler = new Handler(Looper.getMainLooper());
-        executor.execute(new Runnable() {
-            @Override
-            public void run() {
-                Internetop internetop = Internetop.getInstance(getContext());
-                String result = internetop.getString(url);
-                handler.post(new Runnable() {
-                    @Override
-                    public void run() {
-                        if(result.equalsIgnoreCase("error.IOException")||
-                                result.equals("error.OKHttp")) {
+        executor.execute(() -> {
+            Internetop internetop = Internetop.getInstance(getContext());
+            String result = internetop.getString(url);
+            handler.post(() -> {
+                if(result.equalsIgnoreCase("error.IOException")||
+                        result.equals("error.OKHttp")) {
 
-                            Utils.showError(getContext(),result);
-                        }
-                        else if(result.equalsIgnoreCase("null")){
-                            Utils.showError(getContext(),"error.desconocido");
-                        }
-                        else{
-                            resetLista(result);
-                        }
-                    }
-                });
-            }
+                    Utils.showError(requireContext(),result);
+                }
+                else if(result.equalsIgnoreCase("null")){
+                    Utils.showError(requireContext(),"error.desconocido");
+                }
+                else{
+                    resetLista(result);
+                }
+            });
         });
     }
+    @SuppressLint("NotifyDataSetChanged")
     private void resetLista(String result){
         try {
             JSONArray listaUsuariosJson = new JSONArray(result);
@@ -286,12 +251,9 @@ public class UsuarioFragment extends Fragment implements UsuarioAdapter.UsuarioA
             } else {
                 usuario.notifyDataSetChanged();
             }
-            // Si estás utilizando una ProgressBar, aquí iría el código para ocultarla
-            // Por ejemplo:
-            // ProgressBar pbMain = findViewById(R.id.pb_main);
-            // pbMain.setVisibility(View.GONE);
+
         } catch (JSONException e) {
-            Utils.showError(getContext(),e.getMessage());
+            Utils.showError(requireContext(),e.getMessage());
         }
     }
 }

@@ -1,5 +1,7 @@
 package com.example.hamacav1.entidades.clientes;
 
+import androidx.annotation.NonNull;
+
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -17,7 +19,9 @@ public class Cliente implements Serializable {
     private String nombreCompleto;
     private String numeroTelefono;
     private String email;
+    private String rol;
 
+    @NonNull
     @Override
     public String toString() {
         return this.getNombreCompleto();
@@ -29,5 +33,6 @@ public class Cliente implements Serializable {
         this.nombreCompleto = jsonObject.optString("nombreCompleto", "");
         this.numeroTelefono = jsonObject.optString("numeroTelefono", "");
         this.email = jsonObject.optString("email", "");
+        this.rol = jsonObject.optString("rol", "");
     }
 }

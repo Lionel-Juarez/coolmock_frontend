@@ -2,6 +2,8 @@ package com.example.hamacav1.entidades.sombrillas;
 
 import android.annotation.SuppressLint;
 import android.app.DatePickerDialog;
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -52,7 +54,6 @@ public class SombrillaFragment extends Fragment implements SombrillaDetalles.Som
     private final List<Sombrilla> todasLasSombrillas = new ArrayList<>();
     private ProgressBar progressBar;
 
-
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_sombrilla, container, false);
@@ -84,6 +85,7 @@ public class SombrillaFragment extends Fragment implements SombrillaDetalles.Som
         sombrillasAdapter = new SombrillaAdapter(todasLasSombrillas, getContext(), getChildFragmentManager());
         sombrillasRecyclerView.setAdapter(sombrillasAdapter);
     }
+
     private void cargarSombrillas(int year, int month, int dayOfMonth) {
         LocalDate today = LocalDate.of(year, month + 1, dayOfMonth);
         Log.d("SombrillaFragment", "Cargando sombrillas para la fecha actual: " + today);
@@ -93,8 +95,19 @@ public class SombrillaFragment extends Fragment implements SombrillaDetalles.Som
         String url = getResources().getString(R.string.url_sombrillas).concat("sombrillas");
         HttpUrl urlWithParams = Objects.requireNonNull(HttpUrl.parse(url)).newBuilder().build();
 
+        SharedPreferences sharedPreferences = requireContext().getSharedPreferences("MyAppPrefs", Context.MODE_PRIVATE);
+        String idToken = sharedPreferences.getString("idToken", null);
+
+        if (idToken == null) {
+            Log.e("SombrillaLoad", "Token de autorización no disponible");
+            progressBar.setVisibility(View.GONE);
+            Toast.makeText(getContext(), "Error de autenticación. Por favor, inicie sesión de nuevo.", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
         Request request = new Request.Builder()
                 .url(urlWithParams.toString())
+                .addHeader("Authorization", "Bearer " + idToken)
                 .get()
                 .build();
 
@@ -162,7 +175,6 @@ public class SombrillaFragment extends Fragment implements SombrillaDetalles.Som
         });
     }
 
-
     private void checkReservationsAndSetReserved(Sombrilla sombrilla, JSONArray reservas, LocalDate today) throws JSONException {
         boolean isReserved = false;
         if (reservas != null) {
@@ -173,7 +185,7 @@ public class SombrillaFragment extends Fragment implements SombrillaDetalles.Som
                     continue;
                 }
                 String fechaReservaStr = reservaObj.optString("fechaReserva");
-                if (!fechaReservaStr.isEmpty()) {
+                if (!fechaReservaStr.equals("null") && !fechaReservaStr.isEmpty()) {
                     try {
                         LocalDateTime fechaReserva = LocalDateTime.parse(fechaReservaStr, DateTimeFormatter.ISO_LOCAL_DATE_TIME);
                         if (fechaReserva.toLocalDate().isEqual(today)) {
@@ -188,7 +200,6 @@ public class SombrillaFragment extends Fragment implements SombrillaDetalles.Som
         }
         sombrilla.setReservada(isReserved);
     }
-
 
     @Override
     public void onSombrillaUpdated(Sombrilla updatedSombrilla) {

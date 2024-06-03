@@ -1,154 +1,89 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/fragment_pagos"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".entidades.pagos.PagoFragment">
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="@android:color/transparent"
-        android:orientation="vertical">
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:background="@android:color/transparent">
 
         <RelativeLayout
             android:id="@+id/overlayContainer"
             android:layout_width="match_parent"
-            android:layout_height="60dp"
+            android:layout_height="90dp"
             android:background="@drawable/rounded_bottom_corners"
             android:elevation="4dp"
-            android:layout_marginBottom="20dp"
             android:padding="16dp">
 
             <TextView
-                android:id="@+id/tvTitleReservas"
+                android:id="@+id/tvTitlePagos"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_alignParentStart="true"
                 android:text="@string/pagos"
                 android:textColor="@color/black"
-                android:textSize="24sp"/>
+                android:textSize="24sp" />
         </RelativeLayout>
 
-        <androidx.cardview.widget.CardView
-            android:id="@+id/cardPrimeraPantalla"
-            android:layout_width="match_parent"
+        <TextView
+            android:id="@+id/tvNoPagosMessage"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_margin="8dp"
-            app:cardCornerRadius="8dp"
-            app:cardElevation="4dp">
+            android:gravity="center"
+            android:padding="16dp"
+            android:layout_marginTop="150dp"
+            android:text="@string/no_pagos_hoy"
+            android:textColor="@color/grey"
+            android:textSize="24sp"
+            android:textStyle="bold"
+            android:visibility="gone" />
 
-            <RelativeLayout
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1">
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/pagosVistaRecyclerView"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content">
+                android:layout_height="match_parent"
+                android:layout_marginHorizontal="8dp"
+                android:layout_marginTop="20dp"
+                android:clipToPadding="false"
+                android:scrollbars="vertical" />
 
-                <TextView
-                    android:id="@+id/tvPrimeraPantalla"
-                    android:layout_width="wrap_content"
-                    android:layout_height="200dp"
-                    android:layout_alignParentStart="true"
-                    android:padding="16dp"
-                    android:text="Primera pantalla"
-                    android:textColor="@color/black"
-                    android:textSize="18sp" />
+            <ImageView
+                android:id="@+id/headerImageSavings"
+                android:layout_width="140dp"
+                android:layout_height="140dp"
+                android:layout_alignParentEnd="true"
+                android:layout_alignParentBottom="true"
+                android:layout_marginBottom="160dp"
+                android:contentDescription="@string/filter"
+                android:src="@drawable/savings"
+                android:visibility="gone" />
 
-                <ImageView
-                    android:id="@+id/imgPrimeraPantalla"
-                    android:layout_width="150dp"
-                    android:layout_height="150dp"
-                    android:layout_alignParentEnd="true"
-                    android:layout_centerVertical="true"
-                    android:layout_marginEnd="16dp"
-                    android:contentDescription="@string/content_graph"
-                    android:scaleType="centerInside"
-                    android:src="@drawable/customer" />
-
-            </RelativeLayout>
-        </androidx.cardview.widget.CardView>
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal">
-
-            <androidx.cardview.widget.CardView
-                android:id="@+id/cardSegundaPantalla"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_margin="8dp"
-                android:layout_weight="1"
-                app:cardCornerRadius="8dp"
-                app:cardElevation="4dp">
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:orientation="vertical"
-                    android:padding="16dp">
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Segunda pantalla"
-                        android:textColor="@color/black"
-                        android:textSize="18sp" />
-
-                    <ImageView
-                        android:id="@+id/imgSegundaPantalla"
-                        android:layout_width="150dp"
-                        android:layout_height="150dp"
-                        android:layout_gravity="center_horizontal"
-                        android:layout_marginTop="8dp"
-                        android:contentDescription="@string/content_savings"
-                        android:scaleType="centerInside"
-                        android:src="@drawable/savings" />
-
-                </LinearLayout>
-            </androidx.cardview.widget.CardView>
-
-            <androidx.cardview.widget.CardView
-                android:id="@+id/cardTerceraPantalla"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_margin="8dp"
-                android:layout_weight="1"
-                app:cardCornerRadius="8dp"
-                app:cardElevation="4dp">
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:orientation="vertical"
-                    android:padding="16dp">
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="@string/historial_pagos"
-                        android:textColor="@color/black"
-                        android:textSize="18sp" />
-
-                    <ImageView
-                        android:id="@+id/imgTerceraPantalla"
-                        android:layout_width="150dp"
-                        android:layout_height="150dp"
-                        android:layout_gravity="center_horizontal"
-                        android:layout_marginTop="8dp"
-                        android:contentDescription="@string/content_payment"
-                        android:scaleType="centerInside"
-                        android:src="@drawable/payments" />
-
-                </LinearLayout>
-            </androidx.cardview.widget.CardView>
-        </LinearLayout>
+            <ImageView
+                android:id="@+id/headerImageQuestion"
+                android:layout_width="120dp"
+                android:layout_height="120dp"
+                android:layout_centerHorizontal="true"
+                android:layout_alignParentBottom="true"
+                android:layout_marginBottom="160dp"
+                android:contentDescription="@string/filter"
+                android:src="@drawable/question"
+                android:visibility="gone" />
+        </RelativeLayout>
     </LinearLayout>
 
-    <FrameLayout
-        android:id="@+id/fragment_container"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_below="@id/overlayContainer"
-        android:layout_alignParentBottom="true"
-        android:layout_marginTop="16dp"
-        tools:ignore="NotSibling" />
+    <ProgressBar
+        android:id="@+id/progressBar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:visibility="gone" />
 </RelativeLayout>

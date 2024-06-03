@@ -1,4 +1,5 @@
 package com.example.hamacav1.entidades.sombrillas;
+import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
@@ -43,6 +44,7 @@ public class SombrillaDetalles  extends DialogFragment {
     RadioButton radioOne, radioTwo;
     RadioGroup radioGroupHamacas;
 
+    @SuppressLint("SetTextI18n")
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_sombrilla_detalles, container, false);
@@ -172,6 +174,7 @@ public class SombrillaDetalles  extends DialogFragment {
     }
 
 
+    @SuppressLint("SetTextI18n")
     private void actualizarEstado(TextView tvDetalleEstado, Sombrilla sombrilla) {
         String estado = sombrilla.isReservada() ? "Reservada" : sombrilla.isOcupada() ? "Ocupada" : "Disponible";
         tvDetalleEstado.setText("Estado: " + estado);
@@ -263,15 +266,6 @@ public class SombrillaDetalles  extends DialogFragment {
             // Si no hay cantidad especificada, no seleccionar ninguno
             radioGroupHamacas.clearCheck();
         }
-    }
-
-    private String getCurrentUserName() {
-        // Implementa la lógica para obtener el nombre del usuario actual
-        return "nombreUsuario"; // Esto es solo un ejemplo, deberías obtenerlo de tus datos de usuario
-    }
-
-    public long getCurrentUserId(){
-        return 1;
     }
 }
 

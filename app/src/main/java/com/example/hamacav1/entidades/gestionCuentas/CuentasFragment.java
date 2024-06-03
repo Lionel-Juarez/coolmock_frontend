@@ -9,7 +9,6 @@ import androidx.fragment.app.FragmentTransaction;
 
 import android.app.AlertDialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -17,7 +16,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.TextView;
 
 import com.example.hamacav1.R;
 import com.example.hamacav1.entidades.clientes.ClienteFragment;
@@ -37,26 +35,11 @@ public class CuentasFragment extends Fragment {
         CardView usuarioCard = view.findViewById(R.id.usuarioCard);
         CardView logoutCard = view.findViewById(R.id.logoutCard);
 
-        clienteCard.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                replaceFragment(new ClienteFragment());
-            }
-        });
+        clienteCard.setOnClickListener(v -> replaceFragment(new ClienteFragment()));
 
-        usuarioCard.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                replaceFragment(new UsuarioFragment());
-            }
-        });
+        usuarioCard.setOnClickListener(v -> replaceFragment(new UsuarioFragment()));
 
-        logoutCard.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                showLogoutConfirmation();
-            }
-        });
+        logoutCard.setOnClickListener(v -> showLogoutConfirmation());
         return view;
     }
 
@@ -79,20 +62,12 @@ public class CuentasFragment extends Fragment {
         Button btnYes = dialogView.findViewById(R.id.btnYes);
         Button btnNo = dialogView.findViewById(R.id.btnNo);
 
-        btnYes.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                logout();
-                dialog.dismiss();
-            }
+        btnYes.setOnClickListener(v -> {
+            logout();
+            dialog.dismiss();
         });
 
-        btnNo.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                dialog.dismiss();
-            }
-        });
+        btnNo.setOnClickListener(v -> dialog.dismiss());
 
         dialog.show();
     }

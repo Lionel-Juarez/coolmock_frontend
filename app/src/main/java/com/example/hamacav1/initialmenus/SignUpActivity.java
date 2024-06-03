@@ -4,29 +4,35 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.view.View;
+import android.util.Log;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.hamacav1.R;
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
-import com.google.firebase.auth.AuthResult;
+
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.auth.GetTokenResult;
+
+import org.json.JSONObject;
+
+import java.util.Objects;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+
+import okhttp3.MediaType;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.RequestBody;
+import okhttp3.Response;
 
 public class SignUpActivity extends AppCompatActivity {
 
     private FirebaseAuth auth;
-    private EditText signupEmail, signupPassword;
-    private Button signupButton;
-    private TextView loginRedirectText;
+    private EditText signupEmail, signupPassword, signupNombreCompleto, signupTelefono;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -36,58 +42,91 @@ public class SignUpActivity extends AppCompatActivity {
         auth = FirebaseAuth.getInstance();
         signupEmail = findViewById(R.id.signup_email);
         signupPassword = findViewById(R.id.signup_password);
-        signupButton = findViewById(R.id.signup_button);
-        loginRedirectText = findViewById(R.id.loginRedirectText);
+        signupNombreCompleto = findViewById(R.id.signup_nombre_completo);
+        signupTelefono = findViewById(R.id.signup_telefono);
+        Button signupButton = findViewById(R.id.signup_button);
+        TextView loginRedirectText = findViewById(R.id.loginRedirectText);
 
-        signupButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                String user = signupEmail.getText().toString().trim();
-                String pass = signupPassword.getText().toString().trim();
-                if (user.isEmpty()) {
-                    signupEmail.setError("Email cannot be empty");
-                } else if (pass.isEmpty()) {
-                    signupPassword.setError("Password cannot be empty");
-                } else {
-                    auth.createUserWithEmailAndPassword(user, pass).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
-                        @Override
-                        public void onComplete(@NonNull Task<AuthResult> task) {
-                            if (task.isSuccessful()) {
-                                FirebaseUser user = auth.getCurrentUser();
-                                if (user != null) {
-                                    user.getIdToken(true).addOnCompleteListener(new OnCompleteListener<GetTokenResult>() {
-                                        @Override
-                                        public void onComplete(@NonNull Task<GetTokenResult> task) {
-                                            if (task.isSuccessful()) {
-                                                String idToken = task.getResult().getToken();
-                                                // Guardar el token en SharedPreferences
-                                                SharedPreferences sharedPreferences = getSharedPreferences("MyAppPrefs", Context.MODE_PRIVATE);
-                                                SharedPreferences.Editor editor = sharedPreferences.edit();
-                                                editor.putString("idToken", idToken);
-                                                editor.apply();
+        signupButton.setOnClickListener(view -> {
+            String email = signupEmail.getText().toString().trim();
+            String pass = signupPassword.getText().toString().trim();
+            String nombreCompleto = signupNombreCompleto.getText().toString().trim();
+            String telefono = signupTelefono.getText().toString().trim();
 
-                                                Toast.makeText(SignUpActivity.this, "SignUp Successful", Toast.LENGTH_SHORT).show();
-                                                startActivity(new Intent(SignUpActivity.this, LoginActivity.class));
-                                                finish(); // Finalizar actividad para evitar regresar
-                                            } else {
-                                                Toast.makeText(SignUpActivity.this, "Failed to get token: " + task.getException().getMessage(), Toast.LENGTH_SHORT).show();
-                                            }
-                                        }
-                                    });
+            if (email.isEmpty()) {
+                signupEmail.setError("Email cannot be empty");
+            } else if (pass.isEmpty()) {
+                signupPassword.setError("Password cannot be empty");
+            } else if (nombreCompleto.isEmpty()) {
+                signupNombreCompleto.setError("Nombre completo cannot be empty");
+            } else if (telefono.isEmpty()) {
+                signupTelefono.setError("Teléfono cannot be empty");
+            } else {
+                auth.createUserWithEmailAndPassword(email, pass).addOnCompleteListener(task -> {
+                    if (task.isSuccessful()) {
+                        FirebaseUser user = auth.getCurrentUser();
+                        if (user != null) {
+                            user.getIdToken(true).addOnCompleteListener(task1 -> {
+                                if (task1.isSuccessful()) {
+                                    String idToken = task1.getResult().getToken();
+                                    // Guardar el token en SharedPreferences
+                                    SharedPreferences sharedPreferences = getSharedPreferences("MyAppPrefs", Context.MODE_PRIVATE);
+                                    SharedPreferences.Editor editor = sharedPreferences.edit();
+                                    editor.putString("idToken", idToken);
+                                    editor.apply();
+
+                                    createCliente(nombreCompleto, telefono, email, idToken);
+
+                                    Toast.makeText(SignUpActivity.this, "SignUp Successful", Toast.LENGTH_SHORT).show();
+                                    startActivity(new Intent(SignUpActivity.this, LoginActivity.class));
+                                    finish(); // Finalizar actividad para evitar regresar
+                                } else {
+                                    Toast.makeText(SignUpActivity.this, "Failed to get token: " + Objects.requireNonNull(task1.getException()).getMessage(), Toast.LENGTH_SHORT).show();
                                 }
-                            } else {
-                                Toast.makeText(SignUpActivity.this, "SignUp Failed: " + task.getException().getMessage(), Toast.LENGTH_SHORT).show();
-                            }
+                            });
                         }
-                    });
-                }
+                    } else {
+                        Toast.makeText(SignUpActivity.this, "SignUp Failed: " + Objects.requireNonNull(task.getException()).getMessage(), Toast.LENGTH_SHORT).show();
+                    }
+                });
             }
         });
 
-        loginRedirectText.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                startActivity(new Intent(SignUpActivity.this, LoginActivity.class));
+        loginRedirectText.setOnClickListener(view -> startActivity(new Intent(SignUpActivity.this, LoginActivity.class)));
+    }
+
+    private void createCliente(String nombreCompleto, String telefono, String email, String idToken) {
+        ExecutorService executor = Executors.newSingleThreadExecutor();
+
+        executor.execute(() -> {
+            OkHttpClient client = new OkHttpClient();
+            MediaType MEDIA_TYPE_JSON = MediaType.parse("application/json; charset=utf-8");
+            JSONObject json = new JSONObject();
+            try {
+                json.put("nombreCompleto", nombreCompleto);
+                json.put("numeroTelefono", telefono);
+                json.put("email", email);
+                json.put("rol", "CLIENTE");
+
+                RequestBody body = RequestBody.create(json.toString(), MEDIA_TYPE_JSON);
+                Request request = new Request.Builder()
+                        .url(getResources().getString(R.string.url_clientes) + "nuevoCliente")
+                        .addHeader("Authorization", "Bearer " + idToken)
+                        .post(body)
+                        .build();
+
+                try (Response response = client.newCall(request).execute()) {
+                    if (response.isSuccessful()) {
+                        Log.d("createCliente", "Cliente creado con éxito");
+                    } else {
+                        String errorMessage = response.body() != null ? response.body().string() : "Respuesta vacía";
+                        Log.e("createCliente", "Error al crear cliente, respuesta del servidor: " + errorMessage);
+                    }
+                } catch (Exception e) {
+                    Log.e("createCliente", "Excepción al enviar datos del cliente: " + e.getMessage(), e);
+                }
+            } catch (Exception e) {
+                Log.e("createCliente", "Excepción al crear JSON del cliente: " + e.getMessage(), e);
             }
         });
     }

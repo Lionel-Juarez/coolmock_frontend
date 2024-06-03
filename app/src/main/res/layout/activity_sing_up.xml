@@ -12,6 +12,7 @@
         android:id="@+id/backgroundImage"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:contentDescription="@string/content_fondo"
         android:scaleType="centerCrop"
         android:src="@drawable/fondo1" />
 
@@ -28,7 +29,7 @@
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Sign Up"
+            android:text="@string/singup"
             android:id="@+id/signupText"
             android:textSize="36sp"
             android:textAlignment="center"
@@ -36,12 +37,25 @@
             android:textColor="@color/black" />
 
         <EditText
-            android:id="@+id/signup_email"
+            android:id="@+id/signup_nombre_completo"
             android:layout_width="match_parent"
             android:layout_height="50dp"
             android:layout_marginTop="40dp"
             android:background="@drawable/rounded_corners"
-            android:drawableLeft="@drawable/baseline_person_24"
+            android:drawableStart="@drawable/baseline_person_24"
+            android:drawablePadding="8dp"
+            android:hint="@string/nombre_completo"
+            android:padding="8dp"
+            android:textColor="@color/black"
+            android:textStyle="bold" />
+
+        <EditText
+            android:id="@+id/signup_email"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:layout_marginTop="20dp"
+            android:background="@drawable/rounded_corners"
+            android:drawableStart="@drawable/baseline_email_24"
             android:drawablePadding="8dp"
             android:hint="@string/email"
             android:padding="8dp"
@@ -54,7 +68,7 @@
             android:layout_height="50dp"
             android:layout_marginTop="20dp"
             android:background="@drawable/rounded_corners"
-            android:drawableLeft="@drawable/baseline_password_24_principal_color"
+            android:drawableStart="@drawable/baseline_password_24_principal_color"
             android:drawablePadding="8dp"
             android:hint="@string/password"
             android:inputType="textPassword"
@@ -68,7 +82,7 @@
             android:layout_height="50dp"
             android:layout_marginTop="20dp"
             android:background="@drawable/rounded_corners"
-            android:drawableLeft="@drawable/baseline_contact_phone_24"
+            android:drawableStart="@drawable/baseline_contact_phone_24"
             android:drawablePadding="8dp"
             android:hint="@string/telefono_hint"
             android:inputType="phone"

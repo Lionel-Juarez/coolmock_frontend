@@ -23,7 +23,7 @@
     <string name="url_clientes">http://10.0.2.2:8080/api/clientes/</string>
     <string name="url_reservas">http://10.0.2.2:8080/api/reservas/</string>
     <string name="url_usuarios">http://10.0.2.2:8080/api/usuarios/</string>
-    <string name="url_pagos">http://10.0.2.2:8080/api/pagos/</string>
+    <string name="url_pagos">http://10.0.2.2:8080/api/pagos</string>
 
     <string name="eliminar_reporte">Delete report</string>
     <string name="are_you_sure">Are you sure?</string>
@@ -147,6 +147,7 @@
     <string name="title">Title</string>
     <string name="cliente_desconocido">Unknown client\n</string>
     <string name="content_fondo">img fondo</string>
+    <string name="nombre_completo">Full name</string>
 
     //Spinners
     <string-array name="hour_array">
