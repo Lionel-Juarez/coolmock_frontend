@@ -20,6 +20,7 @@ public class Cliente implements Serializable {
     private String numeroTelefono;
     private String email;
     private String rol;
+    private String uid;
 
     @NonNull
     @Override
@@ -34,5 +35,6 @@ public class Cliente implements Serializable {
         this.numeroTelefono = jsonObject.optString("numeroTelefono", "");
         this.email = jsonObject.optString("email", "");
         this.rol = jsonObject.optString("rol", "");
+        this.uid = jsonObject.optString("uid", "");
     }
 }

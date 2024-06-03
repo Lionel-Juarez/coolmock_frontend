@@ -63,20 +63,6 @@
             android:textStyle="bold" />
 
         <EditText
-            android:id="@+id/signup_password"
-            android:layout_width="match_parent"
-            android:layout_height="50dp"
-            android:layout_marginTop="20dp"
-            android:background="@drawable/rounded_corners"
-            android:drawableStart="@drawable/baseline_password_24_principal_color"
-            android:drawablePadding="8dp"
-            android:hint="@string/password"
-            android:inputType="textPassword"
-            android:padding="8dp"
-            android:textStyle="bold"
-            android:textColor="@color/black" />
-
-        <EditText
             android:id="@+id/signup_telefono"
             android:layout_width="match_parent"
             android:layout_height="50dp"
@@ -87,8 +73,39 @@
             android:hint="@string/telefono_hint"
             android:inputType="phone"
             android:padding="8dp"
+            android:textColor="@color/black"
+            android:textStyle="bold" />
+
+        <EditText
+            android:id="@+id/signup_password"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:layout_marginTop="20dp"
+            android:background="@drawable/rounded_corners"
+            android:drawableStart="@drawable/baseline_password_24_principal_color"
+            android:drawableEnd="@drawable/baseline_visibility_off_24"
+            android:drawablePadding="8dp"
+            android:hint="@string/password"
+            android:inputType="textPassword"
+            android:padding="8dp"
             android:textStyle="bold"
             android:textColor="@color/black" />
+
+        <EditText
+            android:id="@+id/signup_password_confirm"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:layout_marginTop="20dp"
+            android:background="@drawable/rounded_corners"
+            android:drawableStart="@drawable/baseline_password_24_principal_color"
+            android:drawableEnd="@drawable/baseline_visibility_off_24"
+            android:drawablePadding="8dp"
+            android:hint="@string/confirm_password"
+            android:inputType="textPassword"
+            android:padding="8dp"
+            android:textStyle="bold"
+            android:textColor="@color/black" />
+
 
         <Button
             android:layout_width="match_parent"

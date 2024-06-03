@@ -148,6 +148,7 @@
     <string name="cliente_desconocido">Unknown client\n</string>
     <string name="content_fondo">img fondo</string>
     <string name="nombre_completo">Full name</string>
+    <string name="confirm_password">Confirm password</string>
 
     //Spinners
     <string-array name="hour_array">

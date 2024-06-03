@@ -336,7 +336,8 @@ public class NuevaReserva extends AppCompatActivity {
                             String telefono = jsonObject.optString("numeroTelefono");
                             String email = jsonObject.optString("email");
                             String rol = jsonObject.optString("rol");
-                            clientsList.add(new Cliente(id, nombre, telefono, email, rol));
+                            String uid = null;
+                            clientsList.add(new Cliente(id, nombre, telefono, email, rol, uid));
                         }
                         updateClientsAutoComplete(clientsList);
                     } catch (JSONException e) {

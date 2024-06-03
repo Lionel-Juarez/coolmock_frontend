@@ -132,6 +132,9 @@ public class NuevoCliente extends AppCompatActivity {
                 json.put("email", email);
                 json.put("rol", "CLIENTE");
 
+                // Añadir el uid solo si está disponible
+                String uid = null; // O cualquier otra forma de obtener el uid si está disponible
+
                 SharedPreferences sharedPreferences = getSharedPreferences("MyAppPrefs", Context.MODE_PRIVATE);
                 String idToken = sharedPreferences.getString("idToken", null);
 
@@ -149,7 +152,7 @@ public class NuevoCliente extends AppCompatActivity {
                             String responseData = responseBody.string();
                             JSONObject responseObject = new JSONObject(responseData);
                             long idCliente = responseObject.getLong("idCliente");
-                            Cliente newClient = new Cliente(idCliente, nombreCompleto, numeroTelefono, email, "CLIENTE");
+                            Cliente newClient = new Cliente(idCliente, nombreCompleto, numeroTelefono, email, "CLIENTE", uid);
                             Log.d("NuevoCliente", "Cliente creado con éxito, ID: " + idCliente);
 
                             handler.post(() -> {
