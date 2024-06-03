@@ -131,6 +131,7 @@
     <string name="titulo_liberando_sombrilla">Liberando sombrilla</string>
     <string name="descripcion_liberando_sombrilla">La sombrilla #%1$d ha sido liberada, Cantidad de Hamacas: %2$s</string>
     <string name="titulo_reservando_sombrilla">Reservando sombrilla</string>
+    <string name="nombre_completo">Nombre completo</string>
     <string name="new_hint">Nuevo</string>
 
     <string name="filter">Filter</string>
