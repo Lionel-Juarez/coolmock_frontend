@@ -4,6 +4,7 @@ import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.text.InputType;
 import android.util.Log;
@@ -34,14 +35,13 @@ import okhttp3.RequestBody;
 import okhttp3.Response;
 
 public class SignUpActivity extends AppCompatActivity {
-
     private FirebaseAuth auth;
     private EditText signupEmail, signupPassword, signupNombreCompleto, signupTelefono;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_sing_up);
+        setContentView(R.layout.activity_sign_up);
 
         auth = FirebaseAuth.getInstance();
         signupEmail = findViewById(R.id.signup_email);
@@ -113,8 +113,8 @@ public class SignUpActivity extends AppCompatActivity {
         passwordField.setOnTouchListener((v, event) -> {
             if (event.getAction() == MotionEvent.ACTION_UP) {
                 int drawableEnd = 2; // index of the drawable end
-                if (passwordField.getCompoundDrawables()[drawableEnd] != null &&
-                        event.getRawX() >= (passwordField.getRight() - passwordField.getCompoundDrawables()[drawableEnd].getBounds().width())) {
+                Drawable drawable = passwordField.getCompoundDrawables()[drawableEnd];
+                if (drawable != null && event.getRawX() >= (passwordField.getRight() - drawable.getBounds().width())) {
                     int selection = passwordField.getSelectionEnd();
                     if (passwordField.getInputType() == (InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD)) {
                         passwordField.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD);
@@ -130,7 +130,6 @@ public class SignUpActivity extends AppCompatActivity {
             return false;
         });
     }
-
 
     private void createOrUpdateCliente(String nombreCompleto, String telefono, String email, String idToken, String uid) {
         if (!Internetop.getInstance(this).isNetworkAvailable()) {

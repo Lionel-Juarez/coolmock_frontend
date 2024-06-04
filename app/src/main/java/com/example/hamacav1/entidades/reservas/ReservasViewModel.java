@@ -182,18 +182,26 @@ public class ReservasViewModel extends ViewModel {
         String formattedDate = sdf.format(selectedDate);
 
         OkHttpClient client = new OkHttpClient.Builder()
-                .connectTimeout(30, TimeUnit.SECONDS)
-                .writeTimeout(30, TimeUnit.SECONDS)
-                .readTimeout(30, TimeUnit.SECONDS)
+                .connectTimeout(60, TimeUnit.SECONDS)
+                .writeTimeout(60, TimeUnit.SECONDS)
+                .readTimeout(60, TimeUnit.SECONDS)
                 .build();
 
-        HttpUrl url = Objects.requireNonNull(HttpUrl.parse("http://10.0.2.2:8080/api/reservas/fecha-estado")).newBuilder()
+        String baseUrl = context.getResources().getString(R.string.url_reservas);
+        HttpUrl url = Objects.requireNonNull(HttpUrl.parse(baseUrl + "api/reservas/fecha-estado")).newBuilder()
                 .addQueryParameter("fecha", formattedDate)
                 .addQueryParameter("estado", estado)
                 .build();
 
         SharedPreferences sharedPreferences = context.getSharedPreferences("MyAppPrefs", Context.MODE_PRIVATE);
         String idToken = sharedPreferences.getString("idToken", null);
+
+        if (idToken == null) {
+            Log.e("ReservasViewModel", "Token de autorización no disponible");
+            loading.postValue(false);
+            errorMessages.postValue("Error de autenticación. Por favor, inicie sesión de nuevo.");
+            return;
+        }
 
         Request request = new Request.Builder()
                 .url(url)
@@ -221,6 +229,7 @@ public class ReservasViewModel extends ViewModel {
             }
         });
     }
+
 
     public void filterReservasByState(String state) {
         OkHttpClient client = new OkHttpClient();

@@ -133,6 +133,8 @@
     <string name="titulo_reservando_sombrilla">Reservando sombrilla</string>
     <string name="nombre_completo">Nombre completo</string>
     <string name="new_hint">Nuevo</string>
+    <string name="confirm_password">Confirma contraseña</string>
+
 
     <string name="filter">Filter</string>
     <string name="content_graph">graph img</string>
