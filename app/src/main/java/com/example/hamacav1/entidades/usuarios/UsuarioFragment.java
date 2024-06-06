@@ -11,6 +11,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
@@ -19,6 +20,7 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.hamacav1.MainActivity;
 import com.example.hamacav1.util.Internetop;
 import com.example.hamacav1.R;
 import com.example.hamacav1.util.Utils;
@@ -83,9 +85,14 @@ public class UsuarioFragment extends Fragment implements UsuarioAdapter.UsuarioA
     }
 
     private void newUsuario() {
-        Intent intent = new Intent(getContext(), NuevoUsuario.class);
-        nuevoResultLauncher.launch(intent);
+        if (MainActivity.rol != null && MainActivity.rol.equals("ADMIN")) {
+            Intent intent = new Intent(getContext(), NuevoUsuario.class);
+            nuevoResultLauncher.launch(intent);
+        } else {
+            Toast.makeText(getContext(), getString(R.string.only_admin_can_add_user), Toast.LENGTH_SHORT).show();
+        }
     }
+
 
     private void loadUsuariosFromBackend() {
         String url = getResources().getString(R.string.url_usuarios) ;

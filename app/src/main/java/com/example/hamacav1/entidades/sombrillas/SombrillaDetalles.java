@@ -63,7 +63,7 @@ public class SombrillaDetalles  extends DialogFragment {
 
         Sombrilla sombrilla = getArguments() != null ? getArguments().getParcelable(ARG_HAMACA) : null;
         if (sombrilla != null) {
-            tvDetalleNumero.setText("Sombrilla #" + sombrilla.getIdSombrilla());
+            tvDetalleNumero.setText(sombrilla.getNumeroSombrilla());
             tvDetallePrecio.setText("Precio: €" + sombrilla.getPrecio());
             actualizarEstado(tvDetalleEstado, sombrilla);
 
@@ -259,11 +259,10 @@ public class SombrillaDetalles  extends DialogFragment {
                     radioTwo.setChecked(true);
                     break;
                 default:
-                    radioGroupHamacas.clearCheck(); // Ningún botón seleccionado
+                    radioGroupHamacas.clearCheck();
                     break;
             }
         } else {
-            // Si no hay cantidad especificada, no seleccionar ninguno
             radioGroupHamacas.clearCheck();
         }
     }

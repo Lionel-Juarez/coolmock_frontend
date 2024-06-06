@@ -57,7 +57,7 @@
     <string name="eliminar_cliente">Eliminar cliente</string>
     <string name="fab_add_cliente">Agregar cliente</string>
     <string name="clientes">Clientes</string>
-    <string name="numero_sombrilla">#%d</string>
+    <string name="numero_sombrilla">Nº #%d</string>
     <string name="estado_sombrilla">Estado de la tumbona</string>
     <string name="reserva">Reservas</string>
     <string name="create_new_reservation">Crear una nueva reserva</string>
@@ -145,11 +145,23 @@
     <string name="content_customer">img customer</string>
     <string name="content_user">img user</string>
     <string name="content_logout">img logout</string>
+    <string name="content_cliente">img cliente</string>
+    <string name="content_telefono">img telefono</string>
+    <string name="content_email">img email</string>
+    <string name="content_edit">img edit</string>
+    <string name="content_eliminar">img eliminar</string>
+
     <string name="created_by">Created By:</string>
     <string name="title">Title</string>
 
     <string name="cliente_desconocido">Cliente desconocido</string>
     <string name="content_fondo">img fondo</string>
+
+    <string name="sunbed_price">Precio x hamaca</string>
+    <string name="estado_actual">Estado actual</string>
+    <string name="selected_sunbeds">Nº de hamacas ocupadas</string>
+    <string name="only_admin_can_add_user">Solo el Admin puede crear usuarios</string>
+
 
     //Spinners
     <string-array name="hour_array">

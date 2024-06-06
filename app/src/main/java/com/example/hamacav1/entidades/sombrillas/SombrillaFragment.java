@@ -72,16 +72,13 @@ public class SombrillaFragment extends Fragment implements SombrillaDetalles.Som
     private void showDatePickerDialog() {
         Calendar c = Calendar.getInstance();
         DatePickerDialog datePickerDialog = new DatePickerDialog(requireContext(),
-                (view, year, month, dayOfMonth) -> {
-                    // Lógica para cargar las sombrillas con la fecha seleccionada...
-                    cargarSombrillas(year, month, dayOfMonth);
-                }, c.get(Calendar.YEAR), c.get(Calendar.MONTH), c.get(Calendar.DAY_OF_MONTH));
+                (view, year, month, dayOfMonth) -> cargarSombrillas(year, month, dayOfMonth), c.get(Calendar.YEAR), c.get(Calendar.MONTH), c.get(Calendar.DAY_OF_MONTH));
         datePickerDialog.show();
     }
 
     private void setupRecyclerView(View view) {
         RecyclerView sombrillasRecyclerView = view.findViewById(R.id.sombrillasRecyclerView);
-        sombrillasRecyclerView.setLayoutManager(new GridLayoutManager(getContext(), 9));
+        sombrillasRecyclerView.setLayoutManager(new GridLayoutManager(getContext(), 6));
         sombrillasAdapter = new SombrillaAdapter(todasLasSombrillas, getContext(), getChildFragmentManager());
         sombrillasRecyclerView.setAdapter(sombrillasAdapter);
     }
@@ -90,7 +87,7 @@ public class SombrillaFragment extends Fragment implements SombrillaDetalles.Som
         LocalDate today = LocalDate.of(year, month + 1, dayOfMonth);
         Log.d("SombrillaFragment", "Cargando sombrillas para la fecha actual: " + today);
 
-        progressBar.setVisibility(View.VISIBLE); // Mostrar ProgressBar al iniciar la carga
+        progressBar.setVisibility(View.VISIBLE);
 
         String url = getResources().getString(R.string.url_sombrillas).concat("sombrillas");
         HttpUrl urlWithParams = Objects.requireNonNull(HttpUrl.parse(url)).newBuilder().build();
@@ -118,7 +115,7 @@ public class SombrillaFragment extends Fragment implements SombrillaDetalles.Som
                 Log.e("SombrillaLoad", "Error al cargar sombrillas: " + e.getMessage(), e);
                 if (getActivity() != null) {
                     getActivity().runOnUiThread(() -> {
-                        progressBar.setVisibility(View.GONE); // Ocultar ProgressBar en caso de fallo
+                        progressBar.setVisibility(View.GONE);
                         Toast.makeText(getContext(), "Error al cargar sombrillas", Toast.LENGTH_SHORT).show();
                     });
                 }
@@ -158,7 +155,7 @@ public class SombrillaFragment extends Fragment implements SombrillaDetalles.Som
                                 Log.e("SombrillaFragment", "Error al procesar los datos de sombrillas", e);
                                 Toast.makeText(getContext(), "Error al procesar los datos", Toast.LENGTH_SHORT).show();
                             } finally {
-                                progressBar.setVisibility(View.GONE); // Ocultar ProgressBar al completar la carga
+                                progressBar.setVisibility(View.GONE);
                             }
                         });
                     }

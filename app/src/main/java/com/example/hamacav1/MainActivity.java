@@ -40,7 +40,7 @@ import okhttp3.Response;
 
 public class MainActivity extends AppCompatActivity {
     ActivityMainBinding binding;
-    private String rol;
+    public static String rol;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -61,7 +61,6 @@ public class MainActivity extends AppCompatActivity {
         binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
-        // Verificar el rol del cliente
         verificarRolCliente(userId, idToken);
 
         renovarToken();
@@ -75,9 +74,9 @@ public class MainActivity extends AppCompatActivity {
             } else if (itemId == R.id.sunbed) {
                 Log.d("Main", "El boton sunbed se ha pulsado");
                 replaceFragment(new SombrillaFragment());
-            } else if (itemId == R.id.reportes && !rol.equals("CLIENTE")) {
+            } else if (itemId == R.id.reportes && rol != null && !rol.equals("CLIENTE")) {
                 replaceFragment(new ReportsFragment());
-            } else if (itemId == R.id.calcs && !rol.equals("CLIENTE")) {
+            } else if (itemId == R.id.calcs && rol != null && !rol.equals("CLIENTE")) {
                 replaceFragment(new PagoFragment());
             } else if (itemId == R.id.cuentas) {
                 replaceFragment(new CuentasFragment());
@@ -85,6 +84,15 @@ public class MainActivity extends AppCompatActivity {
             return true;
         });
     }
+
+    private void ajustarNavegacionPorRol() {
+        Menu menu = binding.bottomNavigationView.getMenu();
+        if (rol != null && rol.equals("CLIENTE")) {
+            menu.findItem(R.id.reportes).setVisible(false);
+            menu.findItem(R.id.calcs).setVisible(false);
+        }
+    }
+
 
     private void verificarRolCliente(String uid, String idToken) {
         String url = getResources().getString(R.string.url_clientes) + "uid/" + uid;
@@ -127,22 +135,12 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
-    private void ajustarNavegacionPorRol() {
-        Menu menu = binding.bottomNavigationView.getMenu();
-        if (rol.equals("CLIENTE")) {
-            menu.findItem(R.id.reportes).setVisible(false);
-            menu.findItem(R.id.calcs).setVisible(false);
-        }
-    }
-
     public void replaceFragment(Fragment fragment) {
         FragmentManager fragmentManager = getSupportFragmentManager();
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
         fragmentTransaction.replace(R.id.frame_layout, fragment);
         fragmentTransaction.commit();
     }
-
-
 
     private void renovarToken() {
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();

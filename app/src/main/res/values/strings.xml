@@ -64,7 +64,7 @@
     <string name="eliminar_cliente">Delete Customer</string>
     <string name="fab_add_cliente">Add customer</string>
     <string name="clientes">Customers</string>
-    <string name="numero_sombrilla">#%d</string>
+    <string name="numero_sombrilla">Nº #%d</string>
     <string name="estado_sombrilla">Sunbed state</string>
     <string name="reserva">Reservations</string>
     <string name="create_new_reservation">Create a new reservation</string>
@@ -146,16 +146,28 @@
     <string name="content_savings">img savings</string>
     <string name="content_payment">img payment</string>
     <string name="content_calendar">img calendar</string>
-    <string name="fecha_ejemplo">07/06/24</string>
     <string name="content_customer">img customer</string>
     <string name="content_user">img user</string>
     <string name="content_logout">img logout</string>
+    <string name="content_cliente">img cliente</string>
+    <string name="content_telefono">img telefono</string>
+    <string name="content_email">img email</string>
+    <string name="content_edit">img edit</string>
+    <string name="content_eliminar">img eliminar</string>
+
     <string name="created_by">Created By:</string>
+    <string name="fecha_ejemplo">07/06/24</string>
     <string name="title">Title</string>
     <string name="cliente_desconocido">Unknown client\n</string>
     <string name="content_fondo">img fondo</string>
     <string name="nombre_completo">Full name</string>
+
     <string name="confirm_password">Confirm password</string>
+    <string name="sunbed_price">Sunbed price</string>
+    <string name="estado_actual">Actual state</string>
+    <string name="selected_sunbeds">Number of selected sunbeds</string>
+    <string name="only_admin_can_add_user">Only Admin can create new users</string>
+
 
     //Spinners
     <string-array name="hour_array">

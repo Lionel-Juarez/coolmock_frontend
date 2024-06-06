@@ -1,6 +1,7 @@
 <RelativeLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
     <androidx.cardview.widget.CardView
@@ -22,30 +23,32 @@
                 android:layout_height="wrap_content"
                 android:textSize="18sp"
                 android:textStyle="bold"
-                android:text="Número de Sombrilla"
-                android:drawableLeft="@drawable/sombrilla24"
+                android:text="@string/numero_sombrilla"
                 android:drawablePadding="10dp"
-                android:gravity="center_vertical"/>
+                android:gravity="center_vertical"
+                app:drawableLeftCompat="@drawable/sombrilla24" />
 
             <TextView
                 android:id="@+id/tvDetallePrecio"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="16dp"
-                android:text="Precio de Sombrilla"
-                android:drawableLeft="@drawable/etiqueta_precio24"
+                android:text="@string/sunbed_price"
                 android:drawablePadding="10dp"
-                android:gravity="center_vertical"/>
+                android:gravity="center_vertical"
+                android:textColor="@color/black"
+                app:drawableLeftCompat="@drawable/etiqueta_precio24" />
 
             <TextView
                 android:id="@+id/tvDetalleEstado"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="16dp"
-                android:text="Estado Actual"
-                android:drawableLeft="@drawable/etiqueta"
+                android:text="@string/estado_actual"
                 android:drawablePadding="10dp"
-                android:gravity="center_vertical"/>
+                android:gravity="center_vertical"
+                android:textColor="@color/black"
+                app:drawableLeftCompat="@drawable/etiqueta" />
 
             <com.google.android.material.divider.MaterialDivider
                 android:layout_width="match_parent"
@@ -69,7 +72,8 @@
                     android:text="@string/btn_reservar"
                     android:textColor="#FFFFFF"
                     android:textSize="18sp"
-                    app:cornerRadius="10dp" />
+                    app:cornerRadius="5dp"
+                    tools:ignore="RtlHardcoded" />
 
 
                 <Button
@@ -80,7 +84,8 @@
                     android:text="@string/btn_ocupar"
                     android:textColor="#FFFFFF"
                     android:textSize="18sp"
-                    app:cornerRadius="10dp" />
+                    app:cornerRadius="5dp"
+                    tools:ignore="RtlHardcoded" />
 
                 <Button
                     android:id="@+id/btnLiberar"
@@ -90,7 +95,8 @@
                     android:text="@string/btn_liberar"
                     android:textColor="#FFFFFF"
                     android:textSize="18sp"
-                    app:cornerRadius="10dp" />
+                    app:cornerRadius="5dp"
+                    tools:ignore="RtlHardcoded" />
 
                 <Button
                     android:id="@+id/btnVerReserva"
@@ -100,7 +106,8 @@
                     android:text="@string/btn_verReserva"
                     android:textColor="#FFFFFF"
                     android:textSize="18sp"
-                    app:cornerRadius="10dp"/>
+                    app:cornerRadius="5dp"
+                    tools:ignore="RtlHardcoded" />
             </LinearLayout>
 
             <com.google.android.material.divider.MaterialDivider
@@ -118,6 +125,15 @@
                 android:paddingTop="10dp"
                 android:gravity="center_horizontal">
 
+                <TextView
+                    android:id="@+id/tvCantidadHamacas"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="16dp"
+                    android:text="@string/selected_sunbeds"
+                    android:gravity="center_horizontal"
+                    android:textColor="@color/black"/>
+
                 <RadioGroup
                     android:id="@+id/radioGroupHamacas"
                     android:layout_width="match_parent"
@@ -130,18 +146,18 @@
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
-                        android:text="1"
+                        android:text="@string/_1"
                         android:background="@drawable/selector_button_background"
                         android:button="@android:color/transparent"
                         android:gravity="center"
-                        android:layout_marginRight="20dp" />
+                        android:layout_marginEnd="20dp" />
 
                     <RadioButton
                         android:id="@+id/radioTwo"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
-                        android:text="2"
+                        android:text="@string/_2"
                         android:background="@drawable/selector_button_background"
                         android:button="@android:color/transparent"
                         android:gravity="center" />

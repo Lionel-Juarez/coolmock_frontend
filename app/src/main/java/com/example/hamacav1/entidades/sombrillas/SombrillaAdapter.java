@@ -2,14 +2,13 @@ package com.example.hamacav1.entidades.sombrillas;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
-import android.graphics.PorterDuff;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
-import androidx.core.content.ContextCompat;
 import androidx.fragment.app.FragmentManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -41,8 +40,9 @@ public class SombrillaAdapter extends RecyclerView.Adapter<SombrillaAdapter.Somb
     @Override
     public void onBindViewHolder(@NonNull SombrillaViewHolder holder, int position) {
         Sombrilla sombrilla = listaSombrillas.get(position);
-//        holder.tvNumeroSombrilla.setText(String.format(context.getString(R.string.numero_sombrilla), sombrilla.getIdSombrilla()));
-        updateViewColor(holder.ivEstadoSombrilla, sombrilla);
+        updateViewImage(holder.ivEstadoSombrilla, sombrilla);
+
+        holder.tvNumeroSombrilla.setText(String.valueOf(sombrilla.getNumeroSombrilla()));
 
         holder.itemView.setOnClickListener(view -> {
             int adapterPosition = holder.getAdapterPosition(); // Obtiene la posición actualizada
@@ -53,18 +53,18 @@ public class SombrillaAdapter extends RecyclerView.Adapter<SombrillaAdapter.Somb
             }
         });
     }
-    private void updateViewColor(ImageView imageView, Sombrilla sombrilla) {
-        int colorResId = R.color.colorDisponible; // Default color
+
+    private void updateViewImage(ImageView imageView, Sombrilla sombrilla) {
+        int imageResId = R.drawable.sombrilla_libre;
 
         if (sombrilla.isReservada()) {
-            colorResId = R.color.colorReservada; // Verde si está reservada
+            imageResId = R.drawable.sombrilla_reservada;
         } else if (sombrilla.isOcupada()) {
-            colorResId = R.color.colorOcupada; // Rojo si está ocupada
+            imageResId = R.drawable.sombrilla_ocupada;
         }
 
-        imageView.setColorFilter(ContextCompat.getColor(context, colorResId), PorterDuff.Mode.SRC_IN);
+        imageView.setImageResource(imageResId);
     }
-
 
     @Override
     public int getItemCount() {
@@ -72,13 +72,13 @@ public class SombrillaAdapter extends RecyclerView.Adapter<SombrillaAdapter.Somb
     }
 
     public static class SombrillaViewHolder extends RecyclerView.ViewHolder {
-//        TextView tvNumeroSombrilla;
-        ImageView ivEstadoSombrilla;  // Agregado para gestionar el cambio de color
+        ImageView ivEstadoSombrilla;
+        TextView tvNumeroSombrilla;
 
         public SombrillaViewHolder(@NonNull View itemView) {
             super(itemView);
-//            tvNumeroSombrilla = itemView.findViewById(R.id.tvNumeroSombrilla);
-            ivEstadoSombrilla = itemView.findViewById(R.id.ivEstadoSombrilla);  // Inicializar ImageView
+            ivEstadoSombrilla = itemView.findViewById(R.id.ivEstadoSombrilla);
+            tvNumeroSombrilla = itemView.findViewById(R.id.etNumeroSombrilla);
         }
     }
 

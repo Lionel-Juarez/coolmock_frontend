@@ -11,6 +11,7 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.hamacav1.MainActivity;
 import com.example.hamacav1.R;
 
 import java.util.List;
@@ -19,7 +20,7 @@ public class UsuarioAdapter extends RecyclerView.Adapter<UsuarioAdapter.UsuarioV
 
     private final List<Usuario> usuarioList;
     private final Context context;
-    private final UsuarioAdapterCallback callback; // Asegúrate de tener esta interfaz definida y de establecer el callback
+    private final UsuarioAdapterCallback callback;
 
     public UsuarioAdapter(List<Usuario> UsuariosList, Context context, UsuarioAdapterCallback callback) {
         this.usuarioList = UsuariosList;
@@ -39,8 +40,17 @@ public class UsuarioAdapter extends RecyclerView.Adapter<UsuarioAdapter.UsuarioV
         Usuario usuario = usuarioList.get(position);
         holder.nombre.setText(usuario.getUsername());
         holder.rol.setText(usuario.getRol());
-        holder.edit.setOnClickListener(v -> callback.editPressed(position)); // Edita
-        holder.delete.setOnClickListener(v -> callback.deletePressed(position)); // Elimina
+
+        if (MainActivity.rol != null && MainActivity.rol.equals("ADMIN")) {
+            holder.edit.setVisibility(View.VISIBLE);
+            holder.delete.setVisibility(View.VISIBLE);
+        } else {
+            holder.edit.setVisibility(View.GONE);
+            holder.delete.setVisibility(View.GONE);
+        }
+
+        holder.edit.setOnClickListener(v -> callback.editPressed(position));
+        holder.delete.setOnClickListener(v -> callback.deletePressed(position));
     }
 
     @Override
@@ -61,7 +71,6 @@ public class UsuarioAdapter extends RecyclerView.Adapter<UsuarioAdapter.UsuarioV
             delete = itemView.findViewById(R.id.eliminarUsuario);
             edit = itemView.findViewById(R.id.modificarUsuario);
 
-            //expandableView.setVisibility(View.GONE);
         }
     }
 
