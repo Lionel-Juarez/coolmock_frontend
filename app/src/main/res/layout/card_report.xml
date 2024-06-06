@@ -48,10 +48,22 @@
             android:textAlignment="textStart"
             android:textColor="@color/black"
             android:textSize="14sp" />
+
+        <ImageView
+            android:id="@+id/expand_icon"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:layout_alignParentEnd="true"
+            android:layout_below="@id/reportTitle"
+            android:layout_marginTop="10dp"
+            android:contentDescription="@string/toggle_details"
+            android:src="@drawable/abajo24" />
+
         <LinearLayout
             android:id="@+id/expandable_view"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_below="@id/reportDescription"
             android:visibility="gone"
             android:orientation="vertical"
             android:paddingTop="10dp">
@@ -71,15 +83,5 @@
                 android:textSize="12sp"
                 android:text="@string/created_by"/>
         </LinearLayout>
-        <!-- Icono de expansión -->
-        <ImageView
-            android:id="@+id/expand_icon"
-            android:layout_width="30dp"
-            android:layout_height="30dp"
-            android:layout_alignParentEnd="true"
-            android:layout_below="@id/reportTitle"
-            android:layout_marginTop="10dp"
-            android:contentDescription="@string/toggle_details"
-            android:src="@drawable/abajo24" />
     </RelativeLayout>
 </androidx.cardview.widget.CardView>

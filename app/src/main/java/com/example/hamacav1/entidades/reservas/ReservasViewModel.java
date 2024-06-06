@@ -177,7 +177,7 @@ public class ReservasViewModel extends ViewModel {
     }
 
     public void loadReservasByDateAndState(Date selectedDate, String estado) {
-        loading.postValue(true);  // Indicar que la carga está en progreso
+        loading.postValue(true);
         SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy", Locale.getDefault());
         String formattedDate = sdf.format(selectedDate);
 
@@ -188,7 +188,7 @@ public class ReservasViewModel extends ViewModel {
                 .build();
 
         String baseUrl = context.getResources().getString(R.string.url_reservas);
-        HttpUrl url = Objects.requireNonNull(HttpUrl.parse(baseUrl + "api/reservas/fecha-estado")).newBuilder()
+        HttpUrl url = Objects.requireNonNull(HttpUrl.parse(baseUrl + "fecha-estado")).newBuilder()
                 .addQueryParameter("fecha", formattedDate)
                 .addQueryParameter("estado", estado)
                 .build();
@@ -213,7 +213,7 @@ public class ReservasViewModel extends ViewModel {
             public void onFailure(@NotNull Call call, @NotNull IOException e) {
                 Log.e("ReservasViewModel", "Error loading reservations by date and state", e);
                 errorMessages.postValue("Error al cargar las reservas: " + e.getMessage());
-                loading.postValue(false);  // Indicar que la carga ha finalizado
+                loading.postValue(false);
             }
 
             @Override

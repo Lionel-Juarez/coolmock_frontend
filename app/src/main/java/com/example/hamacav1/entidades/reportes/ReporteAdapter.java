@@ -51,14 +51,14 @@ public class ReporteAdapter extends RecyclerView.Adapter<ReporteAdapter.ReportVi
             holder.title.setTextColor(ContextCompat.getColor(context, R.color.color_liberando_sombrilla));
         } else if (reporte.getTitulo().equals(context.getString(R.string.titulo_reservando_sombrilla))){
             holder.title.setTextColor(ContextCompat.getColor(context, R.color.colorReservada)); // Default color
-        }else{
+        } else {
             holder.title.setTextColor(ContextCompat.getColor(context, R.color.black));
         }
 
         holder.fullComment.setText(reporte.getComentarioCompleto());
         holder.fullComment.setMaxLines(2);
         holder.creationDate.setText(reporte.getFechaCreacion());
-        holder.createdBy.setText(R.id.createdBy + reporte.getCreadoPor());
+        holder.createdBy.setText(context.getString(R.string.created_by) + " " + reporte.getCreadoPor()); // Fixed the string concatenation
 
         boolean isExpanded = holder.expandableView.getVisibility() == View.VISIBLE;
         holder.expandIcon.setImageResource(isExpanded ? R.drawable.arriba24 : R.drawable.abajo24);
@@ -80,6 +80,7 @@ public class ReporteAdapter extends RecyclerView.Adapter<ReporteAdapter.ReportVi
             holder.expandIcon.setImageResource(isExpanded1 ? R.drawable.abajo24 : R.drawable.arriba24);
         });
     }
+
 
 
     @Override

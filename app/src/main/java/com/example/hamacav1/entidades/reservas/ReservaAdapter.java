@@ -81,27 +81,24 @@ public class ReservaAdapter extends RecyclerView.Adapter<ReservaAdapter.ReservaV
         holder.estado.setText(context.getString(R.string.estado_reserva, reserva.getEstado()));
         holder.pagada.setText(context.getString(R.string.reserva_pagada, reserva.isPagada() ? "Sí" : "No"));
 
-        // Ocultar fecha de pago si la reserva no está pagada
         if (reserva.isPagada()) {
             holder.fechaPago.setText(context.getString(R.string.fecha_pago, reserva.getFechaPago()));
             holder.fechaPago.setVisibility(View.VISIBLE);
             holder.metodoPago.setText(context.getString(R.string.metodo_pago, reserva.getMetodoPago()));
             holder.metodoPago.setVisibility(View.VISIBLE);
 
-            // Deshabilitar botón de pago y cambiar color
             holder.btnPagar.setEnabled(false);
             holder.btnPagar.setBackgroundColor(ContextCompat.getColor(context, R.color.colorBotonDeshabilitado));
         } else {
             holder.fechaPago.setVisibility(View.GONE);
             holder.metodoPago.setVisibility(View.GONE);
 
-            // Habilitar botón de pago y restaurar color
             holder.btnPagar.setEnabled(true);
             holder.btnPagar.setBackgroundColor(ContextCompat.getColor(context, R.color.principalButtonColor));
         }
 
-        if (reserva.getCreadaPor() != null && reserva.getCreadaPor().getUsername() != null) {
-            holder.creadaPor.setText(context.getString(R.string.creado_por, reserva.getCreadaPor().getUsername()));
+        if (reserva.getNombreUsuario() != null) {
+            holder.creadaPor.setText(context.getString(R.string.creado_por, reserva.getNombreUsuario()));
         } else {
             holder.creadaPor.setText(context.getString(R.string.creado_por, "Información no disponible"));
         }
@@ -117,7 +114,6 @@ public class ReservaAdapter extends RecyclerView.Adapter<ReservaAdapter.ReservaV
 
         String numerosSombrillas = numerosSombrillasBuilder.toString();
         holder.sombrillasReservadas.setText(context.getString(R.string.sombrillas_reservadas, numerosSombrillas));
-
 
         boolean isExpanded = expandedState.get(position, false); // Obtiene el estado actual
         holder.expandableView.setVisibility(isExpanded ? View.VISIBLE : View.GONE);
@@ -145,7 +141,6 @@ public class ReservaAdapter extends RecyclerView.Adapter<ReservaAdapter.ReservaV
         } else {
             holder.cardView.setBackground(ContextCompat.getDrawable(context, R.drawable.card_border));
         }
-
     }
 
     public void expandItem(int position, ReservaViewHolder holder) {

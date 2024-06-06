@@ -4,6 +4,7 @@
     android:id="@+id/reserva_card"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:layout_margin="2dp"
     app:cardCornerRadius="12dp"
     app:cardElevation="10dp">
 
@@ -11,7 +12,6 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
-        <!-- Cliente -->
         <TextView
             android:id="@+id/tvReservaCliente"
             android:layout_width="match_parent"
@@ -23,7 +23,6 @@
             android:textSize="18sp"
             android:textStyle="bold" />
 
-        <!-- Fecha y Hora de Llegada -->
         <TextView
             android:id="@+id/tvFechaReserva"
             android:layout_width="wrap_content"
@@ -67,7 +66,6 @@
             android:onClick="toggleDetails"
             android:src="@drawable/abajo24" />
 
-        <!-- Expandable View con detalles adicionales y botones -->
         <LinearLayout
             android:id="@+id/expandable_view"
             android:layout_width="match_parent"
@@ -112,7 +110,6 @@
                 android:layout_marginBottom="4dp"
                 android:text="@string/payment_date" />
 
-            <!-- Botones de acción -->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"

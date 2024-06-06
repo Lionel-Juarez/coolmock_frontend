@@ -12,7 +12,7 @@
         android:layout_height="match_parent"
         android:contentDescription="@string/content_fondo"
         android:scaleType="centerCrop"
-        android:src="@drawable/fondo1" />
+        android:src="@color/grey" />
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -87,14 +87,13 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="15dp"
-                android:orientation="horizontal">
+                android:orientation="vertical">
 
                 <AutoCompleteTextView
                     android:id="@+id/actv_cliente"
-                    android:layout_width="0dp"
+                    android:layout_width="match_parent"
                     android:layout_height="40dp"
-                    android:layout_marginEnd="20dp"
-                    android:layout_weight="1"
+                    android:layout_marginBottom="10dp"
                     android:background="@drawable/selector_button_background"
                     android:drawableStart="@drawable/nombrefiltro"
                     android:drawablePadding="10dp"
@@ -106,13 +105,13 @@
 
                 <Button
                     android:id="@+id/btn_add_cliente"
-                    android:layout_width="wrap_content"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:onClick="openNuevoCliente"
                     android:padding="10dp"
-                    android:text="@string/nueva" />
+                    android:text="@string/nueva"
+                    android:gravity="center" />
             </LinearLayout>
-
 
             <com.google.android.material.divider.MaterialDivider
                 android:layout_width="match_parent"

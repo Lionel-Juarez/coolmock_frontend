@@ -30,7 +30,6 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
-import java.util.Objects;
 
 import okhttp3.Call;
 import okhttp3.Callback;
@@ -41,6 +40,7 @@ import okhttp3.Response;
 public class MainActivity extends AppCompatActivity {
     ActivityMainBinding binding;
     public static String rol;
+    public static String nombreUsuario;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -106,7 +106,6 @@ public class MainActivity extends AppCompatActivity {
         client.newCall(request).enqueue(new Callback() {
             @Override
             public void onFailure(@NonNull @NotNull Call call, @NonNull @NotNull IOException e) {
-                Log.e("MainActivity", "Error al obtener el cliente", e);
                 runOnUiThread(() -> Toast.makeText(MainActivity.this, "Error al obtener los datos del cliente", Toast.LENGTH_SHORT).show());
             }
 
@@ -116,19 +115,17 @@ public class MainActivity extends AppCompatActivity {
                     String responseData = response.body().string();
                     try {
                         JSONObject jsonObject = new JSONObject(responseData);
-                        Log.d("MainActivity", "Cliente: " + jsonObject.toString(4)); // Formato bonito para JSON
-                        rol = jsonObject.optString("rol", "CLIENTE"); // Si el rol es nulo, establece como "CLIENTE" por defecto
+                        rol = jsonObject.optString("rol", "CLIENTE");
+                        nombreUsuario = jsonObject.optString("nombreCompleto", "Usuario desconocido");
 
                         runOnUiThread(() -> {
                             ajustarNavegacionPorRol();
-                            replaceFragment(new ReservaFragment()); // Asegurar que se reemplace el fragmento después de ajustar la navegación
+                            replaceFragment(new ReservaFragment());
                         });
                     } catch (JSONException e) {
-                        Log.e("MainActivity", "Error al procesar los datos del cliente", e);
                         runOnUiThread(() -> Toast.makeText(MainActivity.this, "Error al procesar los datos del cliente", Toast.LENGTH_SHORT).show());
                     }
                 } else {
-                    Log.e("MainActivity", "Respuesta no exitosa del servidor");
                     runOnUiThread(() -> Toast.makeText(MainActivity.this, "Error al obtener los datos del cliente", Toast.LENGTH_SHORT).show());
                 }
             }
@@ -148,15 +145,10 @@ public class MainActivity extends AppCompatActivity {
             user.getIdToken(true).addOnCompleteListener(task -> {
                 if (task.isSuccessful()) {
                     String idToken = task.getResult().getToken();
-                    // Guardar el token en SharedPreferences
                     SharedPreferences sharedPreferences = getSharedPreferences("MyAppPrefs", Context.MODE_PRIVATE);
                     SharedPreferences.Editor editor = sharedPreferences.edit();
                     editor.putString("idToken", idToken);
                     editor.apply();
-                    Log.d("TokenRenovado", "Firebase ID Token: " + idToken);
-                } else {
-                    // Manejar error de renovación del token
-                    Log.e("TokenRenovacionError", "Error al renovar el token: " + Objects.requireNonNull(task.getException()).getMessage());
                 }
             });
         }

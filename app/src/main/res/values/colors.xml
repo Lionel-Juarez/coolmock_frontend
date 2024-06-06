@@ -9,7 +9,7 @@
     <!-- Colores básicos y de fondo -->
     <color name="principalColor">#336DFF</color>
     <color name="secondaryColor">#BAA204</color>
-    <color name="colorFondo">#775675</color>
+    <color name="colorFondo">#B5B5B5</color>
     <color name="accentColor">#FF8A65</color>
     <color name="lightBackgroundColor">#72B0DD</color>
     <color name="darkBackgroundColor">#01579B</color>

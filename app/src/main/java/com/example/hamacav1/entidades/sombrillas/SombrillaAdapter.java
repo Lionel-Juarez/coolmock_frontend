@@ -2,16 +2,20 @@ package com.example.hamacav1.entidades.sombrillas;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import androidx.activity.result.ActivityResultLauncher;
 import androidx.annotation.NonNull;
+import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.hamacav1.MainActivity;
 import com.example.hamacav1.R;
 
 import java.util.ArrayList;
@@ -48,11 +52,28 @@ public class SombrillaAdapter extends RecyclerView.Adapter<SombrillaAdapter.Somb
             int adapterPosition = holder.getAdapterPosition(); // Obtiene la posición actualizada
             if (adapterPosition != RecyclerView.NO_POSITION) {
                 Sombrilla currentSombrilla = listaSombrillas.get(adapterPosition);
-                SombrillaDetalles dialogFragment = SombrillaDetalles.newInstance(currentSombrilla, updatedSombrilla -> notifyItemChanged(adapterPosition));
+                SombrillaDetalles dialogFragment = SombrillaDetalles.newInstance(currentSombrilla, new SombrillaDetalles.SombrillaUpdateListener() {
+                    @Override
+                    public void onSombrillaUpdated(Sombrilla updatedSombrilla) {
+                        notifyItemChanged(adapterPosition);
+                    }
+
+                    @Override
+                    public ActivityResultLauncher<Intent> getNuevaReservaLauncher() {
+                        if (context instanceof MainActivity) {
+                            Fragment fragment = ((MainActivity) context).getSupportFragmentManager().findFragmentById(R.id.frame_layout);
+                            if (fragment instanceof SombrillaFragment) {
+                                return ((SombrillaFragment) fragment).getNuevaReservaLauncher();
+                            }
+                        }
+                        return null;
+                    }
+                });
                 dialogFragment.show(fragmentManager, "sombrilla_details");
             }
         });
     }
+
 
     private void updateViewImage(ImageView imageView, Sombrilla sombrilla) {
         int imageResId = R.drawable.sombrilla_libre;

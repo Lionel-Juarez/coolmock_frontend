@@ -1,5 +1,6 @@
 package com.example.hamacav1.entidades.sombrillas;
 import android.annotation.SuppressLint;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
@@ -11,6 +12,7 @@ import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.TextView;
 
+import androidx.activity.result.ActivityResultLauncher;
 import androidx.annotation.NonNull;
 import androidx.fragment.app.DialogFragment;
 
@@ -43,6 +45,15 @@ public class SombrillaDetalles  extends DialogFragment {
     private static final String ARG_HAMACA = "sombrilla";
     RadioButton radioOne, radioTwo;
     RadioGroup radioGroupHamacas;
+    private SombrillaUpdateListener updateListener;
+
+    @Override
+    public void onAttach(@NonNull Context context) {
+        super.onAttach(context);
+        if (getParentFragment() instanceof SombrillaUpdateListener) {
+            updateListener = (SombrillaUpdateListener) getParentFragment();
+        }
+    }
 
     @SuppressLint("SetTextI18n")
     @Override
@@ -88,7 +99,7 @@ public class SombrillaDetalles  extends DialogFragment {
                             activity.setSelectedItemId(R.id.home);
                             activity.replaceFragment(fragment);
                         }
-                        dismiss();  // Cierra el dialogo o fragmento actual
+                        dismiss();
                     } else {
                         Log.d("SombrillaDetalles", "Sombrilla con id: " + sombrilla.getIdSombrilla() + " no tiene reservas asociadas");
                         Toast.makeText(getContext(), "No hay reserva asociada a esta sombrilla", Toast.LENGTH_SHORT).show();
@@ -114,7 +125,6 @@ public class SombrillaDetalles  extends DialogFragment {
                     radioOne.setVisibility(View.GONE);
                     radioTwo.setVisibility(View.GONE);
 
-                    // Crear reporte para la acción realizada
                     String titulo = getString(R.string.titulo_liberando_sombrilla);
                     String descripcion = getString(R.string.descripcion_liberando_sombrilla, sombrilla.getIdSombrilla(), sombrilla.getCantidadHamacas());
                     NuevoReporte.crearReporte(getContext(), titulo, descripcion);
@@ -136,12 +146,13 @@ public class SombrillaDetalles  extends DialogFragment {
                 radioTwo.setClickable(true);
 
                 btnReservar.setOnClickListener(v -> {
-
                     Intent intent = new Intent(getActivity(), NuevaReserva.class);
                     ArrayList<Long> idsSombrillas = new ArrayList<>();
                     idsSombrillas.add(sombrilla.getIdSombrilla());
                     intent.putExtra("idsSombrillas", idsSombrillas);
-                    startActivity(intent);
+                    if (updateListener != null) {
+                        updateListener.getNuevaReservaLauncher().launch(intent);
+                    }
                     dismiss();
                 });
                 btnOcupar.setOnClickListener(v -> {
@@ -154,7 +165,6 @@ public class SombrillaDetalles  extends DialogFragment {
                         actualizarEstado(tvDetalleEstado, sombrilla);
                         updateSombrillaOnServer(sombrilla);
 
-                        // Crear reporte para la acción realizada
                         String titulo = getString(R.string.titulo_ocupando_sombrilla);
                         String descripcion = getString(R.string.descripcion_ocupando_sombrilla, sombrilla.getIdSombrilla(), cantidadHamacas);
                         NuevoReporte.crearReporte(getContext(), titulo, descripcion);
@@ -173,7 +183,6 @@ public class SombrillaDetalles  extends DialogFragment {
         return view;
     }
 
-
     @SuppressLint("SetTextI18n")
     private void actualizarEstado(TextView tvDetalleEstado, Sombrilla sombrilla) {
         String estado = sombrilla.isReservada() ? "Reservada" : sombrilla.isOcupada() ? "Ocupada" : "Disponible";
@@ -190,9 +199,8 @@ public class SombrillaDetalles  extends DialogFragment {
 
     public interface SombrillaUpdateListener {
         void onSombrillaUpdated(Sombrilla sombrilla);
+        ActivityResultLauncher<Intent> getNuevaReservaLauncher();
     }
-
-    private SombrillaUpdateListener updateListener;
 
     public static SombrillaDetalles newInstance(Sombrilla sombrilla, SombrillaUpdateListener listener) {
         SombrillaDetalles fragment = new SombrillaDetalles();

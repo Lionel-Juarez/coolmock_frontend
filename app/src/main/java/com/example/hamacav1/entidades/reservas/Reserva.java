@@ -37,6 +37,7 @@ public class Reserva implements Serializable {
     private LocalDateTime fechaReserva;
     private LocalDateTime fechaReservaRealizada;
     private String cantidadHamacas;
+    private String nombreUsuario;
 
     public void fromJSON(JSONObject json) throws JSONException {
         this.idReserva = json.optLong("idReserva");
@@ -48,6 +49,7 @@ public class Reserva implements Serializable {
         this.fechaPago = parseDateTime(json.optString("fechaPago"));
         this.fechaReserva = parseDateTime(json.optString("fechaReserva"));
         this.fechaReservaRealizada = parseDateTime(json.optString("fechaReservaRealizada"));
+        this.nombreUsuario = json.optString("nombreUsuario");
 
         JSONArray sombrillasJson = json.optJSONArray("sombrillas");
         if (sombrillasJson != null) {

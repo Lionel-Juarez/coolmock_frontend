@@ -1,8 +1,10 @@
 package com.example.hamacav1.entidades.sombrillas;
 
 import android.annotation.SuppressLint;
+import android.app.Activity;
 import android.app.DatePickerDialog;
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
@@ -15,6 +17,8 @@ import android.widget.ProgressBar;
 import android.widget.Toast;
 
 
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -53,12 +57,18 @@ public class SombrillaFragment extends Fragment implements SombrillaDetalles.Som
     private SombrillaAdapter sombrillasAdapter;
     private final List<Sombrilla> todasLasSombrillas = new ArrayList<>();
     private ProgressBar progressBar;
+    private ActivityResultLauncher<Intent> nuevaReservaLauncher;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_sombrilla, container, false);
         setupRecyclerView(view);
         progressBar = view.findViewById(R.id.progressBar);
+        nuevaReservaLauncher = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), result -> {
+            if (result.getResultCode() == Activity.RESULT_OK) {
+                recargarSombrillas();
+            }
+        });
         cargarSombrillas(Calendar.getInstance().get(Calendar.YEAR), Calendar.getInstance().get(Calendar.MONTH), Calendar.getInstance().get(Calendar.DAY_OF_MONTH));
         setupOpenDatePicker(view);
         return view;
@@ -197,6 +207,9 @@ public class SombrillaFragment extends Fragment implements SombrillaDetalles.Som
         }
         sombrilla.setReservada(isReserved);
     }
+    public void recargarSombrillas() {
+        cargarSombrillas(Calendar.getInstance().get(Calendar.YEAR), Calendar.getInstance().get(Calendar.MONTH), Calendar.getInstance().get(Calendar.DAY_OF_MONTH));
+    }
 
     @Override
     public void onSombrillaUpdated(Sombrilla updatedSombrilla) {
@@ -206,5 +219,10 @@ public class SombrillaFragment extends Fragment implements SombrillaDetalles.Som
             sombrillasAdapter.notifyItemChanged(index);
             Log.d("SombrillaFragment", "Actualización de la vista de sombrilla en el índice: " + index);
         }
+    }
+
+    @Override
+    public ActivityResultLauncher<Intent> getNuevaReservaLauncher() {
+        return nuevaReservaLauncher;
     }
 }

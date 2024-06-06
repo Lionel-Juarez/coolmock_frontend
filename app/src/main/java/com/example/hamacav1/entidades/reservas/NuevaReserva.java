@@ -20,9 +20,12 @@ import android.widget.RadioButton;
 import android.widget.Spinner;
 import android.widget.Toast;
 
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.example.hamacav1.MainActivity;
 import com.example.hamacav1.entidades.clientes.Cliente;
 import com.example.hamacav1.R;
 import com.example.hamacav1.entidades.clientes.NuevoCliente;
@@ -38,6 +41,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
+import java.io.Serializable;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -69,7 +73,19 @@ public class NuevaReserva extends AppCompatActivity {
     private List<Cliente> clientsList;
     private ArrayAdapter<Cliente> clienteAdapter;
 
-
+    private final ActivityResultLauncher<Intent> nuevoClienteLauncher = registerForActivityResult(
+            new ActivityResultContracts.StartActivityForResult(),
+            result -> {
+                if (result.getResultCode() == Activity.RESULT_OK && result.getData() != null) {
+                    Cliente newClient = (Cliente) result.getData().getSerializableExtra("cliente");
+                    if (newClient != null) {
+                        clientsList.add(newClient);
+                        clienteAdapter.notifyDataSetChanged();
+                        actvCliente.setText(newClient.getNombreCompleto());
+                    }
+                }
+            }
+    );
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -109,15 +125,25 @@ public class NuevaReserva extends AppCompatActivity {
         radioOne.setChecked(true);
     }
 
+
     private void loadData() {
         Intent intent = getIntent();
         if (intent != null && intent.hasExtra("idsSombrillas")) {
-            idsSombrillas = (ArrayList<Long>) intent.getSerializableExtra("idsSombrillas");
+            Serializable serializable = intent.getSerializableExtra("idsSombrillas");
+            if (serializable instanceof ArrayList) {
+                idsSombrillas = new ArrayList<>();
+                for (Object obj : (ArrayList<?>) serializable) {
+                    if (obj instanceof Long) {
+                        idsSombrillas.add((Long) obj);
+                    }
+                }
+            }
         }
         Log.d("NuevaReserva", "ID de la sombrilla: " + idsSombrillas);
 
         loadClientsFromBackend();
     }
+
 
     public void addReserva(View view) {
         String fechaReserva = fechaReservaSeleccionada;
@@ -138,7 +164,6 @@ public class NuevaReserva extends AppCompatActivity {
         SimpleDateFormat sdfNow = new SimpleDateFormat("dd-MM-yyyy HH:mm", Locale.getDefault());
         String fechaReservaRealizada = sdfNow.format(calendarNow.getTime());
 
-        // Obtener la hora de llegada desde el NumberPicker
         String[] hours = getResources().getStringArray(R.array.hour_array);
         String horaLlegada = hours[numberPickerHoraLlegada.getValue()];
 
@@ -168,7 +193,6 @@ public class NuevaReserva extends AppCompatActivity {
             MediaType MEDIA_TYPE_JSON = MediaType.parse("application/json; charset=utf-8");
             JSONObject json = new JSONObject();
             try {
-                // Obtener información del usuario desde Firebase
                 FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
                 if (user == null) {
                     Log.e("sendTask", "El usuario no está autenticado.");
@@ -176,20 +200,24 @@ public class NuevaReserva extends AppCompatActivity {
                     return;
                 }
                 String uidUsuario = user.getUid();
-                String nombreUsuario = user.getDisplayName() != null ? user.getDisplayName() : "Usuario desconocido";
+                String nombreUsuario = MainActivity.nombreUsuario;
 
-                json.put("fechaReserva", Utils.convertToIso8601(fechaReserva));  // Asegurarse de que la fecha está en formato ISO-8601
-                json.put("fechaReservaRealizada", Utils.convertToIso8601(fechaReservaRealizada));  // Asegurarse de que la fecha está en formato ISO-8601
+                json.put("fechaReserva", Utils.convertToIso8601(fechaReserva));
+                json.put("fechaReservaRealizada", Utils.convertToIso8601(fechaReservaRealizada));
                 json.put("estado", estado);
                 json.put("pagada", pagada);
                 json.put("metodoPago", metodoPago);
                 json.put("horaLlegada", horaLlegada);
                 json.put("idCliente", idCliente);
-                json.put("idUsuario", uidUsuario);  // Pasar el UID del usuario desde Firebase
+                json.put("idUsuario", uidUsuario);
+                json.put("nombreUsuario", nombreUsuario);
                 json.put("idSombrillas", new JSONArray(idsSombrillas));
                 if (pagada) {
-                    json.put("fechaPago", Utils.convertToIso8601(fechaReserva));  // Usar la misma fecha de reserva para la fecha de pago
+                    json.put("fechaPago", Utils.convertToIso8601(fechaReserva));
                 }
+
+                Log.d("NombreUsuario", nombreUsuario);
+
 
                 SharedPreferences sharedPreferences = getSharedPreferences("MyAppPrefs", Context.MODE_PRIVATE);
                 String idToken = sharedPreferences.getString("idToken", null);
@@ -219,7 +247,8 @@ public class NuevaReserva extends AppCompatActivity {
                                 NuevoReporte.crearReporte(getApplicationContext(), titulo, descripcion);
 
                                 Toast.makeText(getApplicationContext(), "Reserva añadida con éxito", Toast.LENGTH_SHORT).show();
-                                setResult(Activity.RESULT_OK);
+                                Intent resultIntent = new Intent();
+                                setResult(Activity.RESULT_OK, resultIntent);
                                 finish();
                             });
                         } else {
@@ -260,7 +289,6 @@ public class NuevaReserva extends AppCompatActivity {
                 @Override
                 public void onFailure(@NotNull Call call, @NotNull IOException e) {
                     Log.e("updateSombrilla", "Error al actualizar sombrilla ID " + idSombrilla + ": " + e.getMessage());
-                    // Opcional: Manejar la falla en la UI thread si es necesario
                 }
 
                 @Override
@@ -268,7 +296,6 @@ public class NuevaReserva extends AppCompatActivity {
                     if (!response.isSuccessful()) {
                         assert response.body() != null;
                         Log.e("updateSombrilla", "Error al actualizar sombrilla ID " + idSombrilla + ", respuesta del servidor: " + response.body().string());
-                        // Opcional: Manejar el error en la UI thread si es necesario
                     } else {
                         Log.d("updateSombrilla", "Sombrilla ID " + idSombrilla + " actualizada correctamente.");
                     }
@@ -291,7 +318,7 @@ public class NuevaReserva extends AppCompatActivity {
         this.clientsList = clientsList;
         clienteAdapter = new ArrayAdapter<>(this, android.R.layout.simple_dropdown_item_1line, clientsList);
         actvCliente.setAdapter(clienteAdapter);
-        actvCliente.setThreshold(1);  // Comienza a sugerir después de una letra
+        actvCliente.setThreshold(0);
         Log.d("NuevaReserva", "Clientes actualizados en la interfaz de usuario.");
     }
 
@@ -350,7 +377,7 @@ public class NuevaReserva extends AppCompatActivity {
 
     public void openNuevoCliente(View view) {
         Intent intent = new Intent(this, NuevoCliente.class);
-        startActivityForResult(intent, 1);
+        nuevoClienteLauncher.launch(intent);
     }
 
     @Override
