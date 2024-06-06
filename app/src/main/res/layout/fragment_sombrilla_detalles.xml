@@ -1,16 +1,17 @@
-<RelativeLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
+
     <androidx.cardview.widget.CardView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_margin="20dp"
         android:layout_centerInParent="true"
+        android:layout_margin="20dp"
         app:cardCornerRadius="10dp"
         app:cardElevation="50dp">
+
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -21,11 +22,11 @@
                 android:id="@+id/tvDetalleNumeroSombrilla"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:textSize="18sp"
-                android:textStyle="bold"
-                android:text="@string/numero_sombrilla"
                 android:drawablePadding="10dp"
                 android:gravity="center_vertical"
+                android:text="@string/numero_sombrilla"
+                android:textSize="18sp"
+                android:textStyle="bold"
                 app:drawableLeftCompat="@drawable/sombrilla24" />
 
             <TextView
@@ -33,9 +34,9 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="16dp"
-                android:text="@string/sunbed_price"
                 android:drawablePadding="10dp"
                 android:gravity="center_vertical"
+                android:text="@string/sunbed_price"
                 android:textColor="@color/black"
                 app:drawableLeftCompat="@drawable/etiqueta_precio24" />
 
@@ -44,25 +45,25 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="16dp"
-                android:text="@string/estado_actual"
                 android:drawablePadding="10dp"
                 android:gravity="center_vertical"
+                android:text="@string/estado_actual"
                 android:textColor="@color/black"
                 app:drawableLeftCompat="@drawable/etiqueta" />
 
             <com.google.android.material.divider.MaterialDivider
                 android:layout_width="match_parent"
                 android:layout_height="3dp"
-                app:dividerInsetStart="16dp"
+                android:layout_marginTop="20dp"
                 app:dividerInsetEnd="16dp"
-                android:layout_marginTop="20dp"/>
+                app:dividerInsetStart="16dp" />
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:gravity="center_vertical"
                 android:orientation="vertical"
-                android:paddingTop="10dp"
-                android:gravity="center_vertical">
+                android:paddingTop="10dp">
 
                 <Button
                     android:id="@+id/btnReservar"
@@ -113,54 +114,55 @@
             <com.google.android.material.divider.MaterialDivider
                 android:layout_width="match_parent"
                 android:layout_height="3dp"
-                app:dividerInsetStart="16dp"
-                app:dividerInsetEnd="16dp"
                 android:layout_marginTop="20dp"
-                        android:layout_marginBottom="20dp"/>
+                android:layout_marginBottom="20dp"
+                app:dividerInsetEnd="16dp"
+                app:dividerInsetStart="16dp" />
+
+            <TextView
+                android:id="@+id/tvCantidadHamacas"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_horizontal"
+                android:text="@string/selected_sunbeds"
+                android:layout_marginBottom="10dp"
+                android:textColor="@color/black" />
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:gravity="center_horizontal"
                 android:orientation="horizontal"
-                android:paddingTop="10dp"
-                android:gravity="center_horizontal">
-
-                <TextView
-                    android:id="@+id/tvCantidadHamacas"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="16dp"
-                    android:text="@string/selected_sunbeds"
-                    android:gravity="center_horizontal"
-                    android:textColor="@color/black"/>
+                android:paddingTop="10dp">
 
                 <RadioGroup
                     android:id="@+id/radioGroupHamacas"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:gravity="center"
                     android:orientation="horizontal"
-                    android:gravity="center">
+                    tools:ignore="UselessParent">
 
                     <RadioButton
                         android:id="@+id/radioOne"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
+                        android:layout_marginEnd="20dp"
                         android:layout_weight="1"
-                        android:text="@string/_1"
                         android:background="@drawable/selector_button_background"
                         android:button="@android:color/transparent"
                         android:gravity="center"
-                        android:layout_marginEnd="20dp" />
+                        android:text="@string/_1" />
 
                     <RadioButton
                         android:id="@+id/radioTwo"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
-                        android:text="@string/_2"
                         android:background="@drawable/selector_button_background"
                         android:button="@android:color/transparent"
-                        android:gravity="center" />
+                        android:gravity="center"
+                        android:text="@string/_2" />
                 </RadioGroup>
             </LinearLayout>
         </LinearLayout>
