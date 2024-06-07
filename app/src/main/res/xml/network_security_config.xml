@@ -1,18 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <network-security-config>
-    <!-- Configuración base para toda la aplicación -->
-    <base-config cleartextTrafficPermitted="false">
+    <base-config cleartextTrafficPermitted="true">
         <trust-anchors>
-            <!-- Confía en los certificados preinstacantidadHamacass en el dispositivo -->
             <certificates src="system" />
         </trust-anchors>
     </base-config>
-
-    <!-- Configuración específica para un dominio -->
     <domain-config cleartextTrafficPermitted="true">
         <domain includeSubdomains="true">10.0.2.2</domain>
         <domain includeSubdomains="true">localhost</domain>
         <domain includeSubdomains="true">18.101.138.29</domain>
-        <!-- Puedes añadir más etiquetas <domain> aquí para otros dominios -->
+        <domain includeSubdomains="true">192.168.1.155</domain>
+        <domain includeSubdomains="true">firebaseapp.com</domain> <!-- Añade firebaseapp.com -->
+        <domain includeSubdomains="true">googleapis.com</domain> <!-- Añade googleapis.com -->
     </domain-config>
 </network-security-config>

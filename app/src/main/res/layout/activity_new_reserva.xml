@@ -61,7 +61,7 @@
                 <ImageView
                     android:id="@+id/btnOpenCalendar"
                     android:layout_width="130dp"
-                    android:layout_height="150dp"
+                    android:layout_height="120dp"
                     android:layout_marginEnd="30dp"
                     android:background="?attr/selectableItemBackground"
                     android:contentDescription="@string/content_calendar"
@@ -145,8 +145,8 @@
                     <RadioButton
                         android:id="@+id/radioOne"
                         android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_marginEnd="20dp"
+                        android:layout_height="40dp"
+                        android:layout_marginEnd="30dp"
                         android:layout_weight="1"
                         android:background="@drawable/selector_button_background"
                         android:button="@android:color/transparent"
@@ -155,8 +155,8 @@
 
                     <RadioButton
                         android:id="@+id/radioTwo"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
+                        android:layout_width="1dp"
+                        android:layout_height="40dp"
                         android:layout_weight="1"
                         android:background="@drawable/selector_button_background"
                         android:button="@android:color/transparent"

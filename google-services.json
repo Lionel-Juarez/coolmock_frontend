@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "577598822259",
+    "project_id": "hamacav1",
+    "storage_bucket": "hamacav1.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:577598822259:android:76f80b24d99b2536b95706",
+        "android_client_info": {
+          "package_name": "com.example.hamacav1"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDMwTgXsEJzMSifwr7YOXQOWVT_A27VLUY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
