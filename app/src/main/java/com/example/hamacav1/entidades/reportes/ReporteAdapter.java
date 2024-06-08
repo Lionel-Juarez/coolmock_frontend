@@ -44,16 +44,22 @@ public class ReporteAdapter extends RecyclerView.Adapter<ReporteAdapter.ReportVi
         Reporte reporte = reportsList.get(position);
         holder.title.setText(reporte.getTitulo());
 
-        // Colorea el título basado en su texto
         if (reporte.getTitulo().equals(context.getString(R.string.titulo_ocupando_sombrilla))) {
             holder.title.setTextColor(ContextCompat.getColor(context, R.color.colorOcupada));
         } else if (reporte.getTitulo().equals(context.getString(R.string.titulo_liberando_sombrilla))) {
             holder.title.setTextColor(ContextCompat.getColor(context, R.color.color_liberando_sombrilla));
-        } else if (reporte.getTitulo().equals(context.getString(R.string.titulo_reservando_sombrilla))){
-            holder.title.setTextColor(ContextCompat.getColor(context, R.color.colorReservada)); // Default color
+        } else if (reporte.getTitulo().equals(context.getString(R.string.titulo_reservando_sombrilla))) {
+            holder.title.setTextColor(ContextCompat.getColor(context, R.color.colorReservada));
+        } else if (reporte.getTitulo().equals(context.getString(R.string.titulo_cancelacion_reserva))) {
+            holder.title.setTextColor(ContextCompat.getColor(context, R.color.colorCancelacion));
+        } else if (reporte.getTitulo().equals(context.getString(R.string.titulo_llegada_reserva))) {
+            holder.title.setTextColor(ContextCompat.getColor(context, R.color.colorLlegada));
+        } else if (reporte.getTitulo().equals(context.getString(R.string.titulo_pagando_reserva))) {
+            holder.title.setTextColor(ContextCompat.getColor(context, R.color.colorPago));
         } else {
             holder.title.setTextColor(ContextCompat.getColor(context, R.color.black));
         }
+
 
         holder.fullComment.setText(reporte.getComentarioCompleto());
         holder.fullComment.setMaxLines(2);

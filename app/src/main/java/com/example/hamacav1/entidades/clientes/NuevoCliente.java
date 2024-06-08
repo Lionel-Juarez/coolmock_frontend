@@ -156,7 +156,7 @@ public class NuevoCliente extends AppCompatActivity {
                             Log.d("NuevoCliente", "Cliente creado con éxito, ID: " + idCliente);
 
                             handler.post(() -> {
-                                String titulo = "Creación de Cliente";
+                                String titulo = getResources().getString(R.string.creacion_cliente);
                                 String descripcion = "Cliente " + nombreCompleto + " creado con éxito.";
 
                                 NuevoReporte.crearReporte(getApplicationContext(), titulo, descripcion);
@@ -183,5 +183,8 @@ public class NuevoCliente extends AppCompatActivity {
                 handler.post(() -> Utils.showError(getApplicationContext(), "Error de conexión al servidor: " + e.getMessage()));
             }
         });
+    }
+    public void cancel(View view) {
+        Utils.closeActivity(this);
     }
 }

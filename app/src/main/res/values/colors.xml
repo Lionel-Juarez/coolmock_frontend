@@ -6,6 +6,7 @@
     <color name="teal_200">#FF03DAC5</color>
     <color name="teal_700">#FF018786</color>
     <color name="blueColor">#7FB6DC</color>
+
     <!-- Colores básicos y de fondo -->
     <color name="principalColor">#336DFF</color>
     <color name="secondaryColor">#BAA204</color>
@@ -14,11 +15,18 @@
     <color name="lightBackgroundColor">#72B0DD</color>
     <color name="darkBackgroundColor">#01579B</color>
     <color name="grey">#6A7177</color>
+    <color name="colorBotonCancelar">#FF0000</color>
+    <color name="dark_background">#CCCCCC</color>
+    <color name="gray">#D1D1D1</color>
 
+    <!--    Reportes-->
+    <color name="colorCancelacion">#FF0000</color> <!-- Example color, replace with your actual color -->
+    <color name="colorLlegada">#BAA204</color> <!-- Example color, replace with your actual color -->
+    <color name="colorPago">#0B710D</color> <!-- Example color, replace with your actual color -->
 
     <!-- Colores para estados de las sombrillas -->
-    <color name="colorReservada">#0B710D</color>
-    <color name="colorOcupada">#C15400</color>
+    <color name="colorReservada">#0000FF</color>
+    <color name="colorOcupada">#DC5E00</color>
     <color name="colorDisponible">#1C1515</color>
     <color name="color_liberando_sombrilla">#808080</color>
     <!-- Textos y UI -->

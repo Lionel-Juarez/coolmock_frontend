@@ -72,7 +72,7 @@ public class ReservasViewModel extends ViewModel {
                 .readTimeout(30, TimeUnit.SECONDS)
                 .build();
 
-        String url = "http://10.0.2.2:8080/api/reservas/";
+        String url = context.getString(R.string.url_reservas);
         SharedPreferences sharedPreferences = context.getSharedPreferences("MyAppPrefs", Context.MODE_PRIVATE);
         String idToken = sharedPreferences.getString("idToken", null);
 
@@ -109,17 +109,23 @@ public class ReservasViewModel extends ViewModel {
         SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy", Locale.getDefault());
         String formattedDate = sdf.format(selectedDate);
 
+        SharedPreferences sharedPreferences = context.getSharedPreferences("MyAppPrefs", Context.MODE_PRIVATE);
+        String idToken = sharedPreferences.getString("idToken", null);
+
         OkHttpClient client = new OkHttpClient.Builder()
                 .connectTimeout(30, TimeUnit.SECONDS)
                 .writeTimeout(30, TimeUnit.SECONDS)
                 .readTimeout(30, TimeUnit.SECONDS)
                 .build();
 
-        HttpUrl url = Objects.requireNonNull(HttpUrl.parse("http://10.0.2.2:8080/api/reservas/")).newBuilder()
+        HttpUrl url = Objects.requireNonNull(HttpUrl.parse(context.getString(R.string.url_reservas))).newBuilder()
                 .addQueryParameter("fecha", formattedDate)
                 .build();
 
-        Request request = new Request.Builder().url(url).build();
+        Request request = new Request.Builder()
+                .url(url)
+                .addHeader("Authorization", "Bearer " + idToken)
+                .build();
 
         client.newCall(request).enqueue(new Callback() {
             @Override
@@ -144,7 +150,7 @@ public class ReservasViewModel extends ViewModel {
     }
     public void filterReservasByName(String name) {
         OkHttpClient client = new OkHttpClient();
-        HttpUrl url = Objects.requireNonNull(HttpUrl.parse("http://10.0.2.2:8080/api/reservas/")).newBuilder()
+        HttpUrl url = Objects.requireNonNull(HttpUrl.parse(context.getString(R.string.url_reservas))).newBuilder()
                 .addQueryParameter("nombre", name)
                 .build();
 
@@ -233,7 +239,7 @@ public class ReservasViewModel extends ViewModel {
 
     public void filterReservasByState(String state) {
         OkHttpClient client = new OkHttpClient();
-        HttpUrl url = Objects.requireNonNull(HttpUrl.parse("http://10.0.2.2:8080/api/reservas/")).newBuilder()
+        HttpUrl url = Objects.requireNonNull(HttpUrl.parse(context.getString(R.string.url_reservas))).newBuilder()
                 .addQueryParameter("estado", state)  // Asegúrate de que el nombre del parámetro coincide con el usado en el backend
                 .build();
 

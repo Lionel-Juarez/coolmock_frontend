@@ -39,6 +39,7 @@
     <string name="url_pagos">http://192.168.1.155:8080/api/pagos</string>
 
 
+
     <string name="eliminar_reporte">Delete report</string>
     <string name="are_you_sure">Are you sure?</string>
     <string name="yes">Yes</string>
@@ -174,6 +175,11 @@
     <string name="estado_actual">Actual state</string>
     <string name="selected_sunbeds">Number of selected sunbeds</string>
     <string name="only_admin_can_add_user">Only Admin can create new users</string>
+    <string name="creacion_cliente">Cliente creado</string>
+    <string name="titulo_pagando_reserva">Pago de reserva</string>
+    <string name="titulo_cancelacion_reserva">Cancelación de reserva</string>
+    <string name="titulo_llegada_reserva">Reserva ha llegado</string>
+    <string name="content_icono">img icono</string>
 
 
     //Spinners

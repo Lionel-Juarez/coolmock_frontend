@@ -49,7 +49,7 @@ public class SombrillaAdapter extends RecyclerView.Adapter<SombrillaAdapter.Somb
         holder.tvNumeroSombrilla.setText(String.valueOf(sombrilla.getNumeroSombrilla()));
 
         holder.itemView.setOnClickListener(view -> {
-            int adapterPosition = holder.getAdapterPosition(); // Obtiene la posición actualizada
+            int adapterPosition = holder.getAdapterPosition();
             if (adapterPosition != RecyclerView.NO_POSITION) {
                 Sombrilla currentSombrilla = listaSombrillas.get(adapterPosition);
                 SombrillaDetalles dialogFragment = SombrillaDetalles.newInstance(currentSombrilla, new SombrillaDetalles.SombrillaUpdateListener() {

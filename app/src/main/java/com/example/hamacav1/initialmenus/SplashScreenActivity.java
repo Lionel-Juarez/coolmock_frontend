@@ -9,6 +9,10 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
+import android.widget.ImageView;
+
 import com.example.hamacav1.MainActivity;
 import com.example.hamacav1.R;
 
@@ -22,17 +26,20 @@ public class SplashScreenActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_splash_screen);
 
+        ImageView splashLogo = findViewById(R.id.splash_logo);
+
+        Animation fadeIn = AnimationUtils.loadAnimation(this, R.anim.fade_in);
+        splashLogo.startAnimation(fadeIn);
+
         new Handler().postDelayed(() -> {
             SharedPreferences sharedPreferences = getSharedPreferences("MyAppPrefs", Context.MODE_PRIVATE);
             String idToken = sharedPreferences.getString("idToken", null);
 
             if (idToken != null) {
-                // Token is available, redirect to MainActivity
                 Log.d("SplashScreen", "Token found, redirecting to MainActivity");
                 Intent intent = new Intent(SplashScreenActivity.this, MainActivity.class);
                 startActivity(intent);
             } else {
-                // No token, redirect to LoginActivity
                 Log.d("SplashScreen", "No token found, redirecting to LoginActivity");
                 Intent intent = new Intent(SplashScreenActivity.this, LoginActivity.class);
                 startActivity(intent);

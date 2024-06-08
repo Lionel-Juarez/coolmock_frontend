@@ -42,7 +42,7 @@
                 android:layout_marginBottom="8dp" />
 
             <TextView
-                android:id="@+id/tvSubTitle"
+                android:id="@+id/tvFechaReserva"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/fecha_ejemplo"

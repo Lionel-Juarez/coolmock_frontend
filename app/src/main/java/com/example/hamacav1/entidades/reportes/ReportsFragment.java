@@ -26,7 +26,6 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -92,14 +91,12 @@ public class ReportsFragment extends Fragment implements ReporteAdapter.ReportsA
 
                 LinearLayoutManager layoutManager = (LinearLayoutManager) recyclerView.getLayoutManager();
                 if (!isLoading && hasMoreReports && layoutManager != null && layoutManager.findLastCompletelyVisibleItemPosition() == reportsList.size() - 1) {
-                    // Último ítem visible
                     loadReportsFromBackend(++currentPage, LOAD_MORE_SIZE); // Load next page with 5 items
                     isLoading = true;
                 }
             }
         });
 
-        // Encontrar y configurar el ImageView para el filtro
         ImageView btnFilter = view.findViewById(R.id.btnFilter);
         if (btnFilter != null) {
             btnFilter.setOnClickListener(v -> {
@@ -108,7 +105,6 @@ public class ReportsFragment extends Fragment implements ReporteAdapter.ReportsA
             Log.e("ReportsFragment", "ImageView btnFilter is null");
         }
 
-        // Encontrar y configurar el Button para nuevo reporte
         Button btnNew = view.findViewById(R.id.btnNew);
         if (btnNew != null) {
             btnNew.setOnClickListener(this::newReport);
@@ -180,15 +176,17 @@ public class ReportsFragment extends Fragment implements ReporteAdapter.ReportsA
                                     newReportsList.add(reporte);
                                 }
                             }
-                            Collections.reverse(newReportsList);
-                            if (newReportsList.isEmpty() && reportsList.isEmpty()) {
+                            if (!newReportsList.isEmpty()) {
+                                reportsList.addAll(newReportsList);  // Añadir a la lista existente
+                                reporteAdapter.notifyDataSetChanged();
+                            }
+
+                            if (reportsList.isEmpty()) {
                                 emptyView.setVisibility(View.VISIBLE);
                                 reportsRecyclerView.setVisibility(View.GONE);
                             } else {
                                 emptyView.setVisibility(View.GONE);
                                 reportsRecyclerView.setVisibility(View.VISIBLE);
-                                reportsList.addAll(newReportsList);
-                                reporteAdapter.notifyDataSetChanged();
                             }
                             isLoading = false;
                         } catch (JSONException e) {
@@ -226,7 +224,6 @@ public class ReportsFragment extends Fragment implements ReporteAdapter.ReportsA
             Utils.showError(requireContext(), "error.IOException");
         }
     }
-
 
     private void getListaTask(String url) {
         ExecutorService executor = Executors.newSingleThreadExecutor();

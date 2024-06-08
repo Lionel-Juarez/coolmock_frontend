@@ -14,11 +14,13 @@ import android.view.ViewGroup;
 
 import android.widget.ImageView;
 import android.widget.ProgressBar;
+import android.widget.TextView;
 import android.widget.Toast;
 
 
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -34,12 +36,14 @@ import org.json.JSONObject;
 
 import java.io.IOException;
 
+import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 import java.util.Objects;
 
@@ -69,6 +73,12 @@ public class SombrillaFragment extends Fragment implements SombrillaDetalles.Som
                 recargarSombrillas();
             }
         });
+
+        TextView tvFechaReserva = view.findViewById(R.id.tvFechaReserva);
+        @SuppressLint("SimpleDateFormat") String fechaActual = new SimpleDateFormat("dd/MM/yy").format(new Date());
+        tvFechaReserva.setText(fechaActual);
+        tvFechaReserva.setTextColor(ContextCompat.getColor(requireContext(), R.color.principalButtonColor));
+
         cargarSombrillas(Calendar.getInstance().get(Calendar.YEAR), Calendar.getInstance().get(Calendar.MONTH), Calendar.getInstance().get(Calendar.DAY_OF_MONTH));
         setupOpenDatePicker(view);
         return view;

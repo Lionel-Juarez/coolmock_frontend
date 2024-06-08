@@ -24,7 +24,6 @@ import com.example.hamacav1.entidades.reservas.ReservaFragment;
 import com.example.hamacav1.initialmenus.LoginActivity;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.database.annotations.NotNull;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -105,12 +104,15 @@ public class MainActivity extends AppCompatActivity {
 
         client.newCall(request).enqueue(new Callback() {
             @Override
-            public void onFailure(@NonNull @NotNull Call call, @NonNull @NotNull IOException e) {
-                runOnUiThread(() -> Toast.makeText(MainActivity.this, "Error al obtener los datos del cliente", Toast.LENGTH_SHORT).show());
+            public void onFailure(@NonNull Call call, @NonNull IOException e) {
+                runOnUiThread(() -> {
+                    Log.e("MainActivity", "Error al obtener los datos del cliente", e);
+                    Toast.makeText(MainActivity.this, "Error al obtener los datos del cliente", Toast.LENGTH_SHORT).show();
+                });
             }
 
             @Override
-            public void onResponse(@NonNull @NotNull Call call, @NonNull @NotNull Response response) throws IOException {
+            public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
                 if (response.isSuccessful() && response.body() != null) {
                     String responseData = response.body().string();
                     try {
@@ -123,14 +125,21 @@ public class MainActivity extends AppCompatActivity {
                             replaceFragment(new ReservaFragment());
                         });
                     } catch (JSONException e) {
-                        runOnUiThread(() -> Toast.makeText(MainActivity.this, "Error al procesar los datos del cliente", Toast.LENGTH_SHORT).show());
+                        runOnUiThread(() -> {
+                            Log.e("MainActivity", "Error al procesar los datos del cliente", e);
+                            Toast.makeText(MainActivity.this, "Error al procesar los datos del cliente", Toast.LENGTH_SHORT).show();
+                        });
                     }
                 } else {
-                    runOnUiThread(() -> Toast.makeText(MainActivity.this, "Error al obtener los datos del cliente", Toast.LENGTH_SHORT).show());
+                    runOnUiThread(() -> {
+                        Log.e("MainActivity", "Respuesta no exitosa: " + response.code());
+                        Toast.makeText(MainActivity.this, "Error al obtener los datos del cliente", Toast.LENGTH_SHORT).show();
+                    });
                 }
             }
         });
     }
+
 
     public void replaceFragment(Fragment fragment) {
         FragmentManager fragmentManager = getSupportFragmentManager();
@@ -149,10 +158,13 @@ public class MainActivity extends AppCompatActivity {
                     SharedPreferences.Editor editor = sharedPreferences.edit();
                     editor.putString("idToken", idToken);
                     editor.apply();
+                } else {
+                    Log.e("MainActivity", "Error al renovar el token: " + task.getException());
                 }
             });
         }
     }
+
     public void selectSunbed() {
         binding.bottomNavigationView.setSelectedItemId(R.id.sunbed);
     }

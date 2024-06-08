@@ -209,7 +209,7 @@ public class NuevaReserva extends AppCompatActivity {
                 json.put("metodoPago", metodoPago);
                 json.put("horaLlegada", horaLlegada);
                 json.put("idCliente", idCliente);
-                json.put("idUsuario", uidUsuario);
+                json.put("uid", uidUsuario); // Asegúrate de usar "uid" aquí
                 json.put("nombreUsuario", nombreUsuario);
                 json.put("idSombrillas", new JSONArray(idsSombrillas));
                 if (pagada) {
@@ -217,7 +217,6 @@ public class NuevaReserva extends AppCompatActivity {
                 }
 
                 Log.d("NombreUsuario", nombreUsuario);
-
 
                 SharedPreferences sharedPreferences = getSharedPreferences("MyAppPrefs", Context.MODE_PRIVATE);
                 String idToken = sharedPreferences.getString("idToken", null);
@@ -241,7 +240,7 @@ public class NuevaReserva extends AppCompatActivity {
 
                             handler.post(() -> {
                                 List<Integer> numSombrillas = idsSombrillas.stream().map(Long::intValue).collect(Collectors.toList());
-                                String titulo = "Creación de Reserva";
+                                String titulo = getResources().getString(R.string.titulo_reservando_sombrilla);
                                 String descripcion = "Sombrilla/s " + numSombrillas + " reservadas, cantidad: " + cantidadHamacas;
 
                                 NuevoReporte.crearReporte(getApplicationContext(), titulo, descripcion);
@@ -269,6 +268,7 @@ public class NuevaReserva extends AppCompatActivity {
             }
         });
     }
+
 
     private void updateSombrillasAsReserved(List<Long> idsSombrillas, long idReserva, String cantidadHamacas) {
         Log.e("UpdateSombrilla", "dentro de la funcion updateSombrillas");
@@ -436,9 +436,9 @@ public class NuevaReserva extends AppCompatActivity {
         datePickerDialog.show();
     }
 
-    //Funciones extra
+    // Método cancel que cierra la actividad actual usando Utils
     public void cancel(View view) {
-        finish();
+        Utils.closeActivity(this);
     }
 
 }

@@ -8,6 +8,7 @@ import android.os.Handler;
 import android.os.Looper;
 import android.util.Log;
 import android.view.View;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.Toast;
@@ -44,6 +45,9 @@ public class NuevoUsuario extends AppCompatActivity {
         etNombre = findViewById(R.id.et_new_nombre_usuario);
         etPassword = findViewById(R.id.et_new_password_usuario);
         spinnerRol = findViewById(R.id.spinner_usuario_rol);
+
+        Button cancelar = findViewById(R.id.bt_usuario_cancel);
+        cancelar.setBackgroundColor(getResources().getColor(R.color.colorBotonCancelar)); // Cambia el color del botón
     }
 
     @Override
@@ -132,5 +136,9 @@ public class NuevoUsuario extends AppCompatActivity {
                 handler.post(() -> Utils.showError(getApplicationContext(),"Error al procesar la solicitud."));
             }
         });
+    }
+    // Método cancel que cierra la actividad actual usando Utils
+    public void cancel(View view) {
+        Utils.closeActivity(this);
     }
 }

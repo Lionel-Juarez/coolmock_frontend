@@ -18,12 +18,26 @@
     <string name="delete_comment">Eliminar reporte</string>
 
 
-    <string name="url_reportes">http://10.0.2.2:8080/api/reportes/</string>
-    <string name="url_sombrillas">http://10.0.2.2:8080/api/sombrillas/</string>
-    <string name="url_clientes">http://10.0.2.2:8080/api/clientes/</string>
-    <string name="url_reservas">http://10.0.2.2:8080/api/reservas/</string>
-    <string name="url_usuarios">http://10.0.2.2:8080/api/usuarios/</string>
-    <string name="url_pagos">http://10.0.2.2:8080/api/pagos/</string>
+    <!--    <string name="url_reportes">http://18.101.138.29/api/reportes/</string>-->
+    <!--    <string name="url_sombrillas">http://18.101.138.29/api/sombrillas/</string>-->
+    <!--    <string name="url_clientes">http://18.101.138.29/api/clientes/</string>-->
+    <!--    <string name="url_reservas">http://18.101.138.29/api/reservas/</string>-->
+    <!--    <string name="url_usuarios">http://18.101.138.29/api/usuarios/</string>-->
+    <!--    <string name="url_pagos">http://18.101.138.29/api/pagos</string>-->
+
+    <!--    <string name="url_reportes">http://10.0.2.2:8080/api/reportes/</string>-->
+    <!--    <string name="url_sombrillas">http://10.0.2.2:8080/api/sombrillas/</string>-->
+    <!--    <string name="url_clientes">http://10.0.2.2:8080/api/clientes/</string>-->
+    <!--    <string name="url_reservas">http://10.0.2.2:8080/api/reservas/</string>-->
+    <!--    <string name="url_usuarios">http://10.0.2.2:8080/api/usuarios/</string>-->
+    <!--    <string name="url_pagos">http://10.0.2.2:8080/api/pagos</string>-->
+
+    <string name="url_reportes">http://192.168.1.155:8080/api/reportes/</string>
+    <string name="url_sombrillas">http://192.168.1.155:8080/api/sombrillas/</string>
+    <string name="url_clientes">http://192.168.1.155:8080/api/clientes/</string>
+    <string name="url_reservas">http://192.168.1.155:8080/api/reservas/</string>
+    <string name="url_usuarios">http://192.168.1.155:8080/api/usuarios/</string>
+    <string name="url_pagos">http://192.168.1.155:8080/api/pagos</string>
 
     <string name="eliminar_reporte">Eliminar reporte</string>
     <string name="are_you_sure">¿Estás seguro?</string>
@@ -96,7 +110,7 @@
     <string name="select_time">Selecciona una hora</string>
     <string name="select_hour">Selecciona una hora</string>
     <string name="cliente">Cliente:</string>
-    <string name="horaLlegada">Hora de llegada: %s</string>
+    <string name="horaLlegada">Llegada: %s</string>
     <string name="sombrillas">PARCELA</string>
     <string name="historial">HISTORIAL</string>
     <string name="not_registered">¿No estás registrado? Regístrate</string>
@@ -130,7 +144,7 @@
     <string name="descripcion_ocupando_sombrilla">La sombrilla #%1$d ha sido ocupada, Cantidad de Hamacas: %2$s</string>
     <string name="titulo_liberando_sombrilla">Liberando sombrilla</string>
     <string name="descripcion_liberando_sombrilla">La sombrilla #%1$d ha sido liberada, Cantidad de Hamacas: %2$s</string>
-    <string name="titulo_reservando_sombrilla">Reservando sombrilla</string>
+    <string name="titulo_reservando_sombrilla">Reservando sombrillaReservando sombrilla</string>
     <string name="nombre_completo">Nombre completo</string>
     <string name="new_hint">Nuevo</string>
     <string name="confirm_password">Confirma contraseña</string>
@@ -149,6 +163,7 @@
     <string name="content_telefono">img telefono</string>
     <string name="content_email">img email</string>
     <string name="content_edit">img edit</string>
+    <string name="content_icono">img icono</string>
     <string name="content_eliminar">img eliminar</string>
 
     <string name="created_by">Created By:</string>
@@ -161,6 +176,11 @@
     <string name="estado_actual">Estado actual</string>
     <string name="selected_sunbeds">Nº de hamacas ocupadas</string>
     <string name="only_admin_can_add_user">Solo el Admin puede crear usuarios</string>
+
+    <string name="creacion_cliente">Cliente creado</string>
+    <string name="titulo_pagando_reserva">Pago de reserva</string>
+    <string name="titulo_cancelacion_reserva">Cancelación de reserva</string>
+    <string name="titulo_llegada_reserva">Reserva ha llegado</string>
 
 
     //Spinners

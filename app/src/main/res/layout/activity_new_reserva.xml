@@ -3,7 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
+    android:layout_height="wrap_content"
     tools:context=".entidades.reservas.ReservaFragment">
 
     <ImageView
@@ -36,7 +36,7 @@
                 android:text="@string/create_new_reservation"
                 android:textAlignment="center"
                 android:textColor="@color/black"
-                android:textSize="24sp"
+                android:textSize="22sp"
                 android:textStyle="bold" />
 
             <com.google.android.material.divider.MaterialDivider
@@ -46,11 +46,10 @@
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:paddingTop="20dp"
                 android:text="@string/select_date"
                 android:textAlignment="center"
                 android:textColor="@color/black"
-                android:textSize="18sp" />
+                android:textSize="16sp" />
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -60,8 +59,8 @@
 
                 <ImageView
                     android:id="@+id/btnOpenCalendar"
-                    android:layout_width="130dp"
-                    android:layout_height="120dp"
+                    android:layout_width="110dp"
+                    android:layout_height="100dp"
                     android:layout_marginEnd="30dp"
                     android:background="?attr/selectableItemBackground"
                     android:contentDescription="@string/content_calendar"
@@ -174,7 +173,7 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="20dp"
+                android:layout_marginTop="10dp"
                 android:orientation="horizontal">
 
                 <CheckBox
@@ -186,7 +185,7 @@
                 <Spinner
                     android:id="@+id/sp_metodo_pago"
                     android:layout_width="0dp"
-                    android:layout_height="50dp"
+                    android:layout_height="60dp"
                     android:layout_marginStart="10dp"
                     android:layout_weight="1"
                     android:background="@drawable/selector_button_background"
@@ -208,25 +207,24 @@
                 android:orientation="horizontal">
 
                 <Button
-                    android:id="@+id/btn_save_reserva"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_marginEnd="10dp"
-                    android:layout_weight="1"
-                    android:drawableStart="@drawable/check32"
-                    android:onClick="addReserva"
-                    android:text="@string/save"
-                    app:cornerRadius="5dp" />
-
-
-                <Button
                     android:id="@+id/btn_cancel_reserva"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:drawableStart="@drawable/cancel32"
+                    android:layout_marginEnd="10dp"
                     android:onClick="cancel"
                     android:text="@string/cancel"
+                    app:cornerRadius="5dp" />
+
+                <Button
+                    android:id="@+id/btn_save_reserva"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:drawableStart="@drawable/check32"
+                    android:onClick="addReserva"
+                    android:text="@string/save"
                     app:cornerRadius="5dp" />
 
             </LinearLayout>

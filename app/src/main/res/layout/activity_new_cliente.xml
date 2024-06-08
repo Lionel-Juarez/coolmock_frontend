@@ -104,35 +104,33 @@
                 android:paddingTop="20dp">
 
                 <Button
+                    android:id="@+id/bt_cliente_cancel"
+                    android:layout_width="0dp"
+                    android:layout_height="60dp"
+                    android:layout_weight="1"
+                    android:layout_marginEnd="20dp"
+                    android:onClick="cancel"
+                    android:text="@string/cancel"
+                    android:textColor="#FFFFFF"
+                    android:padding="10dp"
+                    android:textSize="18sp"
+                    android:gravity="center"
+                    app:cornerRadius="5dp" />
+
+                <Button
                     android:id="@+id/bt_cliente_accept"
                     android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_marginRight="15dp"
-                    android:drawableLeft="@drawable/check32"
+                    android:layout_height="60dp"
                     android:layout_weight="1"
                     android:onClick="saveCliente"
                     android:text="@string/accept"
                     android:textColor="#FFFFFF"
                     android:padding="10dp"
                     android:textSize="18sp"
-                    android:drawablePadding="10dp"
                     android:gravity="center"
-                    app:cornerRadius="10dp" />
+                    app:cornerRadius="5dp" />
 
-                <Button
-                    android:id="@+id/bt_cliente_cancel"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:drawableLeft="@drawable/cancel32"
-                    android:onClick="cancel"
-                    android:text="@string/cancel"
-                    android:textColor="#FFFFFF"
-                    android:padding="10dp"
-                    android:textSize="18sp"
-                    android:drawablePadding="10dp"
-                    android:gravity="center"
-                    app:cornerRadius="10dp" />
+
 
             </LinearLayout>
 

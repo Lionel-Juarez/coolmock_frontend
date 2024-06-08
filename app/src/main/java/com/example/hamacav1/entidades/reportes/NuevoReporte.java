@@ -199,5 +199,9 @@ public class NuevoReporte extends AppCompatActivity {
             Log.e("NewReport", "Excepción al crear reporte: " + e.getMessage(), e);
         }
     }
+
+    public void cancel(View view) {
+        Utils.closeActivity(this);
+    }
 }
 

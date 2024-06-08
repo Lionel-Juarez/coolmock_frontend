@@ -26,6 +26,16 @@
                 android:text="@string/pagos"
                 android:textColor="@color/black"
                 android:textSize="24sp" />
+
+            <TextView
+                android:id="@+id/tvFechaReserva"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/tvTitlePagos"
+                android:layout_alignParentStart="true"
+                android:text="@string/fecha_ejemplo"
+                android:textColor="@color/black"
+                android:textSize="20sp" />
         </RelativeLayout>
 
         <TextView

@@ -1,10 +1,12 @@
 package com.example.hamacav1.entidades.pagos;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -25,8 +27,10 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import okhttp3.Call;
@@ -63,6 +67,11 @@ public class PagoFragment extends Fragment implements PagoAdapter.PagoAdapterCal
         pagoList = new ArrayList<>();
         pagoAdapter = new PagoAdapter(pagoList, getContext());
         pagoVistaRecyclerView.setAdapter(pagoAdapter);
+
+        TextView tvFechaReserva = view.findViewById(R.id.tvFechaReserva);
+        @SuppressLint("SimpleDateFormat") String fechaActual = new SimpleDateFormat("dd/MM/yy").format(new Date());
+        tvFechaReserva.setText(fechaActual);
+        tvFechaReserva.setTextColor(ContextCompat.getColor(requireContext(), R.color.principalButtonColor));
 
         pagoVistaRecyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
             @Override

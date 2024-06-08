@@ -1,5 +1,6 @@
 package com.example.hamacav1.util;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.res.Resources;
 import android.util.Log;
@@ -34,6 +35,12 @@ public class Utils {
         } catch (DateTimeParseException e) {
             Log.e("convertToIso8601", "Error parsing date: " + e.getMessage());
             return null;
+        }
+    }
+
+    public static void closeActivity(Activity activity) {
+        if (activity != null) {
+            activity.finish();
         }
     }
 }

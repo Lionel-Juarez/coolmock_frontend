@@ -61,11 +61,15 @@ public class LoginActivity extends AppCompatActivity {
                                             startActivity(new Intent(LoginActivity.this, MainActivity.class));
                                             finish(); // Finalizar actividad para evitar regresar
                                         } else {
+                                            Log.e("TokenError", "Failed to get token", task.getException());
                                             Toast.makeText(LoginActivity.this, "Failed to get token: " + Objects.requireNonNull(task.getException()).getMessage(), Toast.LENGTH_SHORT).show();
                                         }
                                     });
                                 }
-                            }).addOnFailureListener(e -> Toast.makeText(LoginActivity.this, "Login Failed: " + e.getMessage(), Toast.LENGTH_SHORT).show());
+                            }).addOnFailureListener(e -> {
+                                Log.e("LoginError", "Login Failed", e);
+                                Toast.makeText(LoginActivity.this, "Login Failed: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                            });
                 } else {
                     loginPassword.setError("Empty fields are not allowed");
                 }

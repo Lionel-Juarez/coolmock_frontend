@@ -20,6 +20,7 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModel;
 import androidx.lifecycle.ViewModelProvider;
@@ -35,6 +36,7 @@ import com.example.hamacav1.entidades.sombrillas.Sombrilla;
 
 import org.jetbrains.annotations.Nullable;
 
+import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -99,6 +101,11 @@ public class ReservaFragment extends Fragment implements ReservaAdapter.Reservas
                 throw new IllegalArgumentException("Unknown ViewModel class");
             }
         }).get(PagoViewModel.class);
+
+        TextView tvFechaReserva = view.findViewById(R.id.tvFechaReserva);
+        @SuppressLint("SimpleDateFormat") String fechaActual = new SimpleDateFormat("dd/MM/yy").format(new Date());
+        tvFechaReserva.setText(fechaActual);
+        tvFechaReserva.setTextColor(ContextCompat.getColor(requireContext(), R.color.principalButtonColor));
 
         Date today = Calendar.getInstance().getTime();
         viewModel.loadReservasByDateAndState(today, "Pendiente");
@@ -294,6 +301,8 @@ public class ReservaFragment extends Fragment implements ReservaAdapter.Reservas
             sombrilla.setOcupada(true);
         }
 
+        Log.d("ReservaFragment", "Updating reserva: " + reserva.getIdReserva());  // Log para la reserva
+
         viewModel.updateReserva(reserva, (success) -> {
             if (success) {
                 Pago pago = new Pago();
@@ -305,10 +314,12 @@ public class ReservaFragment extends Fragment implements ReservaAdapter.Reservas
                 pago.setDetallesPago("Pago realizado para la reserva con ID " + reserva.getIdReserva());
                 pago.setTipoHamaca("Standard"); // Modificar según sea necesario
 
+                Log.d("ReservaFragment", "Creating pago for reserva: " + reserva.getIdReserva());  // Log para el pago
+
                 pagoViewModel.createPago(pago, (pagoSuccess) -> {
                     if (pagoSuccess) {
                         // Crear el reporte solo si la creación del pago fue exitosa
-                        String titulo = "Pago de Reserva";
+                        String titulo = getResources().getString(R.string.titulo_pagando_reserva);
                         String descripcion = "La reserva con ID " + reserva.getIdReserva() + " ha sido pagada utilizando " + metodoPago + ".";
                         NuevoReporte.crearReporte(getContext(), titulo, descripcion);
                     } else {

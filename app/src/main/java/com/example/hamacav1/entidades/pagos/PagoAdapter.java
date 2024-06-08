@@ -13,7 +13,12 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.hamacav1.R;
 
+import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 public class PagoAdapter extends RecyclerView.Adapter<PagoAdapter.PagoViewHolder> {
 
@@ -68,7 +73,13 @@ public class PagoAdapter extends RecyclerView.Adapter<PagoAdapter.PagoViewHolder
                 nombreCliente.setText("Cliente desconocido");
             }
             cantidad.setText("€" + pago.getCantidad());
-            fecha.setText(pago.getFechaPago().toString());
+            // Convertir LocalDateTime a Date y formatear
+            LocalDateTime localDateTime = pago.getFechaPago();
+            Date date = Date.from(localDateTime.atZone(ZoneId.systemDefault()).toInstant());
+            SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy HH:mm", Locale.getDefault());
+            String formattedDate = dateFormat.format(date);
+            fecha.setText(formattedDate);
+
             metodoPago.setText(pago.getMetodoPago());
 
             if ("Efectivo".equals(pago.getMetodoPago())) {
