@@ -38,6 +38,108 @@
                 android:textSize="20sp" />
         </RelativeLayout>
 
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="100dp"
+            android:orientation="horizontal"
+            android:layout_margin="8dp">
+
+            <!-- CardView for Pagadas and Pendientes -->
+            <androidx.cardview.widget.CardView
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:layout_marginEnd="4dp"
+                android:elevation="4dp"
+                android:padding="16dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:gravity="center_horizontal">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:gravity="center_vertical"
+                        android:layout_marginBottom="8dp">
+
+                        <TextView
+                            android:id="@+id/tvPagadasLabel"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Pagadas"
+                            android:textColor="@color/black"
+                            android:textSize="18sp"
+                            android:layout_marginEnd="8dp"/>
+
+                        <TextView
+                            android:id="@+id/tvPagadasCount"
+                            android:layout_width="24dp"
+                            android:layout_height="24dp"
+                            android:background="@drawable/circle_green"
+                            android:text="0"
+                            android:textColor="@android:color/white"
+                            android:textSize="16sp"
+                            android:gravity="center"/>
+
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:gravity="center_vertical">
+
+                        <TextView
+                            android:id="@+id/tvPendientesLabel"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Pendientes"
+                            android:textColor="@color/black"
+                            android:textSize="18sp"
+                            android:layout_marginEnd="8dp"/>
+
+                        <TextView
+                            android:id="@+id/tvPendientesCount"
+                            android:layout_width="24dp"
+                            android:layout_height="24dp"
+                            android:background="@drawable/circle_red"
+                            android:text="0"
+                            android:textColor="@android:color/white"
+                            android:textSize="16sp"
+                            android:gravity="center"/>
+
+                    </LinearLayout>
+                </LinearLayout>
+            </androidx.cardview.widget.CardView>
+
+            <!-- CardView for Total Pagos de Hoy -->
+            <androidx.cardview.widget.CardView
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:layout_marginStart="4dp"
+                android:elevation="4dp"
+                android:padding="16dp"
+                android:clickable="true"
+                android:focusable="true">
+
+                <TextView
+                    android:id="@+id/tvTotalPagosHoy"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:text="Total Pagos de Hoy"
+                    android:textColor="@color/black"
+                    android:textSize="18sp"
+                    android:gravity="center" />
+
+            </androidx.cardview.widget.CardView>
+
+        </LinearLayout>
+
         <TextView
             android:id="@+id/tvNoPagosMessage"
             android:layout_width="wrap_content"
@@ -51,20 +153,10 @@
             android:textStyle="bold"
             android:visibility="gone" />
 
-
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_weight="1">
-
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/pagosVistaRecyclerView"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_marginHorizontal="8dp"
-                android:layout_marginTop="20dp"
-                android:clipToPadding="false"
-                android:scrollbars="vertical" />
 
             <ImageView
                 android:id="@+id/headerImageSavings"
@@ -72,7 +164,7 @@
                 android:layout_height="140dp"
                 android:layout_alignParentEnd="true"
                 android:layout_alignParentBottom="true"
-                android:layout_marginBottom="160dp"
+                android:layout_marginBottom="100dp"
                 android:contentDescription="@string/filter"
                 android:src="@drawable/savings"
                 android:visibility="gone" />
@@ -87,6 +179,17 @@
                 android:contentDescription="@string/filter"
                 android:src="@drawable/question"
                 android:visibility="gone" />
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/pagosVistaRecyclerView"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginHorizontal="8dp"
+                android:paddingBottom="100dp"
+                android:layout_marginTop="20dp"
+                android:clipToPadding="false"
+                android:scrollbars="vertical" />
+
         </RelativeLayout>
     </LinearLayout>
 

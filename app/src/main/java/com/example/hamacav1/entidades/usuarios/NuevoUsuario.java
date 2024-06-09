@@ -45,9 +45,6 @@ public class NuevoUsuario extends AppCompatActivity {
         etNombre = findViewById(R.id.et_new_nombre_usuario);
         etPassword = findViewById(R.id.et_new_password_usuario);
         spinnerRol = findViewById(R.id.spinner_usuario_rol);
-
-        Button cancelar = findViewById(R.id.bt_usuario_cancel);
-        cancelar.setBackgroundColor(getResources().getColor(R.color.colorBotonCancelar)); // Cambia el color del botón
     }
 
     @Override

@@ -214,7 +214,9 @@
                     android:drawableStart="@drawable/cancel32"
                     android:layout_marginEnd="10dp"
                     android:onClick="cancel"
+                    style="@style/CancelButtonStyle"
                     android:text="@string/cancel"
+                    android:textColor="@color/white"
                     app:cornerRadius="5dp" />
 
                 <Button

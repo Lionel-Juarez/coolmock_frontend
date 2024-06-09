@@ -32,12 +32,19 @@
 <!--        <string name="url_usuarios">http://10.0.2.2:8080/api/usuarios/</string>-->
 <!--        <string name="url_pagos">http://10.0.2.2:8080/api/pagos</string>-->
 
-        <string name="url_reportes">http://192.168.1.155:8080/api/reportes/</string>
-        <string name="url_sombrillas">http://192.168.1.155:8080/api/sombrillas/</string>
-        <string name="url_clientes">http://192.168.1.155:8080/api/clientes/</string>
-        <string name="url_reservas">http://192.168.1.155:8080/api/reservas/</string>
-        <string name="url_usuarios">http://192.168.1.155:8080/api/usuarios/</string>
-        <string name="url_pagos">http://192.168.1.155:8080/api/pagos</string>
+<!--        <string name="url_reportes">http://192.168.1.155:8080/api/reportes/</string>-->
+<!--        <string name="url_sombrillas">http://192.168.1.155:8080/api/sombrillas/</string>-->
+<!--        <string name="url_clientes">http://192.168.1.155:8080/api/clientes/</string>-->
+<!--        <string name="url_reservas">http://192.168.1.155:8080/api/reservas/</string>-->
+<!--        <string name="url_usuarios">http://192.168.1.155:8080/api/usuarios/</string>-->
+<!--        <string name="url_pagos">http://192.168.1.155:8080/api/pagos</string>-->
+
+    <string name="url_reportes">http://192.168.0.103:8080/api/reportes/</string>
+    <string name="url_sombrillas">http://192.168.0.103:8080/api/sombrillas/</string>
+    <string name="url_clientes">http://192.168.0.103:8080/api/clientes/</string>
+    <string name="url_reservas">http://192.168.0.103:8080/api/reservas/</string>
+    <string name="url_usuarios">http://192.168.0.103:8080/api/usuarios/</string>
+    <string name="url_pagos">http://192.168.0.103:8080/api/pagos</string>
 
     <string name="eliminar_reporte">Eliminar reporte</string>
     <string name="are_you_sure">¿Estás seguro?</string>
@@ -110,7 +117,7 @@
     <string name="select_hour">Selecciona una hora</string>
     <string name="cliente">Cliente:</string>
     <string name="horaLlegada">Llegada: %s</string>
-    <string name="sombrillas">PARCELA</string>
+    <string name="sombrillas">Parcela</string>
     <string name="historial">HISTORIAL</string>
     <string name="not_registered">¿No estás registrado? Regístrate</string>
     <string name="forgot_password">¿Olvidaste la contraseña?</string>
@@ -179,8 +186,14 @@
 
     <string name="creacion_cliente">Cliente creado</string>
     <string name="titulo_pagando_reserva">Pago de reserva</string>
-    <string name="titulo_cancelacion_reserva">Cancelación de reserva</string>
+    <string name="titulo_cancelacion_reserva">Reserva cancelada</string>
     <string name="titulo_llegada_reserva">Reserva ha llegado</string>
+
+    <string name="ha_llegado">Ha llegado </string>
+    <string name="cancelar_reserva">Cancelar reserva</string>
+    <string name="reservada">Reservada</string>
+    <string name="ocupada">Ocupada</string>
+    <string name="libre">Libre</string>
 
 
     //Spinners

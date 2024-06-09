@@ -51,13 +51,6 @@
                 android:textColor="@color/black"
                 app:drawableLeftCompat="@drawable/etiqueta" />
 
-            <com.google.android.material.divider.MaterialDivider
-                android:layout_width="match_parent"
-                android:layout_height="3dp"
-                android:layout_marginTop="20dp"
-                app:dividerInsetEnd="16dp"
-                app:dividerInsetStart="16dp" />
-
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -98,26 +91,7 @@
                     android:textSize="18sp"
                     app:cornerRadius="5dp"
                     tools:ignore="RtlHardcoded" />
-
-                <Button
-                    android:id="@+id/btnVerReserva"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:drawableLeft="@drawable/lupa24"
-                    android:text="@string/btn_verReserva"
-                    android:textColor="#FFFFFF"
-                    android:textSize="18sp"
-                    app:cornerRadius="5dp"
-                    tools:ignore="RtlHardcoded" />
             </LinearLayout>
-
-            <com.google.android.material.divider.MaterialDivider
-                android:layout_width="match_parent"
-                android:layout_height="3dp"
-                android:layout_marginTop="20dp"
-                android:layout_marginBottom="20dp"
-                app:dividerInsetEnd="16dp"
-                app:dividerInsetStart="16dp" />
 
             <TextView
                 android:id="@+id/tvCantidadHamacas"

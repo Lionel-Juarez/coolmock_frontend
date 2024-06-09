@@ -162,14 +162,12 @@ public class SombrillaFragment extends Fragment implements SombrillaDetalles.Som
                                         Sombrilla sombrilla = Sombrilla.fromJSON(jsonObject);
                                         JSONArray reservas = jsonObject.optJSONArray("reservas");
                                         if (reservas != null) {
-                                            Log.d("SombrillaFragment", "Verificando reservas para sombrilla ID: " + sombrilla.getIdSombrilla());
                                         }
                                         checkReservationsAndSetReserved(sombrilla, reservas, today);
                                         todasLasSombrillas.add(sombrilla);
                                     }
                                     sombrillasAdapter.setSombrillas(todasLasSombrillas);
                                     sombrillasAdapter.notifyDataSetChanged();
-                                    Log.d("SombrillaFragment", "Sombrillas cargadas y actualizadas en el adaptador.");
                                 }
                             } catch (JSONException e) {
                                 Log.e("SombrillaFragment", "Error al procesar los datos de sombrillas", e);

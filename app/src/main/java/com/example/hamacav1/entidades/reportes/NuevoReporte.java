@@ -54,7 +54,6 @@ public class NuevoReporte extends AppCompatActivity {
 
         etTitulo = findViewById(R.id.et_new_title_report);
         etComentarioCompleto = findViewById(R.id.et_full_comment);
-        spinnerEstado = findViewById(R.id.spinner_report_state);
 
         SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy HH:mm", Locale.getDefault());
         fechaCreacion = sdf.format(Calendar.getInstance().getTime());

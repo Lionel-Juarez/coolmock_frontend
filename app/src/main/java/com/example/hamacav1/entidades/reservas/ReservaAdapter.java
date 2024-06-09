@@ -94,7 +94,6 @@ public class ReservaAdapter extends RecyclerView.Adapter<ReservaAdapter.ReservaV
             holder.metodoPago.setVisibility(View.GONE);
 
             holder.btnPagar.setEnabled(true);
-            holder.btnPagar.setBackgroundColor(ContextCompat.getColor(context, R.color.principalButtonColor));
         }
 
         StringBuilder numerosSombrillasBuilder = new StringBuilder();
@@ -121,11 +120,6 @@ public class ReservaAdapter extends RecyclerView.Adapter<ReservaAdapter.ReservaV
             callback.onCambiarEstadoClicked(reserva);
         });
 
-        holder.btnModificar.setOnClickListener(v -> {
-            // Manejar acción de modificar
-            callback.onModificarClicked(reserva);
-        });
-
         if (reserva.getIdReserva().equals(targetReservaId) && isExpanded) {
             holder.cardView.setBackground(ContextCompat.getDrawable(context, R.drawable.card_border_selected_expanded));
         } else if (reserva.getIdReserva().equals(targetReservaId)) {
@@ -143,14 +137,12 @@ public class ReservaAdapter extends RecyclerView.Adapter<ReservaAdapter.ReservaV
         Reserva reserva = reservaList.get(position);
 
         if (!isExpanded) {
-            callback.detailExpanded(position);
             if (reserva.getIdReserva().equals(targetReservaId)) {
                 holder.cardView.setBackground(ContextCompat.getDrawable(context, R.drawable.card_border_selected_expanded));
             } else {
                 holder.cardView.setBackground(ContextCompat.getDrawable(context, R.drawable.card_border_expanded));
             }
         } else {
-            callback.detailCollapsed(position);
             if (reserva.getIdReserva().equals(targetReservaId)) {
                 holder.cardView.setBackground(ContextCompat.getDrawable(context, R.drawable.card_border_selected));
             } else {
@@ -187,15 +179,11 @@ public class ReservaAdapter extends RecyclerView.Adapter<ReservaAdapter.ReservaV
             sombrillasReservadas = itemView.findViewById(R.id.tvSombrillas);
             btnPagar = itemView.findViewById(R.id.btnPagar);
             btnCambiarEstado = itemView.findViewById(R.id.btnCambiarEstado);
-            btnModificar = itemView.findViewById(R.id.btnModificar);
         }
     }
 
     public interface ReservasAdapterCallback {
-        void detailExpanded(int position);
-        void detailCollapsed(int position);
         void onPagarClicked(Reserva reserva);
         void onCambiarEstadoClicked(Reserva reserva);
-        void onModificarClicked(Reserva reserva);
     }
 }

@@ -18,6 +18,7 @@ import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
@@ -412,7 +413,7 @@ public class ReservasViewModel extends ViewModel {
         });
     }
 
-    public void updateCancelacionReserva(Reserva reserva, Consumer<Boolean> callback) {
+    public void updateCancelacionReserva(Reserva reserva, String cancelacionDescripcion, Consumer<Boolean> callback) {
         ExecutorService executor = Executors.newSingleThreadExecutor();
         Handler handler = new Handler(Looper.getMainLooper());
 
@@ -438,7 +439,7 @@ public class ReservasViewModel extends ViewModel {
                     if (response.isSuccessful()) {
                         handler.post(() -> {
                             String titulo = context.getString(R.string.titulo_cancelacion_reserva);
-                            String descripcion = "La reserva de " + reserva.getCliente().getNombreCompleto() + " ha sido cancelada.";
+                            String descripcion = "La reserva de " + reserva.getCliente().getNombreCompleto() + " ha sido cancelada. Motivo: " + cancelacionDescripcion;
                             NuevoReporte.crearReporte(context, titulo, descripcion);
 
                             Toast.makeText(context, "Reserva cancelada con éxito", Toast.LENGTH_SHORT).show();
@@ -469,5 +470,4 @@ public class ReservasViewModel extends ViewModel {
             }
         });
     }
-
 }

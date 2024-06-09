@@ -29,6 +29,7 @@
             android:layout_height="60dp"
             android:text="@string/no"
             android:layout_marginEnd="10dp"
+            style="@style/CancelButtonStyle"
             android:textColor="@color/white"/>
 
         <Button

@@ -4,7 +4,7 @@
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
     android:background="@drawable/background_with_border"
-    android:backgroundTint="@color/dark_background"
+    android:backgroundTint="#F3F3F3"
     android:orientation="vertical"
     android:padding="20dp">
 
@@ -13,11 +13,12 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="?attr/selectableItemBackground"
-        android:drawableStart="@drawable/nombrefiltro"
         android:drawablePadding="12dp"
         android:padding="12dp"
         android:text="@string/filter_by_name"
-        android:textSize="16sp" />
+        android:textColor="@color/black"
+        android:textSize="16sp"
+        app:drawableStartCompat="@drawable/nombrefiltro" />
 
     <com.google.android.material.divider.MaterialDivider
         android:layout_width="match_parent"
@@ -30,11 +31,12 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="?attr/selectableItemBackground"
-        android:drawableStart="@drawable/etiqueta"
         android:drawablePadding="12dp"
         android:padding="12dp"
+        android:textColor="@color/black"
         android:text="@string/filter_by_state"
-        android:textSize="16sp" />
+        android:textSize="16sp"
+        app:drawableStartCompat="@drawable/etiqueta" />
 
     <com.google.android.material.divider.MaterialDivider
         android:layout_width="match_parent"
@@ -47,11 +49,12 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="?attr/selectableItemBackground"
-        android:drawableStart="@drawable/fecha24"
         android:drawablePadding="12dp"
         android:padding="12dp"
         android:text="@string/select_date"
-        android:textSize="16sp" />
+        android:textColor="@color/black"
+        android:textSize="16sp"
+        app:drawableStartCompat="@drawable/fecha24" />
 
     <com.google.android.material.divider.MaterialDivider
         android:layout_width="match_parent"
@@ -64,9 +67,10 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="?attr/selectableItemBackground"
-        android:drawableStart="@drawable/todas"
         android:drawablePadding="12dp"
         android:padding="12dp"
+        android:textColor="@color/black"
         android:text="@string/show_all"
-        android:textSize="16sp" />
+        android:textSize="16sp"
+        app:drawableStartCompat="@drawable/todas" />
 </LinearLayout>

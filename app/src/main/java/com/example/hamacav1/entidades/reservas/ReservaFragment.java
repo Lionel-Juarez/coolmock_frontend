@@ -1,8 +1,10 @@
 package com.example.hamacav1.entidades.reservas;
 
 import android.annotation.SuppressLint;
+import android.app.Activity;
 import android.app.DatePickerDialog;
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.text.InputType;
 import android.util.Log;
@@ -18,6 +20,8 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.core.content.ContextCompat;
@@ -55,6 +59,15 @@ public class ReservaFragment extends Fragment implements ReservaAdapter.Reservas
     private Long reservaId;
     private ProgressBar progressBar;
 
+    private final ActivityResultLauncher<Intent> editReservaLauncher = registerForActivityResult(
+            new ActivityResultContracts.StartActivityForResult(),
+            result -> {
+                if (result.getResultCode() == Activity.RESULT_OK) {
+                    viewModel.loadAllReservas();
+                }
+            }
+    );
+
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -67,7 +80,6 @@ public class ReservaFragment extends Fragment implements ReservaAdapter.Reservas
             }
         }
     }
-
     @SuppressLint("NotifyDataSetChanged")
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -125,18 +137,15 @@ public class ReservaFragment extends Fragment implements ReservaAdapter.Reservas
         });
 
         viewModel.getReservas().observe(getViewLifecycleOwner(), nuevasReservas -> {
-            if (nuevasReservas == null || nuevasReservas.isEmpty()) {
+            reservasList = nuevasReservas;
+            if (reservasList == null || reservasList.isEmpty()) {
                 tvNoReservas.setVisibility(View.VISIBLE);
                 reservasRecyclerView.setVisibility(View.GONE);
             } else {
                 tvNoReservas.setVisibility(View.GONE);
                 reservasRecyclerView.setVisibility(View.VISIBLE);
-                reservasList = nuevasReservas;
-                reservasAdapter.setReservas(nuevasReservas);
+                reservasAdapter.setReservas(reservasList);
                 reservasAdapter.notifyDataSetChanged();
-                if (reservaId != null) {
-                    scrollToItem(reservaId);
-                }
             }
         });
 
@@ -144,34 +153,10 @@ public class ReservaFragment extends Fragment implements ReservaAdapter.Reservas
         setupFilterMenu(view);
         return view;
     }
-
-
-
     private void irSombrillas() {
         if (getActivity() instanceof MainActivity) {
             ((MainActivity) getActivity()).selectSunbed();
         }
-    }
-
-    private void scrollToItem(Long reservaId) {
-        int position = findReservaPositionById(reservaId);
-        if (position >= 0) {
-            Log.d("ReservaFragment", "Desplazando a la posición de Reserva: " + position);
-            reservasRecyclerView.scrollToPosition(position);
-            reservasAdapter.expandItem(position);
-        } else {
-            Log.d("ReservaFragment", "Reserva ID " + reservaId + " no encontrada.");
-        }
-    }
-
-    private int findReservaPositionById(Long id) {
-        if (reservasList == null) return -1;  // Retorna -1 si la lista es nula
-        for (int i = 0; i < reservasList.size(); i++) {
-            if (reservasList.get(i).getIdReserva().equals(id)) {
-                return i;
-            }
-        }
-        return -1;
     }
     private void setupFilterMenu(View view) {
         ImageView filterButton = view.findViewById(R.id.btnFilter);
@@ -233,10 +218,8 @@ public class ReservaFragment extends Fragment implements ReservaAdapter.Reservas
         builder.setPositiveButton("OK", (dialog, which) -> {
             String name = input.getText().toString().trim();
             if (!name.isEmpty()) {
-                Log.d("DialogInterface", "Filtrando por nombre: " + name);
                 viewModel.filterReservasByName(name);
             } else {
-                Log.d("DialogInterface", "Intento de filtrado sin nombre");
                 Toast.makeText(getContext(), "Por favor, introduce un nombre.", Toast.LENGTH_SHORT).show();
             }
         });
@@ -260,14 +243,6 @@ public class ReservaFragment extends Fragment implements ReservaAdapter.Reservas
 
         AlertDialog dialog = builder.create();
         dialog.show();
-    }
-    @Override
-    public void detailExpanded(int position) {
-
-    }
-    @Override
-    public void detailCollapsed(int position) {
-
     }
 
     @Override
@@ -329,11 +304,13 @@ public class ReservaFragment extends Fragment implements ReservaAdapter.Reservas
         AlertDialog.Builder builder = new AlertDialog.Builder(requireContext());
         builder.setTitle("Cambiar Estado de la Reserva");
 
-        String[] estados = {"Ha llegado", "Cancelar"};
+        String haLlegado = requireContext().getResources().getString(R.string.ha_llegado);
+        String cancelar = requireContext().getResources().getString(R.string.cancelar_reserva);
+        String[] estados = {haLlegado, cancelar};
         builder.setItems(estados, (dialog, which) -> {
             String selectedState = estados[which];
-            reserva.setEstado(selectedState);
-            if (selectedState.equals("Ha llegado")) {
+            if (selectedState.equals(haLlegado)) {
+                reserva.setEstado("Ha llegado");
                 for (Sombrilla sombrilla : reserva.getSombrillas()) {
                     sombrilla.setReservada(false);
                     sombrilla.setOcupada(true);
@@ -345,26 +322,40 @@ public class ReservaFragment extends Fragment implements ReservaAdapter.Reservas
                         Toast.makeText(getContext(), "Error al actualizar la reserva", Toast.LENGTH_SHORT).show();
                     }
                 });
-            } else if (selectedState.equals("Cancelar")) {
-                for (Sombrilla sombrilla : reserva.getSombrillas()) {
-                    sombrilla.setReservada(false);
-                    sombrilla.setOcupada(false);
-                }
-                viewModel.updateCancelacionReserva(reserva, success -> {
-                    if (success) {
-                        Toast.makeText(getContext(), "Reserva cancelada con éxito", Toast.LENGTH_SHORT).show();
-                    } else {
-                        Toast.makeText(getContext(), "Error al cancelar la reserva", Toast.LENGTH_SHORT).show();
+            } else if (selectedState.equals(cancelar)) {
+                AlertDialog.Builder cancelBuilder = new AlertDialog.Builder(requireContext());
+                cancelBuilder.setTitle("Cancelar Reserva");
+
+                final EditText input = new EditText(requireContext());
+                input.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_FLAG_MULTI_LINE);
+                input.setHint("Razón de la cancelación");
+
+                cancelBuilder.setView(input);
+
+                cancelBuilder.setPositiveButton("Cancelar Reserva", (cancelDialog, whichCancel) -> {
+                    String cancelacionDescripcion = input.getText().toString();
+                    reserva.setEstado("Cancelada");
+                    for (Sombrilla sombrilla : reserva.getSombrillas()) {
+                        sombrilla.setReservada(false);
+                        sombrilla.setOcupada(false);
                     }
+                    viewModel.updateCancelacionReserva(reserva, cancelacionDescripcion, success -> {
+                        if (success) {
+                            Toast.makeText(getContext(), "Reserva cancelada con éxito", Toast.LENGTH_SHORT).show();
+                        } else {
+                            Toast.makeText(getContext(), "Error al cancelar la reserva", Toast.LENGTH_SHORT).show();
+                        }
+                    });
                 });
+
+                cancelBuilder.setNegativeButton("Cancelar", (cancelDialog, whichCancel) -> cancelDialog.cancel());
+
+                AlertDialog cancelDialog = cancelBuilder.create();
+                cancelDialog.show();
             }
         });
 
         AlertDialog dialog = builder.create();
         dialog.show();
-    }
-    @Override
-    public void onModificarClicked(Reserva reserva) {
-
     }
 }

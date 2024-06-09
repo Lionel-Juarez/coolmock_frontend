@@ -34,12 +34,11 @@
                 android:id="@+id/tvTitleReservas"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_gravity="start|top"
+                android:layout_marginBottom="8dp"
                 android:text="@string/sombrillas"
                 android:textColor="@color/black"
-                android:textSize="24sp"
-                android:textStyle="bold"
-                android:layout_gravity="start|top"
-                android:layout_marginBottom="8dp" />
+                android:textSize="24sp" />
 
             <TextView
                 android:id="@+id/tvFechaReserva"
@@ -47,8 +46,9 @@
                 android:layout_height="wrap_content"
                 android:text="@string/fecha_ejemplo"
                 android:textColor="@color/black"
-                android:textSize="22sp"
+                android:textSize="20sp"
                 android:layout_gravity="start"
+                android:textStyle="bold"
                 android:layout_marginTop="32dp" />
 
             <ImageView
@@ -64,7 +64,6 @@
                 android:translationZ="4dp" />
         </FrameLayout>
 
-
         <androidx.cardview.widget.CardView
             android:layout_width="match_parent"
             android:layout_height="400dp"
@@ -72,14 +71,71 @@
             app:cardCornerRadius="8dp"
             app:cardElevation="16dp">
 
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/sombrillasRecyclerView"
+            <RelativeLayout
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:clipToPadding="false"
-                android:scrollbars="vertical"/>
+                android:layout_height="match_parent">
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/sombrillasRecyclerView"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:clipToPadding="false"
+                    android:scrollbars="vertical"
+                    android:layout_above="@+id/legendContainer"/>
+
+                <LinearLayout
+                    android:id="@+id/legendContainer"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentBottom="true"
+                    android:orientation="horizontal"
+                    android:padding="8dp"
+                    android:gravity="center">
+
+                    <ImageView
+                        android:layout_width="12dp"
+                        android:layout_height="12dp"
+                        android:src="@drawable/sombrilla_reservada"
+                        android:contentDescription="@string/reservada" />
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/reservada"
+                        android:textSize="12sp"
+                        android:layout_marginStart="4dp"
+                        android:layout_marginEnd="16dp"/>
+
+                    <ImageView
+                        android:layout_width="12dp"
+                        android:layout_height="12dp"
+                        android:src="@drawable/sombrilla_ocupada"
+                        android:contentDescription="@string/ocupada" />
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/ocupada"
+                        android:textSize="12sp"
+                        android:layout_marginStart="4dp"
+                        android:layout_marginEnd="16dp"/>
+
+                    <ImageView
+                        android:layout_width="12dp"
+                        android:layout_height="12dp"
+                        android:src="@drawable/sombrilla_libre"
+                        android:contentDescription="@string/libre" />
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/libre"
+                        android:textSize="12sp"
+                        android:layout_marginStart="4dp"/>
+
+                </LinearLayout>
+
+            </RelativeLayout>
         </androidx.cardview.widget.CardView>
     </LinearLayout>
+
     <ProgressBar
         android:id="@+id/progressBar"
         android:layout_width="wrap_content"

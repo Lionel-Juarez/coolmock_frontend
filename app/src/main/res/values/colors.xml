@@ -1,34 +1,26 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="purple_200">#FFBB86FC</color>
-    <color name="purple_500">#FF6200EE</color>
-    <color name="purple_700">#FF3700B3</color>
-    <color name="teal_200">#FF03DAC5</color>
-    <color name="teal_700">#FF018786</color>
-    <color name="blueColor">#7FB6DC</color>
-
     <!-- Colores básicos y de fondo -->
-    <color name="principalColor">#336DFF</color>
+    <color name="principalColor">#72B0DD</color>
     <color name="secondaryColor">#BAA204</color>
     <color name="colorFondo">#B5B5B5</color>
-    <color name="accentColor">#FF8A65</color>
+    <color name="accentColor">#3E5CA6</color>
     <color name="lightBackgroundColor">#72B0DD</color>
     <color name="darkBackgroundColor">#01579B</color>
     <color name="grey">#6A7177</color>
-    <color name="colorBotonCancelar">#FF0000</color>
+    <color name="colorBotonCancelar">#8C0000</color>
     <color name="dark_background">#CCCCCC</color>
-    <color name="gray">#D1D1D1</color>
 
     <!--    Reportes-->
-    <color name="colorCancelacion">#FF0000</color> <!-- Example color, replace with your actual color -->
-    <color name="colorLlegada">#BAA204</color> <!-- Example color, replace with your actual color -->
-    <color name="colorPago">#0B710D</color> <!-- Example color, replace with your actual color -->
+    <color name="colorCancelacion">#FF6C6C</color>
+    <color name="colorLlegada">#FFBD37</color>
+    <color name="colorPago">#85F885</color>
 
-    <!-- Colores para estados de las sombrillas -->
-    <color name="colorReservada">#0000FF</color>
-    <color name="colorOcupada">#DC5E00</color>
-    <color name="colorDisponible">#1C1515</color>
-    <color name="color_liberando_sombrilla">#808080</color>
+    <!-- Colores más pastel para estados de las sombrillas -->
+    <color name="colorReservada">#7171FA</color>
+    <color name="colorOcupada">#FFCD78</color>
+    <color name="colorDisponible">#EFEBEB</color>
+    <color name="color_liberando_sombrilla">#C0C0C0</color>
     <!-- Textos y UI -->
     <color name="textColorPrimary">#FFFFFF</color>
     <color name="textColorSecondary">#757575</color>

@@ -31,12 +31,19 @@
 <!--    <string name="url_usuarios">http://10.0.2.2:8080/api/usuarios/</string>-->
 <!--    <string name="url_pagos">http://10.0.2.2:8080/api/pagos</string>-->
 
-    <string name="url_reportes">http://192.168.1.155:8080/api/reportes/</string>
-    <string name="url_sombrillas">http://192.168.1.155:8080/api/sombrillas/</string>
-    <string name="url_clientes">http://192.168.1.155:8080/api/clientes/</string>
-    <string name="url_reservas">http://192.168.1.155:8080/api/reservas/</string>
-    <string name="url_usuarios">http://192.168.1.155:8080/api/usuarios/</string>
-    <string name="url_pagos">http://192.168.1.155:8080/api/pagos</string>
+<!--    <string name="url_reportes">http://192.168.1.155:8080/api/reportes/</string>-->
+<!--    <string name="url_sombrillas">http://192.168.1.155:8080/api/sombrillas/</string>-->
+<!--    <string name="url_clientes">http://192.168.1.155:8080/api/clientes/</string>-->
+<!--    <string name="url_reservas">http://192.168.1.155:8080/api/reservas/</string>-->
+<!--    <string name="url_usuarios">http://192.168.1.155:8080/api/usuarios/</string>-->
+<!--    <string name="url_pagos">http://192.168.1.155:8080/api/pagos</string>-->
+
+    <string name="url_reportes">http://192.168.0.103:8080/api/reportes/</string>
+    <string name="url_sombrillas">http://192.168.0.103:8080/api/sombrillas/</string>
+    <string name="url_clientes">http://192.168.0.103:8080/api/clientes/</string>
+    <string name="url_reservas">http://192.168.0.103:8080/api/reservas/</string>
+    <string name="url_usuarios">http://192.168.0.103:8080/api/usuarios/</string>
+    <string name="url_pagos">http://192.168.0.103:8080/api/pagos</string>
 
 
 
@@ -112,8 +119,8 @@
     <string name="select_hour">Select an hour</string>
     <string name="cliente">Customer:</string>
     <string name="horaLlegada">Arrival time: %s</string>
-    <string name="sombrillas">PARCEL</string>
-    <string name="historial">HISTORY</string>
+    <string name="sombrillas">Parcel</string>
+    <string name="historial">Record</string>
     <string name="not_registered">Not yet registered? Sign Up</string>
     <string name="forgot_password">Forgot Password?</string>
     <string name="login">Login</string>
@@ -174,11 +181,18 @@
     <string name="selected_sunbeds">Number of selected sunbeds</string>
     <string name="only_admin_can_add_user">Only Admin can create new users</string>
     <string name="creacion_cliente">Cliente creado</string>
-    <string name="titulo_pagando_reserva">Pago de reserva</string>
+    <string name="titulo_pagando_reserva">Pago de Reserva</string>
     <string name="titulo_cancelacion_reserva">Cancelación de reserva</string>
     <string name="titulo_llegada_reserva">Reserva ha llegado</string>
     <string name="content_icono">img icono</string>
     <string name="motivo_cancelacion">Reason for cancellation\n</string>
+    <string name="ha_llegado">Has arrived\n</string>
+    <string name="cancelar_reserva">Cancel booking</string>
+    <string name="reservada">Reserved</string>
+    <string name="ocupada">Occupy</string>
+    <string name="libre">Free</string>
+    <string name="pendientes">Pendientes</string>
+    <string name="pagadas">Pagadas</string>
 
 
     //Spinners

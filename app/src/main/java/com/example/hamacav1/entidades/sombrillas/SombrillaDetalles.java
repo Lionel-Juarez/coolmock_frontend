@@ -46,6 +46,7 @@ public class SombrillaDetalles  extends DialogFragment {
     RadioButton radioOne, radioTwo;
     RadioGroup radioGroupHamacas;
     private SombrillaUpdateListener updateListener;
+    @SuppressLint("StaticFieldLeak")
     private static TextView tvDetalleEstado;
 
     @Override
@@ -67,7 +68,6 @@ public class SombrillaDetalles  extends DialogFragment {
         Button btnReservar = view.findViewById(R.id.btnReservar);
         Button btnOcupar = view.findViewById(R.id.btnOcupar);
         Button btnLiberar = view.findViewById(R.id.btnLiberar);
-        Button btnVerReserva = view.findViewById(R.id.btnVerReserva);
 
         radioOne = view.findViewById(R.id.radioOne);
         radioTwo = view.findViewById(R.id.radioTwo);
@@ -75,46 +75,24 @@ public class SombrillaDetalles  extends DialogFragment {
 
         Sombrilla sombrilla = getArguments() != null ? getArguments().getParcelable(ARG_HAMACA) : null;
         if (sombrilla != null) {
+
             tvDetalleNumero.setText(sombrilla.getNumeroSombrilla());
-            tvDetallePrecio.setText("Precio: €" + sombrilla.getPrecio());
+            tvDetallePrecio.setText(getString(R.string.sunbed_price) + sombrilla.getPrecio());
             actualizarEstado(sombrilla);
 
             if (sombrilla.isReservada()) {
                 checkCantidadHamacas(sombrilla);
 
-
                 btnReservar.setVisibility(View.GONE);
                 btnOcupar.setVisibility(View.GONE);
                 btnLiberar.setVisibility(View.GONE);
-                btnVerReserva.setVisibility(View.VISIBLE);
-
-                btnVerReserva.setOnClickListener(v -> {
-                    if (sombrilla.getReservaId() != null) {
-                        Bundle args = new Bundle();
-                        args.putLong(ReservaFragment.EXTRA_RESERVA_ID, sombrilla.getReservaId());
-                        ReservaFragment fragment = new ReservaFragment();
-                        fragment.setArguments(args);
-
-                        MainActivity activity = (MainActivity) getActivity();
-                        if (activity != null) {
-                            activity.setSelectedItemId(R.id.home);
-                            activity.replaceFragment(fragment);
-                        }
-                        dismiss();
-                    } else {
-                        Log.d("SombrillaDetalles", "Sombrilla con id: " + sombrilla.getIdSombrilla() + " no tiene reservas asociadas");
-                        Toast.makeText(getContext(), "No hay reserva asociada a esta sombrilla", Toast.LENGTH_SHORT).show();
-                    }
-                });
-
-
-            }else if(sombrilla.isOcupada()){
+            } else if (sombrilla.isOcupada()) {
                 radioOne.setVisibility(View.VISIBLE);
                 radioTwo.setVisibility(View.VISIBLE);
-                btnReservar.setVisibility(View.VISIBLE);
+                radioOne.setEnabled(false);
+                radioTwo.setEnabled(false);
                 btnOcupar.setVisibility(View.GONE);
                 btnLiberar.setVisibility(View.VISIBLE);
-                btnVerReserva.setVisibility(View.GONE);
 
                 checkCantidadHamacas(sombrilla);
 
@@ -135,15 +113,14 @@ public class SombrillaDetalles  extends DialogFragment {
                     }
                     dismiss();
                 });
-            }else {
+            } else {
                 btnReservar.setVisibility(View.VISIBLE);
                 btnOcupar.setVisibility(View.VISIBLE);
                 btnLiberar.setVisibility(View.VISIBLE);
-                btnVerReserva.setVisibility(View.GONE);
                 radioOne.setVisibility(View.VISIBLE);
                 radioTwo.setVisibility(View.VISIBLE);
-                radioOne.setClickable(true);
-                radioTwo.setClickable(true);
+                radioOne.setEnabled(true);
+                radioTwo.setEnabled(true);
 
                 btnReservar.setOnClickListener(v -> {
                     Intent intent = new Intent(getActivity(), NuevaReserva.class);
@@ -220,13 +197,13 @@ public class SombrillaDetalles  extends DialogFragment {
         try {
             jsonObject.put("reservada", sombrilla.isReservada());
             jsonObject.put("ocupada", sombrilla.isOcupada());
-            jsonObject.put("cantidadHamacas", sombrilla.getCantidadHamacas()); // Incluye la cantidad de hamacas en la actualización
+            jsonObject.put("cantidadHamacas", sombrilla.getCantidadHamacas());
 
             RequestBody body = RequestBody.create(jsonObject.toString(), JSON);
 
             Request request = new Request.Builder()
                     .url(url)
-                    .patch(body) // Usar PATCH aquí
+                    .patch(body)
                     .build();
 
             client.newCall(request).enqueue(new Callback() {
@@ -239,7 +216,7 @@ public class SombrillaDetalles  extends DialogFragment {
                 public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
                     if (!response.isSuccessful()) {
                         assert response.body() != null;
-                        String responseBody = response.body().string(); // Leer la respuesta del servidor
+                        String responseBody = response.body().string();
                         Log.e("SombrillaUpdate", "Respuesta no exitosa del servidor al actualizar sombrilla: HTTP " + response.code() + " - " + responseBody);
                     } else {
                         Log.d("SombrillaUpdate", "Actualización exitosa de la sombrilla con ID: " + sombrilla.getIdSombrilla());
