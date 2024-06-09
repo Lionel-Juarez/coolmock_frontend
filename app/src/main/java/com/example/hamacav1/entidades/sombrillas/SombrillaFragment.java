@@ -223,11 +223,19 @@ public class SombrillaFragment extends Fragment implements SombrillaDetalles.Som
 
     @Override
     public void onSombrillaUpdated(Sombrilla updatedSombrilla) {
-        int index = todasLasSombrillas.indexOf(updatedSombrilla);
+        int index = -1;
+        for (int i = 0; i < todasLasSombrillas.size(); i++) {
+            if (todasLasSombrillas.get(i).getIdSombrilla() == updatedSombrilla.getIdSombrilla()) {
+                index = i;
+                break;
+            }
+        }
         if (index != -1) {
             todasLasSombrillas.set(index, updatedSombrilla);
             sombrillasAdapter.notifyItemChanged(index);
             Log.d("SombrillaFragment", "Actualización de la vista de sombrilla en el índice: " + index);
+        } else {
+            Log.e("SombrillaFragment", "No se encontró la sombrilla para actualizar en la lista.");
         }
     }
 

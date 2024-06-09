@@ -82,7 +82,6 @@ public class NuevoUsuario extends AppCompatActivity {
             etNombre.setError(res.getString(R.string.error_nombre_largo));
             isValid = false;
         }
-        // Validación para la contraseña
         if (password.isEmpty()) {
             etPassword.setError(res.getString(R.string.campo_obligatorio));
             isValid = false;
@@ -107,7 +106,7 @@ public class NuevoUsuario extends AppCompatActivity {
                 MediaType MEDIA_TYPE_JSON = MediaType.parse("application/json; charset=utf-8");
 
                 JSONObject json = new JSONObject();
-                json.put("nombreUsuario",nombreCompleto);
+                json.put("nombreCompleto",nombreCompleto);
                 json.put("password", password);
                 json.put("rol", rol);
 

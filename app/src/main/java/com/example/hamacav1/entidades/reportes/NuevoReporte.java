@@ -21,8 +21,6 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.example.hamacav1.R;
 import com.example.hamacav1.util.Internetop;
 import com.example.hamacav1.util.Utils;
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
 
 import org.json.JSONObject;
 
@@ -43,7 +41,6 @@ import okhttp3.Response;
 
 
 public class NuevoReporte extends AppCompatActivity {
-    private long creadoPor;
     private String fechaCreacion;
     private EditText etTitulo;
     //private EditText descriptionEditText;
@@ -61,7 +58,6 @@ public class NuevoReporte extends AppCompatActivity {
 
         SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy HH:mm", Locale.getDefault());
         fechaCreacion = sdf.format(Calendar.getInstance().getTime());
-        creadoPor = getCurrentUserId();
     }
 
     @Override
@@ -77,7 +73,7 @@ public class NuevoReporte extends AppCompatActivity {
         if (validateInput(titulo, comentarioCompleto)) {
             if (Internetop.getInstance(getApplicationContext()).isNetworkAvailable()) {
                 String url = getResources().getString(R.string.url_reportes) + "newReport";
-                sendTask(url, titulo, comentarioCompleto, estado, fechaCreacion, String.valueOf(creadoPor));
+                sendTask(url, titulo, comentarioCompleto, estado, fechaCreacion);
             } else {
                 Utils.showError(getApplicationContext(),"error.IOException");
             }
@@ -100,7 +96,7 @@ public class NuevoReporte extends AppCompatActivity {
 
         return isValid;
     }
-    private void sendTask(String url, String titulo, String comentarioCompleto, String estado, String fechaCreacion, String creadoPor) {
+    private void sendTask(String url, String titulo, String comentarioCompleto, String estado, String fechaCreacion) {
         ExecutorService executor = Executors.newSingleThreadExecutor();
         Handler handler = new Handler(Looper.getMainLooper());
 
@@ -114,9 +110,6 @@ public class NuevoReporte extends AppCompatActivity {
                 json.put("comentarioCompleto", comentarioCompleto);
                 json.put("estado", estado);
                 json.put("fechaCreacion", fechaCreacion);
-                JSONObject creadoPorObj = new JSONObject();
-                creadoPorObj.put("id", creadoPor);
-                json.put("creadoPor", creadoPorObj);
 
                 RequestBody body = RequestBody.create(json.toString(), MEDIA_TYPE_JSON);
                 Request request = new Request.Builder().url(url).post(body).build();
@@ -145,24 +138,9 @@ public class NuevoReporte extends AppCompatActivity {
         });
     }
 
-    private long getCurrentUserId() {
-        // Implementa la lógica para obtener el ID del usuario actual
-        return 1;
-    }
-
-    // Método estático para crear un reporte de reserva
     public static void crearReporte(Context context, String titulo, String descripcion) {
         SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy HH:mm", Locale.getDefault());
         String fechaCreacion = sdf.format(Calendar.getInstance().getTime());
-
-        // Obtener información del usuario desde Firebase
-        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-        if (user == null) {
-            Log.e("crearReporte", "El usuario no está autenticado.");
-            return;
-        }
-        String uidUsuario = user.getUid();
-        String nombreUsuario = user.getDisplayName() != null ? user.getDisplayName() : "Usuario desconocido";
 
         try {
             OkHttpClient client = new OkHttpClient();
@@ -173,33 +151,32 @@ public class NuevoReporte extends AppCompatActivity {
             json.put("comentarioCompleto", descripcion);
             json.put("estado", "1"); // Estado predeterminado para la creación de reportes
             json.put("fechaCreacion", fechaCreacion);
-            json.put("creadoPorUid", uidUsuario);
-            json.put("creadoPorNombre", nombreUsuario);
 
             String url = context.getResources().getString(R.string.url_reportes) + "newReport";
             RequestBody body = RequestBody.create(json.toString(), MEDIA_TYPE_JSON);
             Request request = new Request.Builder().url(url).post(body).build();
 
+            Log.d("NuevoReporte", "Enviando reporte con título: " + titulo + " y descripción: " + descripcion);
+
             client.newCall(request).enqueue(new Callback() {
                 @Override
                 public void onFailure(@NonNull Call call, @NonNull IOException e) {
-                    Log.e("NewReport", "Error al añadir reporte: ", e);
+                    Log.e("NuevoReporte", "Error al añadir reporte: ", e);
                 }
 
                 @Override
                 public void onResponse(@NonNull Call call, @NonNull Response response) {
                     if (!response.isSuccessful()) {
-                        Log.e("NewReport", "Error al añadir reporte: " + response);
+                        Log.e("NuevoReporte", "Error al añadir reporte: " + response);
                     } else {
-                        Log.d("NewReport", "Reporte añadido con éxito.");
+                        Log.d("NuevoReporte", "Reporte añadido con éxito.");
                     }
                 }
             });
         } catch (Exception e) {
-            Log.e("NewReport", "Excepción al crear reporte: " + e.getMessage(), e);
+            Log.e("NuevoReporte", "Excepción al crear reporte: " + e.getMessage(), e);
         }
     }
-
     public void cancel(View view) {
         Utils.closeActivity(this);
     }

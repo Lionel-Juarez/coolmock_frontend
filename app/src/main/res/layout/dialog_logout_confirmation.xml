@@ -26,7 +26,7 @@
         <Button
             android:id="@+id/btnNo"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_height="60dp"
             android:text="@string/no"
             android:layout_marginEnd="10dp"
             android:textColor="@color/white"/>
@@ -34,7 +34,7 @@
         <Button
             android:id="@+id/btnYes"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_height="60dp"
             android:text="@string/yes"
             android:textColor="@color/white"/>
 

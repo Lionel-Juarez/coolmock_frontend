@@ -13,7 +13,6 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
 import android.view.View;
-import android.widget.Toast;
 
 import com.example.hamacav1.entidades.gestionCuentas.CuentasFragment;
 import com.example.hamacav1.entidades.pagos.PagoFragment;
@@ -25,21 +24,10 @@ import com.example.hamacav1.initialmenus.LoginActivity;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import java.io.IOException;
-
-import okhttp3.Call;
-import okhttp3.Callback;
-import okhttp3.OkHttpClient;
-import okhttp3.Request;
-import okhttp3.Response;
 
 public class MainActivity extends AppCompatActivity {
     ActivityMainBinding binding;
     public static String rol;
-    public static String nombreUsuario;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -49,7 +37,7 @@ public class MainActivity extends AppCompatActivity {
 
         SharedPreferences sharedPreferences = getSharedPreferences("MyAppPrefs", MODE_PRIVATE);
         String userId = sharedPreferences.getString("userId", null);
-        String idToken = sharedPreferences.getString("idToken", null);
+        rol = sharedPreferences.getString("rol", "CLIENTE");
 
         if (userId == null || FirebaseAuth.getInstance().getCurrentUser() == null) {
             startActivity(new Intent(MainActivity.this, LoginActivity.class));
@@ -60,9 +48,16 @@ public class MainActivity extends AppCompatActivity {
         binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
-        verificarRolCliente(userId, idToken);
+        ajustarNavegacionPorRol();
 
         renovarToken();
+
+        boolean loadReservaFragment = getIntent().getBooleanExtra("load_reserva_fragment", false);
+        if (loadReservaFragment) {
+            replaceFragment(new ReservaFragment());
+        } else {
+            replaceFragment(new ReservaFragment()); // Puedes cambiar esto si quieres cargar un fragmento diferente por defecto.
+        }
 
         binding.bottomNavigationView.setBackground(null);
         binding.bottomNavigationView.setOnItemSelectedListener(item -> {
@@ -92,61 +87,13 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-
-    private void verificarRolCliente(String uid, String idToken) {
-        String url = getResources().getString(R.string.url_clientes) + "uid/" + uid;
-
-        OkHttpClient client = new OkHttpClient();
-        Request request = new Request.Builder()
-                .url(url)
-                .addHeader("Authorization", "Bearer " + idToken)
-                .build();
-
-        client.newCall(request).enqueue(new Callback() {
-            @Override
-            public void onFailure(@NonNull Call call, @NonNull IOException e) {
-                runOnUiThread(() -> {
-                    Log.e("MainActivity", "Error al obtener los datos del cliente", e);
-                    Toast.makeText(MainActivity.this, "Error al obtener los datos del cliente", Toast.LENGTH_SHORT).show();
-                });
-            }
-
-            @Override
-            public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
-                if (response.isSuccessful() && response.body() != null) {
-                    String responseData = response.body().string();
-                    try {
-                        JSONObject jsonObject = new JSONObject(responseData);
-                        rol = jsonObject.optString("rol", "CLIENTE");
-                        nombreUsuario = jsonObject.optString("nombreCompleto", "Usuario desconocido");
-
-                        runOnUiThread(() -> {
-                            ajustarNavegacionPorRol();
-                            replaceFragment(new ReservaFragment());
-                        });
-                    } catch (JSONException e) {
-                        runOnUiThread(() -> {
-                            Log.e("MainActivity", "Error al procesar los datos del cliente", e);
-                            Toast.makeText(MainActivity.this, "Error al procesar los datos del cliente", Toast.LENGTH_SHORT).show();
-                        });
-                    }
-                } else {
-                    runOnUiThread(() -> {
-                        Log.e("MainActivity", "Respuesta no exitosa: " + response.code());
-                        Toast.makeText(MainActivity.this, "Error al obtener los datos del cliente", Toast.LENGTH_SHORT).show();
-                    });
-                }
-            }
-        });
-    }
-
-
     public void replaceFragment(Fragment fragment) {
         FragmentManager fragmentManager = getSupportFragmentManager();
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
         fragmentTransaction.replace(R.id.frame_layout, fragment);
         fragmentTransaction.commit();
     }
+
 
     private void renovarToken() {
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
@@ -168,6 +115,7 @@ public class MainActivity extends AppCompatActivity {
     public void selectSunbed() {
         binding.bottomNavigationView.setSelectedItemId(R.id.sunbed);
     }
+
     public void setSelectedItemId(int itemId) {
         binding.bottomNavigationView.setSelectedItemId(itemId);
     }

@@ -3,6 +3,8 @@ package com.example.hamacav1.entidades.sombrillas;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
+import android.os.Handler;
+import android.os.Looper;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -26,7 +28,6 @@ public class SombrillaAdapter extends RecyclerView.Adapter<SombrillaAdapter.Somb
     private final Context context;
     private final FragmentManager fragmentManager;
 
-
     // Constructor
     public SombrillaAdapter(List<Sombrilla> listaSombrillas, Context context, FragmentManager fragmentManager) {
         this.listaSombrillas = listaSombrillas != null ? listaSombrillas : new ArrayList<>();
@@ -45,7 +46,6 @@ public class SombrillaAdapter extends RecyclerView.Adapter<SombrillaAdapter.Somb
     public void onBindViewHolder(@NonNull SombrillaViewHolder holder, int position) {
         Sombrilla sombrilla = listaSombrillas.get(position);
         updateViewImage(holder.ivEstadoSombrilla, sombrilla);
-
         holder.tvNumeroSombrilla.setText(String.valueOf(sombrilla.getNumeroSombrilla()));
 
         holder.itemView.setOnClickListener(view -> {
@@ -55,7 +55,7 @@ public class SombrillaAdapter extends RecyclerView.Adapter<SombrillaAdapter.Somb
                 SombrillaDetalles dialogFragment = SombrillaDetalles.newInstance(currentSombrilla, new SombrillaDetalles.SombrillaUpdateListener() {
                     @Override
                     public void onSombrillaUpdated(Sombrilla updatedSombrilla) {
-                        notifyItemChanged(adapterPosition);
+                        updateSombrillaInList(updatedSombrilla, adapterPosition);
                     }
 
                     @Override
@@ -73,7 +73,6 @@ public class SombrillaAdapter extends RecyclerView.Adapter<SombrillaAdapter.Somb
             }
         });
     }
-
 
     private void updateViewImage(ImageView imageView, Sombrilla sombrilla) {
         int imageResId = R.drawable.sombrilla_libre;
@@ -107,5 +106,10 @@ public class SombrillaAdapter extends RecyclerView.Adapter<SombrillaAdapter.Somb
     public void setSombrillas(List<Sombrilla> sombrillas) {
         this.listaSombrillas = sombrillas;
         notifyDataSetChanged();
+    }
+
+    private void updateSombrillaInList(Sombrilla updatedSombrilla, int position) {
+        listaSombrillas.set(position, updatedSombrilla);
+        new Handler(Looper.getMainLooper()).post(() -> notifyItemChanged(position));
     }
 }

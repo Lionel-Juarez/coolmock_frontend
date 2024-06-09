@@ -13,7 +13,6 @@ public class Usuario {
 
     private long id;
     private String uid;
-    private String username;
     private String nombreCompleto;
     private String email;
     private String telefono;
@@ -22,7 +21,6 @@ public class Usuario {
     public void fromJSON(JSONObject jsonObject) throws JSONException {
         this.id = jsonObject.optLong("id", -1);
         this.uid = jsonObject.optString("uid", "");
-        this.username = jsonObject.optString("username", "");
         this.nombreCompleto = jsonObject.optString("nombreCompleto", "");
         this.email = jsonObject.optString("email", "");
         this.telefono = jsonObject.optString("telefono", "");

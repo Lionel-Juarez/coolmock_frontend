@@ -38,7 +38,6 @@ public class UsuarioAdapter extends RecyclerView.Adapter<UsuarioAdapter.UsuarioV
     @Override
     public void onBindViewHolder(@NonNull UsuarioViewHolder holder, int position) {
         Usuario usuario = usuarioList.get(position);
-        holder.nombre.setText(usuario.getUsername());
         holder.rol.setText(usuario.getRol());
 
         if (MainActivity.rol != null && MainActivity.rol.equals("ADMIN")) {

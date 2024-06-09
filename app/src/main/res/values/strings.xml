@@ -90,7 +90,6 @@
     <string name="metodo_pago">Payment method: %s</string>
     <string name="reserva_pagada">Paid?: %s</string>
     <string name="fecha_pago">Payment date: %s</string>
-    <string name="creado_por">Created by: %s</string>
     <string name="reservations">Reservations</string>
     <string name="no_reservas">No reservations for today</string>
     <string name="tvSombrillas">Reserved sunbeds:</string>
@@ -163,7 +162,6 @@
     <string name="content_edit">img edit</string>
     <string name="content_eliminar">img eliminar</string>
 
-    <string name="created_by">Created By:</string>
     <string name="fecha_ejemplo">07/06/24</string>
     <string name="title">Title</string>
     <string name="cliente_desconocido">Unknown client\n</string>
@@ -180,6 +178,7 @@
     <string name="titulo_cancelacion_reserva">Cancelación de reserva</string>
     <string name="titulo_llegada_reserva">Reserva ha llegado</string>
     <string name="content_icono">img icono</string>
+    <string name="motivo_cancelacion">Reason for cancellation\n</string>
 
 
     //Spinners

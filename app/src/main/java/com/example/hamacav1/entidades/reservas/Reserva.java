@@ -4,7 +4,6 @@ import android.util.Log;
 
 import com.example.hamacav1.entidades.clientes.Cliente;
 import com.example.hamacav1.entidades.sombrillas.Sombrilla;
-import com.example.hamacav1.entidades.usuarios.Usuario;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -28,7 +27,6 @@ public class Reserva implements Serializable {
     private Long idReserva;
     private List<Sombrilla> sombrillas;
     private Cliente cliente;
-    private Usuario creadaPor;
     private String estado;
     private boolean pagada;
     private String metodoPago;
@@ -37,7 +35,6 @@ public class Reserva implements Serializable {
     private LocalDateTime fechaReserva;
     private LocalDateTime fechaReservaRealizada;
     private String cantidadHamacas;
-    private String nombreUsuario;
 
     public void fromJSON(JSONObject json) throws JSONException {
         this.idReserva = json.optLong("idReserva");
@@ -49,7 +46,6 @@ public class Reserva implements Serializable {
         this.fechaPago = parseDateTime(json.optString("fechaPago"));
         this.fechaReserva = parseDateTime(json.optString("fechaReserva"));
         this.fechaReservaRealizada = parseDateTime(json.optString("fechaReservaRealizada"));
-        this.nombreUsuario = json.optString("nombreUsuario");
 
         JSONArray sombrillasJson = json.optJSONArray("sombrillas");
         if (sombrillasJson != null) {
@@ -65,12 +61,6 @@ public class Reserva implements Serializable {
         if (clienteJson != null) {
             this.cliente = new Cliente();
             this.cliente.fromJSON(clienteJson);
-        }
-
-        JSONObject usuarioJson = json.optJSONObject("creadaPor");
-        if (usuarioJson != null) {
-            this.creadaPor = new Usuario();
-            this.creadaPor.fromJSON(usuarioJson);
         }
     }
 

@@ -16,6 +16,7 @@ import android.widget.ImageView;
 import com.example.hamacav1.MainActivity;
 import com.example.hamacav1.R;
 
+
 @SuppressLint("CustomSplashScreen")
 public class SplashScreenActivity extends AppCompatActivity {
 
@@ -27,7 +28,6 @@ public class SplashScreenActivity extends AppCompatActivity {
         setContentView(R.layout.activity_splash_screen);
 
         ImageView splashLogo = findViewById(R.id.splash_logo);
-
         Animation fadeIn = AnimationUtils.loadAnimation(this, R.anim.fade_in);
         splashLogo.startAnimation(fadeIn);
 
@@ -48,3 +48,4 @@ public class SplashScreenActivity extends AppCompatActivity {
         }, SPLASH_TIMER);
     }
 }
+

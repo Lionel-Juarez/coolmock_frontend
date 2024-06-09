@@ -25,7 +25,6 @@ import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.example.hamacav1.MainActivity;
 import com.example.hamacav1.entidades.clientes.Cliente;
 import com.example.hamacav1.R;
 import com.example.hamacav1.entidades.clientes.NuevoCliente;
@@ -200,7 +199,6 @@ public class NuevaReserva extends AppCompatActivity {
                     return;
                 }
                 String uidUsuario = user.getUid();
-                String nombreUsuario = MainActivity.nombreUsuario;
 
                 json.put("fechaReserva", Utils.convertToIso8601(fechaReserva));
                 json.put("fechaReservaRealizada", Utils.convertToIso8601(fechaReservaRealizada));
@@ -210,13 +208,11 @@ public class NuevaReserva extends AppCompatActivity {
                 json.put("horaLlegada", horaLlegada);
                 json.put("idCliente", idCliente);
                 json.put("uid", uidUsuario); // Asegúrate de usar "uid" aquí
-                json.put("nombreUsuario", nombreUsuario);
                 json.put("idSombrillas", new JSONArray(idsSombrillas));
                 if (pagada) {
                     json.put("fechaPago", Utils.convertToIso8601(fechaReserva));
                 }
 
-                Log.d("NombreUsuario", nombreUsuario);
 
                 SharedPreferences sharedPreferences = getSharedPreferences("MyAppPrefs", Context.MODE_PRIVATE);
                 String idToken = sharedPreferences.getString("idToken", null);

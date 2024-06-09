@@ -153,7 +153,6 @@ public class NuevoCliente extends AppCompatActivity {
                             JSONObject responseObject = new JSONObject(responseData);
                             long idCliente = responseObject.getLong("idCliente");
                             Cliente newClient = new Cliente(idCliente, nombreCompleto, numeroTelefono, email, "CLIENTE", uid);
-                            Log.d("NuevoCliente", "Cliente creado con éxito, ID: " + idCliente);
 
                             handler.post(() -> {
                                 String titulo = getResources().getString(R.string.creacion_cliente);

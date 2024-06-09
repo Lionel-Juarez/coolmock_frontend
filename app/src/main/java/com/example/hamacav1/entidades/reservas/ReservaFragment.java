@@ -291,19 +291,11 @@ public class ReservaFragment extends Fragment implements ReservaAdapter.Reservas
 
     private void processPayment(Reserva reserva, String metodoPago) {
         reserva.setPagada(true);
-        reserva.setEstado("Ha llegado");
+        reserva.setEstado("Pendiente");
         reserva.setMetodoPago(metodoPago);
         reserva.setFechaPago(LocalDateTime.now());
 
-        // Actualizar las sombrillas asociadas
-        for (Sombrilla sombrilla : reserva.getSombrillas()) {
-            sombrilla.setReservada(false);
-            sombrilla.setOcupada(true);
-        }
-
-        Log.d("ReservaFragment", "Updating reserva: " + reserva.getIdReserva());  // Log para la reserva
-
-        viewModel.updateReserva(reserva, (success) -> {
+        viewModel.updatePagoReserva(reserva, (success) -> {
             if (success) {
                 Pago pago = new Pago();
                 pago.setReserva(reserva);
@@ -314,12 +306,9 @@ public class ReservaFragment extends Fragment implements ReservaAdapter.Reservas
                 pago.setDetallesPago("Pago realizado para la reserva con ID " + reserva.getIdReserva());
                 pago.setTipoHamaca("Standard"); // Modificar según sea necesario
 
-                Log.d("ReservaFragment", "Creating pago for reserva: " + reserva.getIdReserva());  // Log para el pago
-
                 pagoViewModel.createPago(pago, (pagoSuccess) -> {
                     if (pagoSuccess) {
-                        // Crear el reporte solo si la creación del pago fue exitosa
-                        String titulo = getResources().getString(R.string.titulo_pagando_reserva);
+                        String titulo = "Pago de Reserva";
                         String descripcion = "La reserva con ID " + reserva.getIdReserva() + " ha sido pagada utilizando " + metodoPago + ".";
                         NuevoReporte.crearReporte(getContext(), titulo, descripcion);
                     } else {
@@ -333,9 +322,47 @@ public class ReservaFragment extends Fragment implements ReservaAdapter.Reservas
     }
     @Override
     public void onCambiarEstadoClicked(Reserva reserva) {
-
+        showChangeStateDialog(reserva);
     }
 
+    private void showChangeStateDialog(Reserva reserva) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(requireContext());
+        builder.setTitle("Cambiar Estado de la Reserva");
+
+        String[] estados = {"Ha llegado", "Cancelar"};
+        builder.setItems(estados, (dialog, which) -> {
+            String selectedState = estados[which];
+            reserva.setEstado(selectedState);
+            if (selectedState.equals("Ha llegado")) {
+                for (Sombrilla sombrilla : reserva.getSombrillas()) {
+                    sombrilla.setReservada(false);
+                    sombrilla.setOcupada(true);
+                }
+                viewModel.updateLlegadaReserva(reserva, success -> {
+                    if (success) {
+                        Toast.makeText(getContext(), "Reserva actualizada con éxito", Toast.LENGTH_SHORT).show();
+                    } else {
+                        Toast.makeText(getContext(), "Error al actualizar la reserva", Toast.LENGTH_SHORT).show();
+                    }
+                });
+            } else if (selectedState.equals("Cancelar")) {
+                for (Sombrilla sombrilla : reserva.getSombrillas()) {
+                    sombrilla.setReservada(false);
+                    sombrilla.setOcupada(false);
+                }
+                viewModel.updateCancelacionReserva(reserva, success -> {
+                    if (success) {
+                        Toast.makeText(getContext(), "Reserva cancelada con éxito", Toast.LENGTH_SHORT).show();
+                    } else {
+                        Toast.makeText(getContext(), "Error al cancelar la reserva", Toast.LENGTH_SHORT).show();
+                    }
+                });
+            }
+        });
+
+        AlertDialog dialog = builder.create();
+        dialog.show();
+    }
     @Override
     public void onModificarClicked(Reserva reserva) {
 

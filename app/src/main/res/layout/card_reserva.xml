@@ -83,13 +83,6 @@
                 android:text="@string/sombrillas_reservadas" />
 
             <TextView
-                android:id="@+id/tvCreadoPor"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="4dp"
-                android:text="@string/creado_por" />
-
-            <TextView
                 android:id="@+id/tvPagada"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"

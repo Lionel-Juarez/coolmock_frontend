@@ -97,12 +97,6 @@ public class ReservaAdapter extends RecyclerView.Adapter<ReservaAdapter.ReservaV
             holder.btnPagar.setBackgroundColor(ContextCompat.getColor(context, R.color.principalButtonColor));
         }
 
-        if (reserva.getNombreUsuario() != null) {
-            holder.creadaPor.setText(context.getString(R.string.creado_por, reserva.getNombreUsuario()));
-        } else {
-            holder.creadaPor.setText(context.getString(R.string.creado_por, "Información no disponible"));
-        }
-
         StringBuilder numerosSombrillasBuilder = new StringBuilder();
         for (Sombrilla sombrilla : reserva.getSombrillas()) {
             numerosSombrillasBuilder.length();
@@ -173,7 +167,7 @@ public class ReservaAdapter extends RecyclerView.Adapter<ReservaAdapter.ReservaV
     }
 
     public static class ReservaViewHolder extends RecyclerView.ViewHolder {
-        TextView clienteNombre, fechaReserva, estado, metodoPago, pagada, fechaPago, creadaPor, sombrillasReservadas, horaLlegada;
+        TextView clienteNombre, fechaReserva, estado, metodoPago, pagada, fechaPago, sombrillasReservadas, horaLlegada;
         ImageView expandIcon;
         LinearLayout expandableView;
         CardView cardView;
@@ -187,7 +181,6 @@ public class ReservaAdapter extends RecyclerView.Adapter<ReservaAdapter.ReservaV
             metodoPago = itemView.findViewById(R.id.tvMetodoPago);
             pagada = itemView.findViewById(R.id.tvPagada);
             fechaPago = itemView.findViewById(R.id.tvFechaPago);
-            creadaPor = itemView.findViewById(R.id.tvCreadoPor);
             expandIcon = itemView.findViewById(R.id.expand_icon);
             expandableView = itemView.findViewById(R.id.expandable_view);
             cardView = itemView.findViewById(R.id.reserva_card);

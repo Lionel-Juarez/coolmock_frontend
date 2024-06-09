@@ -64,7 +64,6 @@ public class ReporteAdapter extends RecyclerView.Adapter<ReporteAdapter.ReportVi
         holder.fullComment.setText(reporte.getComentarioCompleto());
         holder.fullComment.setMaxLines(2);
         holder.creationDate.setText(reporte.getFechaCreacion());
-        holder.createdBy.setText(context.getString(R.string.created_by) + " " + reporte.getCreadoPor()); // Fixed the string concatenation
 
         boolean isExpanded = holder.expandableView.getVisibility() == View.VISIBLE;
         holder.expandIcon.setImageResource(isExpanded ? R.drawable.arriba24 : R.drawable.abajo24);
@@ -95,7 +94,7 @@ public class ReporteAdapter extends RecyclerView.Adapter<ReporteAdapter.ReportVi
     }
 
     public static class ReportViewHolder extends RecyclerView.ViewHolder {
-        TextView title, fullComment, creationDate, createdBy;
+        TextView title, fullComment, creationDate;
         ImageView delete, expandIcon;
         View expandableView;
 
@@ -104,7 +103,6 @@ public class ReporteAdapter extends RecyclerView.Adapter<ReporteAdapter.ReportVi
             title = itemView.findViewById(R.id.reportTitle);
             fullComment = itemView.findViewById(R.id.reportDescription);
             creationDate = itemView.findViewById(R.id.creationDate);
-            createdBy = itemView.findViewById(R.id.createdBy);
             expandableView = itemView.findViewById(R.id.expandable_view);
             expandIcon = itemView.findViewById(R.id.expand_icon);
 

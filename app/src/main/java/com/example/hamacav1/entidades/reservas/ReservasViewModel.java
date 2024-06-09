@@ -9,7 +9,9 @@ import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
 import com.example.hamacav1.R;
+import com.example.hamacav1.entidades.reportes.NuevoReporte;
 import com.example.hamacav1.entidades.sombrillas.Sombrilla;
+import com.example.hamacav1.entidades.sombrillas.SombrillaDetalles;
 import com.example.hamacav1.util.Utils;
 
 import java.io.IOException;
@@ -39,6 +41,7 @@ import org.jetbrains.annotations.NotNull;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+
 import android.os.Handler;
 import android.os.Looper;
 import android.widget.Toast;
@@ -148,6 +151,7 @@ public class ReservasViewModel extends ViewModel {
             }
         });
     }
+
     public void filterReservasByName(String name) {
         OkHttpClient client = new OkHttpClient();
         HttpUrl url = Objects.requireNonNull(HttpUrl.parse(context.getString(R.string.url_reservas))).newBuilder()
@@ -291,7 +295,7 @@ public class ReservasViewModel extends ViewModel {
         }
     }
 
-    public void updateReserva(Reserva reserva, Consumer<Boolean> callback) {
+    public void updatePagoReserva(Reserva reserva, Consumer<Boolean> callback) {
         ExecutorService executor = Executors.newSingleThreadExecutor();
         Handler handler = new Handler(Looper.getMainLooper());
 
@@ -308,16 +312,8 @@ public class ReservasViewModel extends ViewModel {
                 json.put("pagada", reserva.isPagada());
                 json.put("metodoPago", reserva.getMetodoPago());
                 json.put("fechaPago", Utils.convertToIso8601(finalFechaPago));
-
-                JSONArray sombrillasArray = new JSONArray();
-                for (Sombrilla sombrilla : reserva.getSombrillas()) {
-                    JSONObject sombrillaJson = new JSONObject();
-                    sombrillaJson.put("idSombrilla", sombrilla.getIdSombrilla());
-                    sombrillaJson.put("reservada", false);
-                    sombrillaJson.put("ocupada", true);
-                    sombrillasArray.put(sombrillaJson);
-                }
-                json.put("sombrillas", sombrillasArray);
+                json.put("estado",reserva.getEstado());
+                Log.e("", reserva.getEstado());
 
                 SharedPreferences sharedPreferences = context.getSharedPreferences("MyAppPrefs", Context.MODE_PRIVATE);
                 String idToken = sharedPreferences.getString("idToken", null);
@@ -335,6 +331,122 @@ public class ReservasViewModel extends ViewModel {
                             Toast.makeText(context, "Reserva actualizada con éxito", Toast.LENGTH_SHORT).show();
                             loadReservasByDateAndState(new Date(), "Pendiente");
                             callback.accept(true);
+                        });
+                    } else {
+                        String errorMessage = response.body() != null ? response.body().string() : "Respuesta vacía";
+                        handler.post(() -> {
+                            Utils.showError(context, "Error al actualizar reserva: " + errorMessage);
+                            callback.accept(false);
+                        });
+                    }
+                } catch (Exception e) {
+                    handler.post(() -> {
+                        Utils.showError(context, "Error de conexión al servidor: " + e.getMessage());
+                        callback.accept(false);
+                    });
+                }
+            } catch (Exception e) {
+                handler.post(() -> {
+                    Utils.showError(context, "Error al preparar datos: " + e.getMessage());
+                    callback.accept(false);
+                });
+            }
+        });
+    }
+
+    public void updateLlegadaReserva(Reserva reserva, Consumer<Boolean> callback) {
+        ExecutorService executor = Executors.newSingleThreadExecutor();
+        Handler handler = new Handler(Looper.getMainLooper());
+
+        executor.execute(() -> {
+            OkHttpClient client = new OkHttpClient();
+            MediaType MEDIA_TYPE_JSON = MediaType.parse("application/json; charset=utf-8");
+            JSONObject json = new JSONObject();
+            try {
+                json.put("idReserva", reserva.getIdReserva());
+                json.put("estado", "Ha llegado");
+
+                SharedPreferences sharedPreferences = context.getSharedPreferences("MyAppPrefs", Context.MODE_PRIVATE);
+                String idToken = sharedPreferences.getString("idToken", null);
+
+                RequestBody body = RequestBody.create(json.toString(), MEDIA_TYPE_JSON);
+                Request request = new Request.Builder()
+                        .url(context.getString(R.string.url_reservas) + "actualizarReserva/" + reserva.getIdReserva())
+                        .addHeader("Authorization", "Bearer " + idToken)
+                        .put(body)
+                        .build();
+
+                try (Response response = client.newCall(request).execute()) {
+                    if (response.isSuccessful()) {
+                        handler.post(() -> {
+                            String titulo = context.getString(R.string.titulo_llegada_reserva);
+                            String descripcion = "La reserva de " + reserva.getCliente().getNombreCompleto() + " ha llegado.";
+                            NuevoReporte.crearReporte(context, titulo, descripcion);
+
+                            Toast.makeText(context, "Reserva actualizada con éxito", Toast.LENGTH_SHORT).show();
+                            loadReservasByDateAndState(new Date(), "Pendiente");
+                            callback.accept(true);
+                            for (Sombrilla sombrilla : reserva.getSombrillas()) {
+                                handler.post(() -> SombrillaDetalles.updateSombrillaOnServer(sombrilla, context));
+                            }
+                        });
+                    } else {
+                        String errorMessage = response.body() != null ? response.body().string() : "Respuesta vacía";
+                        handler.post(() -> {
+                            Utils.showError(context, "Error al actualizar reserva: " + errorMessage);
+                            callback.accept(false);
+                        });
+                    }
+                } catch (Exception e) {
+                    handler.post(() -> {
+                        Utils.showError(context, "Error de conexión al servidor: " + e.getMessage());
+                        callback.accept(false);
+                    });
+                }
+            } catch (Exception e) {
+                handler.post(() -> {
+                    Utils.showError(context, "Error al preparar datos: " + e.getMessage());
+                    callback.accept(false);
+                });
+            }
+        });
+    }
+
+    public void updateCancelacionReserva(Reserva reserva, Consumer<Boolean> callback) {
+        ExecutorService executor = Executors.newSingleThreadExecutor();
+        Handler handler = new Handler(Looper.getMainLooper());
+
+        executor.execute(() -> {
+            OkHttpClient client = new OkHttpClient();
+            MediaType MEDIA_TYPE_JSON = MediaType.parse("application/json; charset=utf-8");
+            JSONObject json = new JSONObject();
+            try {
+                json.put("idReserva", reserva.getIdReserva());
+                json.put("estado", "Cancelada");
+
+                SharedPreferences sharedPreferences = context.getSharedPreferences("MyAppPrefs", Context.MODE_PRIVATE);
+                String idToken = sharedPreferences.getString("idToken", null);
+
+                RequestBody body = RequestBody.create(json.toString(), MEDIA_TYPE_JSON);
+                Request request = new Request.Builder()
+                        .url(context.getString(R.string.url_reservas) + "actualizarReserva/" + reserva.getIdReserva())
+                        .addHeader("Authorization", "Bearer " + idToken)
+                        .put(body)
+                        .build();
+
+                try (Response response = client.newCall(request).execute()) {
+                    if (response.isSuccessful()) {
+                        handler.post(() -> {
+                            String titulo = context.getString(R.string.titulo_cancelacion_reserva);
+                            String descripcion = "La reserva de " + reserva.getCliente().getNombreCompleto() + " ha sido cancelada.";
+                            NuevoReporte.crearReporte(context, titulo, descripcion);
+
+                            Toast.makeText(context, "Reserva cancelada con éxito", Toast.LENGTH_SHORT).show();
+                            loadReservasByDateAndState(new Date(), "Pendiente");
+                            callback.accept(true);
+                            for (Sombrilla sombrilla : reserva.getSombrillas()) {
+                                handler.post(() -> SombrillaDetalles.updateSombrillaOnServer(sombrilla, context));
+                            }
                         });
                     } else {
                         String errorMessage = response.body() != null ? response.body().string() : "Respuesta vacía";

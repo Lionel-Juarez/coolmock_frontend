@@ -46,6 +46,7 @@ public class SombrillaDetalles  extends DialogFragment {
     RadioButton radioOne, radioTwo;
     RadioGroup radioGroupHamacas;
     private SombrillaUpdateListener updateListener;
+    private static TextView tvDetalleEstado;
 
     @Override
     public void onAttach(@NonNull Context context) {
@@ -62,7 +63,7 @@ public class SombrillaDetalles  extends DialogFragment {
 
         TextView tvDetalleNumero = view.findViewById(R.id.tvDetalleNumeroSombrilla);
         TextView tvDetallePrecio = view.findViewById(R.id.tvDetallePrecio);
-        TextView tvDetalleEstado = view.findViewById(R.id.tvDetalleEstado);
+        tvDetalleEstado = view.findViewById(R.id.tvDetalleEstado);
         Button btnReservar = view.findViewById(R.id.btnReservar);
         Button btnOcupar = view.findViewById(R.id.btnOcupar);
         Button btnLiberar = view.findViewById(R.id.btnLiberar);
@@ -76,7 +77,7 @@ public class SombrillaDetalles  extends DialogFragment {
         if (sombrilla != null) {
             tvDetalleNumero.setText(sombrilla.getNumeroSombrilla());
             tvDetallePrecio.setText("Precio: €" + sombrilla.getPrecio());
-            actualizarEstado(tvDetalleEstado, sombrilla);
+            actualizarEstado(sombrilla);
 
             if (sombrilla.isReservada()) {
                 checkCantidadHamacas(sombrilla);
@@ -120,15 +121,14 @@ public class SombrillaDetalles  extends DialogFragment {
                 btnLiberar.setOnClickListener(v -> {
                     sombrilla.setReservada(false);
                     sombrilla.setOcupada(false);
-                    actualizarEstado(tvDetalleEstado, sombrilla);
-                    updateSombrillaOnServer(sombrilla);
+                    actualizarEstado(sombrilla);
+                    updateSombrillaOnServer(sombrilla, requireContext());
                     radioOne.setVisibility(View.GONE);
                     radioTwo.setVisibility(View.GONE);
 
                     String titulo = getString(R.string.titulo_liberando_sombrilla);
                     String descripcion = getString(R.string.descripcion_liberando_sombrilla, sombrilla.getIdSombrilla(), sombrilla.getCantidadHamacas());
                     NuevoReporte.crearReporte(getContext(), titulo, descripcion);
-
 
                     if (updateListener != null) {
                         updateListener.onSombrillaUpdated(sombrilla);
@@ -162,8 +162,8 @@ public class SombrillaDetalles  extends DialogFragment {
                         String cantidadHamacas = radioOne.isChecked() ? "1" : "2";
                         sombrilla.setCantidadHamacas(cantidadHamacas);
 
-                        actualizarEstado(tvDetalleEstado, sombrilla);
-                        updateSombrillaOnServer(sombrilla);
+                        actualizarEstado(sombrilla);
+                        updateSombrillaOnServer(sombrilla, requireContext());
 
                         String titulo = getString(R.string.titulo_ocupando_sombrilla);
                         String descripcion = getString(R.string.descripcion_ocupando_sombrilla, sombrilla.getIdSombrilla(), cantidadHamacas);
@@ -184,7 +184,7 @@ public class SombrillaDetalles  extends DialogFragment {
     }
 
     @SuppressLint("SetTextI18n")
-    private void actualizarEstado(TextView tvDetalleEstado, Sombrilla sombrilla) {
+    public static void actualizarEstado(Sombrilla sombrilla) {
         String estado = sombrilla.isReservada() ? "Reservada" : sombrilla.isOcupada() ? "Ocupada" : "Disponible";
         tvDetalleEstado.setText("Estado: " + estado);
     }
@@ -211,22 +211,22 @@ public class SombrillaDetalles  extends DialogFragment {
         return fragment;
     }
 
-    private void updateSombrillaOnServer(Sombrilla sombrilla) {
-        String url = getResources().getString(R.string.url_sombrillas) + "updateSombrilla/" + sombrilla.getIdSombrilla();
+    public static void updateSombrillaOnServer(Sombrilla sombrilla, Context context) {
+        String url = context.getResources().getString(R.string.url_sombrillas) + "updateSombrilla/" + sombrilla.getIdSombrilla();
         Log.d("SombrillaUpdate", "Actualizando sombrilla con ID: " + sombrilla.getIdSombrilla() + " con URL: " + url);
         OkHttpClient client = new OkHttpClient();
         MediaType JSON = MediaType.parse("application/json; charset=utf-8");
         JSONObject jsonObject = new JSONObject();
         try {
-            jsonObject.put("idSombrilla", sombrilla.getIdSombrilla());
             jsonObject.put("reservada", sombrilla.isReservada());
             jsonObject.put("ocupada", sombrilla.isOcupada());
-            jsonObject.put("cantidadHamacas", sombrilla.getCantidadHamacas());
+            jsonObject.put("cantidadHamacas", sombrilla.getCantidadHamacas()); // Incluye la cantidad de hamacas en la actualización
+
             RequestBody body = RequestBody.create(jsonObject.toString(), JSON);
 
             Request request = new Request.Builder()
                     .url(url)
-                    .put(body) // Usar PUT aquí
+                    .patch(body) // Usar PATCH aquí
                     .build();
 
             client.newCall(request).enqueue(new Callback() {
@@ -250,6 +250,7 @@ public class SombrillaDetalles  extends DialogFragment {
             Log.e("SombrillaUpdate", "Error al crear JSON para actualizar la sombrilla: " + e.getMessage(), e);
         }
     }
+
     private void checkCantidadHamacas(Sombrilla sombrilla) {
         String cantidadHamacas = sombrilla.getCantidadHamacas();
 
