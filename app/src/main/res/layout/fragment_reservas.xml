@@ -70,13 +70,12 @@
             android:id="@+id/tvNoReservas"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="center_horizontal"
-            android:gravity="center"
+            android:layout_gravity="center|center_vertical"
             android:padding="16dp"
-            android:paddingBottom="10dp"
+            android:layout_marginTop="250dp"
             android:text="@string/no_reservas"
             android:textColor="#616161"
-            android:textSize="20sp"
+            android:textSize="22sp"
             android:textStyle="bold"
             android:visibility="gone" />
 

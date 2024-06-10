@@ -23,7 +23,6 @@ import com.example.hamacav1.MainActivity;
 import com.example.hamacav1.entidades.reportes.NuevoReporte;
 import com.example.hamacav1.entidades.reservas.NuevaReserva;
 import com.example.hamacav1.R;
-import com.example.hamacav1.entidades.reservas.ReservaFragment;
 
 import org.jetbrains.annotations.NotNull;
 import org.json.JSONException;
@@ -65,6 +64,7 @@ public class SombrillaDetalles  extends DialogFragment {
         TextView tvDetalleNumero = view.findViewById(R.id.tvDetalleNumeroSombrilla);
         TextView tvDetallePrecio = view.findViewById(R.id.tvDetallePrecio);
         tvDetalleEstado = view.findViewById(R.id.tvDetalleEstado);
+        TextView tvCantidadHamacas = view.findViewById(R.id.tvCantidadHamacas);
         Button btnReservar = view.findViewById(R.id.btnReservar);
         Button btnOcupar = view.findViewById(R.id.btnOcupar);
         Button btnLiberar = view.findViewById(R.id.btnLiberar);
@@ -75,53 +75,23 @@ public class SombrillaDetalles  extends DialogFragment {
 
         Sombrilla sombrilla = getArguments() != null ? getArguments().getParcelable(ARG_HAMACA) : null;
         if (sombrilla != null) {
-
             tvDetalleNumero.setText(sombrilla.getNumeroSombrilla());
             tvDetallePrecio.setText(getString(R.string.sunbed_price) + sombrilla.getPrecio());
             actualizarEstado(sombrilla);
 
-            if (sombrilla.isReservada()) {
-                checkCantidadHamacas(sombrilla);
-
-                btnReservar.setVisibility(View.GONE);
+            // Verificar si el rol es CLIENTE
+            if ("CLIENTE".equals(MainActivity.rol)) {
                 btnOcupar.setVisibility(View.GONE);
                 btnLiberar.setVisibility(View.GONE);
-            } else if (sombrilla.isOcupada()) {
-                radioOne.setVisibility(View.VISIBLE);
-                radioTwo.setVisibility(View.VISIBLE);
-                radioOne.setEnabled(false);
-                radioTwo.setEnabled(false);
-                btnOcupar.setVisibility(View.GONE);
-                btnLiberar.setVisibility(View.VISIBLE);
+                radioOne.setVisibility(View.GONE);
+                radioTwo.setVisibility(View.GONE);
+                tvCantidadHamacas.setVisibility(View.GONE);
 
-                checkCantidadHamacas(sombrilla);
-
-                btnLiberar.setOnClickListener(v -> {
-                    sombrilla.setReservada(false);
-                    sombrilla.setOcupada(false);
-                    actualizarEstado(sombrilla);
-                    updateSombrillaOnServer(sombrilla, requireContext());
-                    radioOne.setVisibility(View.GONE);
-                    radioTwo.setVisibility(View.GONE);
-
-                    String titulo = getString(R.string.titulo_liberando_sombrilla);
-                    String descripcion = getString(R.string.descripcion_liberando_sombrilla, sombrilla.getIdSombrilla(), sombrilla.getCantidadHamacas());
-                    NuevoReporte.crearReporte(getContext(), titulo, descripcion);
-
-                    if (updateListener != null) {
-                        updateListener.onSombrillaUpdated(sombrilla);
-                    }
-                    dismiss();
-                });
-            } else {
-                btnReservar.setVisibility(View.VISIBLE);
-                btnOcupar.setVisibility(View.VISIBLE);
-                btnLiberar.setVisibility(View.VISIBLE);
-                radioOne.setVisibility(View.VISIBLE);
-                radioTwo.setVisibility(View.VISIBLE);
-                radioOne.setEnabled(true);
-                radioTwo.setEnabled(true);
-
+                if (sombrilla.isReservada() || sombrilla.isOcupada()) {
+                    btnReservar.setVisibility(View.GONE);
+                } else {
+                    btnReservar.setVisibility(View.VISIBLE);
+                }
                 btnReservar.setOnClickListener(v -> {
                     Intent intent = new Intent(getActivity(), NuevaReserva.class);
                     ArrayList<Long> idsSombrillas = new ArrayList<>();
@@ -132,28 +102,81 @@ public class SombrillaDetalles  extends DialogFragment {
                     }
                     dismiss();
                 });
-                btnOcupar.setOnClickListener(v -> {
-                    if (radioGroupHamacas.getCheckedRadioButtonId() != -1) {
-                        sombrilla.setOcupada(true);
-                        sombrilla.setReservada(false);
-                        String cantidadHamacas = radioOne.isChecked() ? "1" : "2";
-                        sombrilla.setCantidadHamacas(cantidadHamacas);
+            } else {
+                if (sombrilla.isReservada()) {
+                    checkCantidadHamacas(sombrilla);
+                    btnReservar.setVisibility(View.GONE);
+                    btnOcupar.setVisibility(View.GONE);
+                    btnLiberar.setVisibility(View.GONE);
+                } else if (sombrilla.isOcupada()) {
+                    radioOne.setVisibility(View.VISIBLE);
+                    radioTwo.setVisibility(View.VISIBLE);
+                    radioOne.setEnabled(false);
+                    radioTwo.setEnabled(false);
+                    btnOcupar.setVisibility(View.GONE);
+                    btnLiberar.setVisibility(View.VISIBLE);
 
+                    checkCantidadHamacas(sombrilla);
+
+                    btnLiberar.setOnClickListener(v -> {
+                        sombrilla.setReservada(false);
+                        sombrilla.setOcupada(false);
                         actualizarEstado(sombrilla);
                         updateSombrillaOnServer(sombrilla, requireContext());
+                        radioOne.setVisibility(View.GONE);
+                        radioTwo.setVisibility(View.GONE);
 
-                        String titulo = getString(R.string.titulo_ocupando_sombrilla);
-                        String descripcion = getString(R.string.descripcion_ocupando_sombrilla, sombrilla.getIdSombrilla(), cantidadHamacas);
+                        String titulo = getString(R.string.titulo_liberando_sombrilla);
+                        String descripcion = getString(R.string.descripcion_liberando_sombrilla, sombrilla.getIdSombrilla(), sombrilla.getCantidadHamacas());
                         NuevoReporte.crearReporte(getContext(), titulo, descripcion);
 
                         if (updateListener != null) {
                             updateListener.onSombrillaUpdated(sombrilla);
                         }
                         dismiss();
-                    } else {
-                        Toast.makeText(getContext(), "Seleccione una cantidad de hamacas para ocupar", Toast.LENGTH_SHORT).show();
-                    }
-                });
+                    });
+                } else {
+                    btnReservar.setVisibility(View.VISIBLE);
+                    btnOcupar.setVisibility(View.VISIBLE);
+                    btnLiberar.setVisibility(View.VISIBLE);
+                    radioOne.setVisibility(View.VISIBLE);
+                    radioTwo.setVisibility(View.VISIBLE);
+                    radioOne.setEnabled(true);
+                    radioTwo.setEnabled(true);
+
+                    btnReservar.setOnClickListener(v -> {
+                        Intent intent = new Intent(getActivity(), NuevaReserva.class);
+                        ArrayList<Long> idsSombrillas = new ArrayList<>();
+                        idsSombrillas.add(sombrilla.getIdSombrilla());
+                        intent.putExtra("idsSombrillas", idsSombrillas);
+                        if (updateListener != null) {
+                            updateListener.getNuevaReservaLauncher().launch(intent);
+                        }
+                        dismiss();
+                    });
+                    btnOcupar.setOnClickListener(v -> {
+                        if (radioGroupHamacas.getCheckedRadioButtonId() != -1) {
+                            sombrilla.setOcupada(true);
+                            sombrilla.setReservada(false);
+                            String cantidadHamacas = radioOne.isChecked() ? "1" : "2";
+                            sombrilla.setCantidadHamacas(cantidadHamacas);
+
+                            actualizarEstado(sombrilla);
+                            updateSombrillaOnServer(sombrilla, requireContext());
+
+                            String titulo = getString(R.string.titulo_ocupando_sombrilla);
+                            String descripcion = getString(R.string.descripcion_ocupando_sombrilla, sombrilla.getIdSombrilla(), cantidadHamacas);
+                            NuevoReporte.crearReporte(getContext(), titulo, descripcion);
+
+                            if (updateListener != null) {
+                                updateListener.onSombrillaUpdated(sombrilla);
+                            }
+                            dismiss();
+                        } else {
+                            Toast.makeText(getContext(), "Seleccione una cantidad de hamacas para ocupar", Toast.LENGTH_SHORT).show();
+                        }
+                    });
+                }
             }
         }
 
