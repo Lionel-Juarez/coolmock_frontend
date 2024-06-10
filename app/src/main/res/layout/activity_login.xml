@@ -11,6 +11,7 @@
         android:id="@+id/backgroundImage"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:contentDescription="@string/content_fondo"
         android:scaleType="centerCrop"
         android:src="@drawable/fondo1" />
 
@@ -27,7 +28,7 @@
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="WELCOME!"
+            android:text="@string/welcome"
             android:id="@+id/loginText"
             android:textSize="36sp"
             android:textAlignment="center"
@@ -40,7 +41,7 @@
             android:layout_height="50dp"
             android:layout_marginTop="40dp"
             android:background="@drawable/rounded_corners"
-            android:drawableLeft="@drawable/baseline_person_24"
+            android:drawableStart="@drawable/baseline_person_24"
             android:drawablePadding="8dp"
             android:hint="@string/username"
             android:padding="8dp"
@@ -53,7 +54,7 @@
             android:layout_height="50dp"
             android:layout_marginTop="20dp"
             android:background="@drawable/rounded_corners"
-            android:drawableLeft="@drawable/baseline_password_24_principal_color"
+            android:drawableStart="@drawable/baseline_password_24_principal_color"
             android:drawablePadding="8dp"
             android:hint="@string/password"
             android:inputType="textPassword"
@@ -81,6 +82,8 @@
             android:padding="8dp"
             android:text="@string/forgot_password"
             android:textColor="@color/black"
+            android:background="@drawable/rounded_corners"
+            android:textStyle="bold"
             android:textSize="20sp" />
 
         <com.google.android.material.divider.MaterialDivider
@@ -98,7 +101,9 @@
             android:layout_gravity="center"
             android:text="@string/not_registered"
             android:textAlignment="center"
+            android:background="@drawable/rounded_corners"
             android:textColor="@color/black"
+            android:textStyle="bold"
             android:textSize="20sp" />
 
     </LinearLayout>

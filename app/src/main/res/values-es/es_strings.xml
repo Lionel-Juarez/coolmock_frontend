@@ -112,7 +112,7 @@
     <string name="left_sombrilla">Izquierda</string>
     <string name="right_sombrilla">Derecha</string>
     <string name="both_sombrillas">Ambas</string>
-    <string name="select_sunbed">Seleccionar cantidad de tumbonas</string>
+    <string name="select_sunbed">Cantidad de tumbonas</string>
     <string name="select_time">Selecciona una hora</string>
     <string name="select_hour">Selecciona una hora</string>
     <string name="cliente">Cliente:</string>
@@ -203,6 +203,13 @@
     <string name="filter_by_method">Filtrar por método de pago</string>
     <string name="_0">0</string>
     <string name="content_euro">img euro</string>
+    <string name="datos_cliente">!Estos son tus datos!</string>
+    <string name="volver">Volver</string>
+    <string name="cuenta_cliente">Tu cuenta</string>
+    <string name="cliente_modificado">Datos modificados correctamente</string>
+    <string name="welcome">!BIENVENIDO!</string>
+    <string name="usuario">Usuario</string>
+
 
 
     //Spinners

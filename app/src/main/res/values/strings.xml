@@ -117,7 +117,7 @@
     <string name="select_sunbed">Select number of sunbeds</string>
     <string name="select_time">Select a time</string>
     <string name="select_hour">Select an hour</string>
-    <string name="cliente">Customer:</string>
+    <string name="cliente">Customer</string>
     <string name="horaLlegada">Arrival time: %s</string>
     <string name="sombrillas">Parcel</string>
     <string name="historial">Record</string>
@@ -200,6 +200,12 @@
     <string name="filter_by_method">Filter by payment method</string>
     <string name="_0">0</string>
     <string name="content_euro">img euro</string>
+    <string name="datos_cliente">These are your data!\n</string>
+    <string name="volver">Back</string>
+    <string name="cuenta_cliente">Your Account</string>
+    <string name="cliente_modificado">Customer modified successfully</string>
+    <string name="welcome">WELCOME!</string>
+    <string name="usuario">User</string>
 
 
     //Spinners

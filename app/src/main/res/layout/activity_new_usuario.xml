@@ -11,6 +11,7 @@
         android:id="@+id/backgroundImage"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:contentDescription="@string/content_fondo"
         android:scaleType="centerCrop"
         android:src="@drawable/fondo1" />
 
@@ -37,9 +38,9 @@
                 android:textAlignment="center"
                 android:textColor="@color/black"
                 android:id="@+id/tv_new_usuario_title"
-                android:text="@string/nuevo_usuario"
-                android:layout_marginTop="40dp"
-                android:layout_marginBottom="20dp"
+                android:text="@string/usuario"
+                android:layout_marginTop="10dp"
+                android:layout_marginBottom="10dp"
                 android:textStyle="bold"
                 android:textSize="28sp" />
 
@@ -51,17 +52,17 @@
 
             <EditText
                 android:id="@+id/et_new_nombre_usuario"
-                android:textSize="18sp"
-                android:hint="@string/user_name_hint"
                 android:layout_width="match_parent"
                 android:layout_height="60dp"
-                android:background="@drawable/card_border"
                 android:layout_marginTop="20dp"
-                android:padding="16dp"
+                android:background="@drawable/card_border"
                 android:drawableStart="@drawable/baseline_person_24"
-                android:drawablePadding="20dp"
-                android:gravity="start|center_vertical"
-                android:textColor="@color/principalColor"/>
+                android:drawablePadding="8dp"
+                android:hint="@string/user_name_hint"
+                android:padding="8dp"
+                android:textColor="@color/principalColor"
+                android:textSize="18sp"
+                android:gravity="start|center_vertical" />
 
             <EditText
                 android:id="@+id/signup_email"
@@ -83,7 +84,7 @@
                 android:layout_height="60dp"
                 android:layout_marginTop="20dp"
                 android:background="@drawable/card_border"
-                android:drawableStart="@drawable/baseline_contact_phone_24"
+                android:drawableStart="@drawable/baseline_local_phone_24"
                 android:drawablePadding="8dp"
                 android:hint="@string/telefono_hint"
                 android:inputType="phone"
@@ -94,18 +95,18 @@
 
             <EditText
                 android:id="@+id/et_new_password_usuario"
-                android:textSize="18sp"
-                android:hint="@string/password_hint"
                 android:layout_width="match_parent"
                 android:layout_height="60dp"
-                android:background="@drawable/card_border"
                 android:layout_marginTop="20dp"
-                android:padding="16dp"
+                android:background="@drawable/card_border"
                 android:drawableStart="@drawable/baseline_password_24_principal_color"
-                android:drawablePadding="20dp"
-                android:gravity="start|center_vertical"
+                android:drawablePadding="8dp"
+                android:hint="@string/password_hint"
+                android:inputType="textPassword"
+                android:padding="8dp"
                 android:textColor="@color/principalColor"
-                android:inputType="textPassword"/>
+                android:textSize="18sp"
+                android:gravity="start|center_vertical" />
 
             <Spinner
                 android:id="@+id/spinner_usuario_rol"

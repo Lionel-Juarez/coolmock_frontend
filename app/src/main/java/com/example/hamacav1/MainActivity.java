@@ -52,8 +52,12 @@ public class MainActivity extends AppCompatActivity {
         renovarToken();
 
         boolean loadReservaFragment = getIntent().getBooleanExtra("load_reserva_fragment", false);
+        boolean loadCuentasFragment = getIntent().getBooleanExtra("load_cuentas_fragment", false);
+
         if (loadReservaFragment) {
             replaceFragment(new ReservaFragment());
+        } else if (loadCuentasFragment) {
+            replaceFragment(new CuentasFragment());
         } else {
             replaceFragment(new ReservaFragment());
         }

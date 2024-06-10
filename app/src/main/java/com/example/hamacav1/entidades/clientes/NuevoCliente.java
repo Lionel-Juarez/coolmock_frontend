@@ -10,13 +10,14 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 
-import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.example.hamacav1.MainActivity;
 import com.example.hamacav1.R;
 import com.example.hamacav1.entidades.reportes.NuevoReporte;
 import com.example.hamacav1.util.Internetop;
@@ -57,6 +58,13 @@ public class NuevoCliente extends AppCompatActivity {
             assert cliente != null;
             fillClientData(cliente);
         }
+
+        SharedPreferences sharedPreferences = getSharedPreferences("MyAppPrefs", MODE_PRIVATE);
+        String rol = sharedPreferences.getString("rol", "CLIENTE");
+
+        if ("CLIENTE".equals(rol)) {
+            etEmail.setEnabled(false); // Email no editable para clientes
+        }
     }
 
     private void fillClientData(Cliente cliente) {
@@ -69,7 +77,6 @@ public class NuevoCliente extends AppCompatActivity {
     public void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
     }
-
     public void saveCliente(View view) {
         String nombreCompleto = etNombreCompleto.getText().toString();
         String numeroTelefono = etNumeroTelefono.getText().toString();
@@ -133,17 +140,26 @@ public class NuevoCliente extends AppCompatActivity {
                 json.put("rol", "CLIENTE");
 
                 // Añadir el uid solo si está disponible
-                String uid = null; // O cualquier otra forma de obtener el uid si está disponible
+                String uid = null;
+                if (MainActivity.rol.equals("CLIENTE")) {
+                    uid = cliente.getUid(); // Usar el uid del cliente actual si el rol es CLIENTE
+                }
 
                 SharedPreferences sharedPreferences = getSharedPreferences("MyAppPrefs", Context.MODE_PRIVATE);
                 String idToken = sharedPreferences.getString("idToken", null);
 
                 RequestBody body = RequestBody.create(json.toString(), MEDIA_TYPE_JSON);
-                Request request = new Request.Builder()
+                Request.Builder requestBuilder = new Request.Builder()
                         .url(url)
-                        .addHeader("Authorization", "Bearer " + idToken)
-                        .post(body)
-                        .build();
+                        .addHeader("Authorization", "Bearer " + idToken);
+
+                if (isEditMode) {
+                    requestBuilder.put(body); // Usar PUT para actualizar
+                } else {
+                    requestBuilder.post(body); // Usar POST para crear
+                }
+
+                Request request = requestBuilder.build();
 
                 try (Response response = client.newCall(request).execute()) {
                     if (response.isSuccessful()) {
@@ -159,6 +175,8 @@ public class NuevoCliente extends AppCompatActivity {
                                 String descripcion = "Cliente " + nombreCompleto + " creado con éxito.";
 
                                 NuevoReporte.crearReporte(getApplicationContext(), titulo, descripcion);
+                                // Mostrar mensaje de éxito
+                                Toast.makeText(NuevoCliente.this, getString(R.string.cliente_modificado), Toast.LENGTH_SHORT).show();
 
                                 Intent resultIntent = new Intent();
                                 resultIntent.putExtra("cliente", newClient);
@@ -170,19 +188,18 @@ public class NuevoCliente extends AppCompatActivity {
                         }
                     } else {
                         String errorMessage = response.body() != null ? response.body().string() : "Respuesta vacía";
-                        Log.e("sendTask", "Error al crear cliente, respuesta del servidor: " + errorMessage);
                         handler.post(() -> Utils.showError(getApplicationContext(), "Error al crear cliente: " + errorMessage));
                     }
                 } catch (Exception e) {
-                    Log.e("sendTask", "Excepción al enviar datos del cliente: " + e.getMessage(), e);
                     handler.post(() -> Utils.showError(getApplicationContext(), "Error de conexión al servidor: " + e.getMessage()));
                 }
             } catch (Exception e) {
-                Log.e("sendTask", "Excepción al enviar datos del cliente: " + e.getMessage(), e);
                 handler.post(() -> Utils.showError(getApplicationContext(), "Error de conexión al servidor: " + e.getMessage()));
             }
         });
     }
+
+
     public void cancel(View view) {
         Utils.closeActivity(this);
     }

@@ -20,6 +20,7 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.hamacav1.MainActivity;
 import com.example.hamacav1.R;
 import com.example.hamacav1.util.Internetop;
 import com.example.hamacav1.util.Utils;
@@ -46,6 +47,7 @@ public class ClienteFragment extends Fragment implements ClienteAdapter.ClienteA
     private RecyclerView clienteRecyclerView;
     private ClienteAdapter cliente;
     private List<Cliente> clienteList;
+    private Cliente clienteActual;
     ActivityResultLauncher<Intent> nuevoResultLauncher = registerForActivityResult(
             new ActivityResultContracts.StartActivityForResult(),
             result -> {
@@ -58,15 +60,20 @@ public class ClienteFragment extends Fragment implements ClienteAdapter.ClienteA
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_clientes, container, false);
-        clienteRecyclerView = view.findViewById(R.id.clientesRecyclerView);
-        clienteRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
-        clienteList = new ArrayList<>();
-        cliente = new ClienteAdapter(clienteList, getContext(), this);
-        clienteRecyclerView.setAdapter(cliente);
 
-        loadClientesFromBackend();
+        if ("CLIENTE".equals(MainActivity.rol)) {
+            cargarDatosClienteActual();
+        } else {
+            clienteRecyclerView = view.findViewById(R.id.clientesRecyclerView);
+            clienteRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+            clienteList = new ArrayList<>();
+            cliente = new ClienteAdapter(clienteList, getContext(), this);
+            clienteRecyclerView.setAdapter(cliente);
 
-        view.findViewById(R.id.fab_add_cliente).setOnClickListener(v -> newCliente());
+            loadClientesFromBackend();
+
+            view.findViewById(R.id.fab_add_cliente).setOnClickListener(v -> newCliente());
+        }
 
         return view;
     }
@@ -75,7 +82,6 @@ public class ClienteFragment extends Fragment implements ClienteAdapter.ClienteA
         Intent intent = new Intent(getContext(), NuevoCliente.class);
         nuevoResultLauncher.launch(intent);
     }
-
     private void loadClientesFromBackend() {
         String url = getResources().getString(R.string.url_clientes);
         OkHttpClient client = new OkHttpClient();
@@ -212,6 +218,65 @@ public class ClienteFragment extends Fragment implements ClienteAdapter.ClienteA
         }
     }
 
+    private void cargarDatosClienteActual() {
+        SharedPreferences sharedPreferences = requireActivity().getSharedPreferences("MyAppPrefs", Context.MODE_PRIVATE);
+        String userId = sharedPreferences.getString("userId", null);
+        if (userId != null) {
+            String url = getResources().getString(R.string.url_clientes) + "uid/" + userId;
+            OkHttpClient client = new OkHttpClient();
+
+            String idToken = sharedPreferences.getString("idToken", null);
+
+            Request request = new Request.Builder()
+                    .url(url)
+                    .addHeader("Authorization", "Bearer " + idToken)
+                    .build();
+
+            Log.d("CuentasFragment", "Cargando datos del cliente actual desde: " + url);
+
+            client.newCall(request).enqueue(new Callback() {
+                @Override
+                public void onFailure(@NotNull Call call, @NotNull IOException e) {
+                    Log.e("CuentasFragment", "Error al cargar datos del cliente actual: ", e);
+                }
+
+                @Override
+                public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
+                    if (!response.isSuccessful()) {
+                        Log.e("CuentasFragment", "Respuesta no exitosa del servidor: " + response);
+                        throw new IOException("Código inesperado " + response);
+                    }
+
+                    assert response.body() != null;
+                    final String responseData = response.body().string();
+                    Log.d("CuentasFragment", "Datos del cliente cargados correctamente: " + responseData);
+
+                    requireActivity().runOnUiThread(() -> {
+                        if (!isAdded()) {
+                            Log.w("CuentasFragment", "Fragmento no adjunto a una actividad, abortando operación.");
+                            return;
+                        }
+
+                        try {
+                            JSONObject jsonObject = new JSONObject(responseData);
+                            clienteActual = new Cliente();
+                            clienteActual.fromJSON(jsonObject);
+                            abrirModoEdicion(clienteActual);
+                        } catch (JSONException e) {
+                            Log.e("CuentasFragment", "Error al parsear datos del cliente: ", e);
+                        }
+                    });
+                }
+            });
+        }
+    }
+
+    private void abrirModoEdicion(Cliente cliente) {
+        Intent intent = new Intent(getContext(), NuevoCliente.class);
+        intent.putExtra("cliente", cliente);
+        intent.putExtra("from_cuenta", true);
+        nuevoResultLauncher.launch(intent);
+    }
 
     private void getListaTask(String url) {
         ExecutorService executor = Executors.newSingleThreadExecutor();

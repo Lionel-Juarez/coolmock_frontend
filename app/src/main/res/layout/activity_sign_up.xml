@@ -127,6 +127,8 @@
             android:padding="8dp"
             android:text="@string/already_user"
             android:textColor="@color/black"
+            android:background="@drawable/rounded_corners"
+            android:textStyle="bold"
             android:textSize="18sp" />
 
     </LinearLayout>
