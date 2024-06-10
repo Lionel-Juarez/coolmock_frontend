@@ -77,7 +77,7 @@ public class SombrillaFragment extends Fragment implements SombrillaDetalles.Som
         TextView tvFechaReserva = view.findViewById(R.id.tvFechaReserva);
         @SuppressLint("SimpleDateFormat") String fechaActual = new SimpleDateFormat("dd/MM/yy").format(new Date());
         tvFechaReserva.setText(fechaActual);
-        tvFechaReserva.setTextColor(ContextCompat.getColor(requireContext(), R.color.principalButtonColor));
+        tvFechaReserva.setTextColor(ContextCompat.getColor(requireContext(), R.color.principalColor));
 
         cargarSombrillas(Calendar.getInstance().get(Calendar.YEAR), Calendar.getInstance().get(Calendar.MONTH), Calendar.getInstance().get(Calendar.DAY_OF_MONTH));
         setupOpenDatePicker(view);
@@ -161,8 +161,6 @@ public class SombrillaFragment extends Fragment implements SombrillaDetalles.Som
                                         JSONObject jsonObject = jsonArray.getJSONObject(i);
                                         Sombrilla sombrilla = Sombrilla.fromJSON(jsonObject);
                                         JSONArray reservas = jsonObject.optJSONArray("reservas");
-                                        if (reservas != null) {
-                                        }
                                         checkReservationsAndSetReserved(sombrilla, reservas, today);
                                         todasLasSombrillas.add(sombrilla);
                                     }

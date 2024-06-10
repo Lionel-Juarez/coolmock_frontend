@@ -29,17 +29,6 @@ public class ReservaAdapter extends RecyclerView.Adapter<ReservaAdapter.ReservaV
     private final ReservasAdapterCallback callback;
     private final SparseBooleanArray expandedState = new SparseBooleanArray();
     private final Long targetReservaId;
-
-    public void expandItem(int position) {
-        if (position < 0 || position >= reservaList.size()) {
-            return;
-        }
-        boolean isExpanded = expandedState.get(position, false);
-        expandedState.put(position, !isExpanded);
-        notifyItemChanged(position);
-    }
-
-
     public ReservaAdapter(List<Reserva> reservaList, Context context, ReservasAdapterCallback callback, Long targetReservaId) {
         this.reservaList = reservaList;
         this.context = context;
@@ -92,7 +81,7 @@ public class ReservaAdapter extends RecyclerView.Adapter<ReservaAdapter.ReservaV
         } else {
             holder.fechaPago.setVisibility(View.GONE);
             holder.metodoPago.setVisibility(View.GONE);
-
+            holder.btnPagar.setBackgroundColor(ContextCompat.getColor(context, R.color.principalColor));
             holder.btnPagar.setEnabled(true);
         }
 
@@ -163,7 +152,7 @@ public class ReservaAdapter extends RecyclerView.Adapter<ReservaAdapter.ReservaV
         ImageView expandIcon;
         LinearLayout expandableView;
         CardView cardView;
-        Button btnPagar, btnCambiarEstado, btnModificar;
+        Button btnPagar, btnCambiarEstado;
         public ReservaViewHolder(@NonNull View itemView) {
             super(itemView);
             clienteNombre = itemView.findViewById(R.id.tvReservaCliente);

@@ -1,10 +1,8 @@
 package com.example.hamacav1.entidades.reservas;
 
 import android.annotation.SuppressLint;
-import android.app.Activity;
 import android.app.DatePickerDialog;
 import android.content.Context;
-import android.content.Intent;
 import android.os.Bundle;
 import android.text.InputType;
 import android.util.Log;
@@ -20,8 +18,6 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import androidx.activity.result.ActivityResultLauncher;
-import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.core.content.ContextCompat;
@@ -59,15 +55,6 @@ public class ReservaFragment extends Fragment implements ReservaAdapter.Reservas
     private Long reservaId;
     private ProgressBar progressBar;
 
-    private final ActivityResultLauncher<Intent> editReservaLauncher = registerForActivityResult(
-            new ActivityResultContracts.StartActivityForResult(),
-            result -> {
-                if (result.getResultCode() == Activity.RESULT_OK) {
-                    viewModel.loadAllReservas();
-                }
-            }
-    );
-
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -92,7 +79,7 @@ public class ReservaFragment extends Fragment implements ReservaAdapter.Reservas
         reservasAdapter = new ReservaAdapter(new ArrayList<>(), getContext(), this, reservaId);
         reservasRecyclerView.setAdapter(reservasAdapter);
 
-        viewModel = new ViewModelProvider(this, new ViewModelProvider.Factory() {
+        viewModel = new ViewModelProvider(this, new ViewModelProvider.NewInstanceFactory() {
             @NonNull
             @Override
             public <T extends ViewModel> T create(@NonNull Class<T> modelClass) {
@@ -103,21 +90,23 @@ public class ReservaFragment extends Fragment implements ReservaAdapter.Reservas
             }
         }).get(ReservasViewModel.class);
 
-        pagoViewModel = new ViewModelProvider(this, new ViewModelProvider.Factory() {
+        pagoViewModel = new ViewModelProvider(this, new ViewModelProvider.NewInstanceFactory() {
             @NonNull
             @Override
             public <T extends ViewModel> T create(@NonNull Class<T> modelClass) {
                 if (modelClass.isAssignableFrom(PagoViewModel.class)) {
-                    return (T) new PagoViewModel(getActivity().getApplicationContext());
+                    return (T) new PagoViewModel(getActivity().getApplication());
                 }
                 throw new IllegalArgumentException("Unknown ViewModel class");
             }
         }).get(PagoViewModel.class);
 
+
+
         TextView tvFechaReserva = view.findViewById(R.id.tvFechaReserva);
         @SuppressLint("SimpleDateFormat") String fechaActual = new SimpleDateFormat("dd/MM/yy").format(new Date());
         tvFechaReserva.setText(fechaActual);
-        tvFechaReserva.setTextColor(ContextCompat.getColor(requireContext(), R.color.principalButtonColor));
+        tvFechaReserva.setTextColor(ContextCompat.getColor(requireContext(), R.color.principalColor));
 
         Date today = Calendar.getInstance().getTime();
         viewModel.loadReservasByDateAndState(today, "Pendiente");

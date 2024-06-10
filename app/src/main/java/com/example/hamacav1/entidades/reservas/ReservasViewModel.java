@@ -18,7 +18,6 @@ import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
@@ -57,6 +56,9 @@ public class ReservasViewModel extends ViewModel {
     private final MutableLiveData<Boolean> loading = new MutableLiveData<>();
     private final Context context;
 
+    private final MutableLiveData<Integer> pendientesCount = new MutableLiveData<>(0);
+    private final MutableLiveData<Integer> pagadasCount = new MutableLiveData<>(0);
+
     public ReservasViewModel(Context context) {
         this.context = context.getApplicationContext();
     }
@@ -69,7 +71,7 @@ public class ReservasViewModel extends ViewModel {
     }
 
     public void loadAllReservas() {
-        loading.postValue(true);  // Indicar que la carga está en progreso
+        loading.postValue(true);
         OkHttpClient client = new OkHttpClient.Builder()
                 .connectTimeout(30, TimeUnit.SECONDS)
                 .writeTimeout(30, TimeUnit.SECONDS)
@@ -90,8 +92,8 @@ public class ReservasViewModel extends ViewModel {
             public void onFailure(@NotNull Call call, @NotNull IOException e) {
                 Log.e("ReservasViewModel", "Error loading reservations", e);
                 errorMessages.postValue("Error al cargar las reservas: " + e.getMessage());
-                loading.postValue(false);  // Indicar que la carga ha finalizado
-                reservas.postValue(new ArrayList<>()); // Publicar una lista vacía en caso de error
+                loading.postValue(false);
+                reservas.postValue(new ArrayList<>());
             }
 
             @Override
@@ -103,13 +105,13 @@ public class ReservasViewModel extends ViewModel {
                     Log.e("ReservasViewModel", "Failed to fetch reservations");
                     reservas.postValue(new ArrayList<>());
                 }
-                loading.postValue(false);  // Indicar que la carga ha finalizado
+                loading.postValue(false);
             }
         });
     }
 
     public void loadReservasByDate(Date selectedDate) {
-        loading.postValue(true);  // Indicar que la carga está en progreso
+        loading.postValue(true);
         SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy", Locale.getDefault());
         String formattedDate = sdf.format(selectedDate);
 
@@ -136,7 +138,7 @@ public class ReservasViewModel extends ViewModel {
             public void onFailure(@NotNull Call call, @NotNull IOException e) {
                 Log.e("ReservasViewModel", "Error loading reservations", e);
                 errorMessages.postValue("Error al cargar las reservas: " + e.getMessage());
-                loading.postValue(false);  // Indicar que la carga ha finalizado
+                loading.postValue(false);
             }
 
             @Override
@@ -148,7 +150,7 @@ public class ReservasViewModel extends ViewModel {
                     Log.e("ReservasViewModel", "Failed to fetch reservations");
                     reservas.postValue(new ArrayList<>());
                 }
-                loading.postValue(false);  // Indicar que la carga ha finalizado
+                loading.postValue(false);
             }
         });
     }
@@ -232,6 +234,32 @@ public class ReservasViewModel extends ViewModel {
                 if (response.isSuccessful() && response.body() != null) {
                     String responseData = response.body().string();
                     processResponseData(responseData);
+
+                    // Contar hamacas pendientes y pagadas
+                    List<Reserva> reservasList = reservas.getValue();
+                    if (reservasList != null) {
+                        int pendientes = 0;
+                        int pagadas = 0;
+                        for (Reserva reserva : reservasList) {
+                            String cantidadHamacas = reserva.getCantidadHamacas();
+                            if (cantidadHamacas != null && !cantidadHamacas.isEmpty()) {
+                                try {
+                                    int cantidad = Integer.parseInt(cantidadHamacas);
+                                    if (reserva.isPagada()) {
+                                        pagadas += cantidad;
+                                    } else {
+                                        pendientes += cantidad;
+                                    }
+                                } catch (NumberFormatException e) {
+                                    Log.e("ReservasViewModel", "Error al convertir cantidad de hamacas a entero para la reserva con ID: " + reserva.getIdReserva(), e);
+                                }
+                            } else {
+                                Log.e("ReservasViewModel", "Cantidad de hamacas no válida para la reserva con ID: " + reserva.getIdReserva());
+                            }
+                        }
+                        pendientesCount.postValue(pendientes);
+                        pagadasCount.postValue(pagadas);
+                    }
                 } else {
                     Log.e("ReservasViewModel", "Failed to fetch reservations by date and state");
                     reservas.postValue(new ArrayList<>());
@@ -241,11 +269,10 @@ public class ReservasViewModel extends ViewModel {
         });
     }
 
-
     public void filterReservasByState(String state) {
         OkHttpClient client = new OkHttpClient();
         HttpUrl url = Objects.requireNonNull(HttpUrl.parse(context.getString(R.string.url_reservas))).newBuilder()
-                .addQueryParameter("estado", state)  // Asegúrate de que el nombre del parámetro coincide con el usado en el backend
+                .addQueryParameter("estado", state)
                 .build();
 
         SharedPreferences sharedPreferences = context.getSharedPreferences("MyAppPrefs", Context.MODE_PRIVATE);
@@ -292,7 +319,7 @@ public class ReservasViewModel extends ViewModel {
             this.reservas.postValue(reservas);
         } catch (JSONException e) {
             Log.e("ViewModel", "Error parsing reservations from JSON", e);
-            this.reservas.postValue(new ArrayList<>()); // Publicar una lista vacía en caso de error
+            this.reservas.postValue(new ArrayList<>());
         }
     }
 

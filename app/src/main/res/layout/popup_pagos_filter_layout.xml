@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:background="@drawable/background_with_border"
+    android:backgroundTint="#F3F3F3"
+    android:orientation="vertical"
+    android:padding="20dp">
+
+    <TextView
+        android:id="@+id/action_filter_date"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="?attr/selectableItemBackground"
+        android:drawablePadding="12dp"
+        android:padding="12dp"
+        android:text="@string/filter_by_date"
+        android:textColor="@color/black"
+        android:textSize="16sp"
+        app:drawableStartCompat="@drawable/fecha24" />
+
+    <com.google.android.material.divider.MaterialDivider
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:dividerInsetEnd="16dp"
+        app:dividerInsetStart="16dp" />
+
+    <TextView
+        android:id="@+id/action_filter_method"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="?attr/selectableItemBackground"
+        android:drawablePadding="12dp"
+        android:padding="12dp"
+        android:textColor="@color/black"
+        android:text="@string/filter_by_method"
+        android:textSize="16sp"/>
+<!--        app:drawableStartCompat="@drawable/metodo_pago"-->
+
+
+    <com.google.android.material.divider.MaterialDivider
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:dividerInsetEnd="16dp"
+        app:dividerInsetStart="16dp" />
+
+    <TextView
+        android:id="@+id/action_filter_range"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="?attr/selectableItemBackground"
+        android:drawablePadding="12dp"
+        android:padding="12dp"
+        android:text="@string/filter_by_range"
+        android:textColor="@color/black"
+        android:textSize="16sp"/>
+<!--        app:drawableStartCompat="@drawable/rango_fechas" -->
+
+    <com.google.android.material.divider.MaterialDivider
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:dividerInsetEnd="16dp"
+        app:dividerInsetStart="16dp" />
+
+    <TextView
+        android:id="@+id/action_show_all"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="?attr/selectableItemBackground"
+        android:drawablePadding="12dp"
+        android:padding="12dp"
+        android:textColor="@color/black"
+        android:text="@string/show_all"
+        android:textSize="16sp"
+        app:drawableStartCompat="@drawable/todas" />
+</LinearLayout>

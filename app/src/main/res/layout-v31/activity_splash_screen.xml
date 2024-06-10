@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:gravity="center">
+
+    <!-- Imagen de fondo -->
+    <ImageView
+        android:id="@+id/backgroundImage"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:contentDescription="@string/content_fondo"
+        android:scaleType="centerCrop"
+        android:src="@drawable/fondo1" />
+
+    <!-- Logo con animación -->
+    <ImageView
+        android:id="@+id/splash_logo"
+        android:layout_width="170dp"
+        android:layout_height="170dp"
+        android:contentDescription="@string/content_icono"
+        android:src="@drawable/icono"
+        android:background="@drawable/circle"
+        android:layout_centerInParent="true"
+        android:scaleType="centerCrop"
+        android:clipToOutline="true" />
+
+</RelativeLayout>

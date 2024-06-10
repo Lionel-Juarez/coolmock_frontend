@@ -11,6 +11,7 @@ import android.os.Handler;
 import android.util.Log;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
 
 import com.example.hamacav1.MainActivity;
@@ -22,14 +23,20 @@ public class SplashScreenActivity extends AppCompatActivity {
 
     public static int SPLASH_TIMER = 2000;
 
+    @SuppressLint("UseCompatLoadingForDrawables")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_splash_screen);
 
+        FrameLayout logoContainer = findViewById(R.id.logo_container);
         ImageView splashLogo = findViewById(R.id.splash_logo);
-        Animation fadeIn = AnimationUtils.loadAnimation(this, R.anim.fade_in);
-        splashLogo.startAnimation(fadeIn);
+
+        logoContainer.setBackground(getDrawable(R.drawable.circle));
+        splashLogo.setBackground(getDrawable(R.drawable.circle));
+
+        Animation logoAnimation = AnimationUtils.loadAnimation(this, R.anim.fade_in);
+        logoContainer.startAnimation(logoAnimation);
 
         new Handler().postDelayed(() -> {
             SharedPreferences sharedPreferences = getSharedPreferences("MyAppPrefs", Context.MODE_PRIVATE);
@@ -48,4 +55,5 @@ public class SplashScreenActivity extends AppCompatActivity {
         }, SPLASH_TIMER);
     }
 }
+
 

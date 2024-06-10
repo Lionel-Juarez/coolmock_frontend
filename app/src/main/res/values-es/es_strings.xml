@@ -194,6 +194,15 @@
     <string name="reservada">Reservada</string>
     <string name="ocupada">Ocupada</string>
     <string name="libre">Libre</string>
+    <string name="pendientes">Pendientes</string>
+    <string name="pagadas">Pagadas</string>
+    <string name="reservas_pagadas">Pagadas</string>
+    <string name="reservas_pendientes">Pendientes</string>
+    <string name="total_pagos">Total</string>
+    <string name="filter_by_range">Filtrar por días</string>
+    <string name="filter_by_method">Filtrar por método de pago</string>
+    <string name="_0">0</string>
+    <string name="content_euro">img euro</string>
 
 
     //Spinners

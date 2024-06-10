@@ -1,6 +1,5 @@
 package com.example.hamacav1;
 
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
@@ -56,7 +55,7 @@ public class MainActivity extends AppCompatActivity {
         if (loadReservaFragment) {
             replaceFragment(new ReservaFragment());
         } else {
-            replaceFragment(new ReservaFragment()); // Puedes cambiar esto si quieres cargar un fragmento diferente por defecto.
+            replaceFragment(new ReservaFragment());
         }
 
         binding.bottomNavigationView.setBackground(null);
@@ -114,9 +113,5 @@ public class MainActivity extends AppCompatActivity {
 
     public void selectSunbed() {
         binding.bottomNavigationView.setSelectedItemId(R.id.sunbed);
-    }
-
-    public void setSelectedItemId(int itemId) {
-        binding.bottomNavigationView.setSelectedItemId(itemId);
     }
 }

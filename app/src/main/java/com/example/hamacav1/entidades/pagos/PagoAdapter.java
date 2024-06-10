@@ -21,13 +21,20 @@ import java.util.List;
 import java.util.Locale;
 
 public class PagoAdapter extends RecyclerView.Adapter<PagoAdapter.PagoViewHolder> {
-
     private final List<Pago> pagoList;
     private final Context context;
+    private double totalPagos = 0.0; // Variable para el total de pagos
+    private final TextView tvPendientesCount;
+    private final TextView tvPagadasCount;
+    private final TextView tvTotalPagosHoyCount; // Agregado para el total de pagos
 
-    public PagoAdapter(List<Pago> pagoList, Context context) {
+    public PagoAdapter(List<Pago> pagoList, Context context, TextView tvPendientesCount, TextView tvPagadasCount, TextView tvTotalPagosHoyCount) {
         this.pagoList = pagoList;
         this.context = context;
+        this.tvPendientesCount = tvPendientesCount;
+        this.tvPagadasCount = tvPagadasCount;
+        this.tvTotalPagosHoyCount = tvTotalPagosHoyCount; // Agregado para el total de pagos
+        updateCounts();
     }
 
     @NonNull
@@ -72,13 +79,17 @@ public class PagoAdapter extends RecyclerView.Adapter<PagoAdapter.PagoViewHolder
             } else {
                 nombreCliente.setText("Cliente desconocido");
             }
-            cantidad.setText("€" + pago.getCantidad());
-            // Convertir LocalDateTime a Date y formatear
+            cantidad.setText(""+pago.getCantidad());
+
             LocalDateTime localDateTime = pago.getFechaPago();
-            Date date = Date.from(localDateTime.atZone(ZoneId.systemDefault()).toInstant());
-            SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy HH:mm", Locale.getDefault());
-            String formattedDate = dateFormat.format(date);
-            fecha.setText(formattedDate);
+            if (localDateTime != null) {
+                Date date = Date.from(localDateTime.atZone(ZoneId.systemDefault()).toInstant());
+                SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy HH:mm", Locale.getDefault());
+                String formattedDate = dateFormat.format(date);
+                fecha.setText(formattedDate);
+            } else {
+                fecha.setText("Fecha no disponible");
+            }
 
             metodoPago.setText(pago.getMetodoPago());
 
@@ -88,16 +99,48 @@ public class PagoAdapter extends RecyclerView.Adapter<PagoAdapter.PagoViewHolder
                 metodoPagoIcon.setImageResource(R.drawable.tarjeta32);
             }
         }
+
     }
 
-    public void addPagos(List<Pago> nuevosPagos) {
-        int positionStart = pagoList.size();
+    @SuppressLint("NotifyDataSetChanged")
+    public void setPagos(List<Pago> nuevosPagos) {
+        pagoList.clear();
         pagoList.addAll(nuevosPagos);
-        notifyItemRangeInserted(positionStart, nuevosPagos.size());
+        notifyDataSetChanged();
+        updateCounts();
     }
 
+    @SuppressLint("SetTextI18n")
+    private void updateCounts() {
+        int countPendientes = 0;
+        int countPagadas = 0;
+        totalPagos = 0.0;
+
+        for (Pago pago : pagoList) {
+            if (pago.getReserva() != null) {
+                if (pago.getReserva().isPagada()) {
+                    countPagadas++;
+                } else {
+                    countPendientes++;
+                }
+            }
+            totalPagos += pago.getCantidad(); // Sumar al total de pagos
+        }
+
+        tvPendientesCount.setText(String.valueOf(countPendientes));
+        tvPagadasCount.setText(String.valueOf(countPagadas));
+        tvTotalPagosHoyCount.setText("" + totalPagos); // Actualizar el total de pagos
+    }
+
+    @SuppressLint("SetTextI18n")
+    public void updateTotalPagos() {
+        totalPagos = 0.0;
+        for (Pago pago : pagoList) {
+            totalPagos += pago.getCantidad();
+        }
+        tvTotalPagosHoyCount.setText("" + totalPagos);
+    }
 
     public interface PagoAdapterCallback {
-
     }
 }
