@@ -46,7 +46,6 @@
     <string name="url_pagos">http://192.168.0.103:8080/api/pagos</string>
 
 
-
     <string name="eliminar_reporte">Delete report</string>
     <string name="are_you_sure">Are you sure?</string>
     <string name="yes">Yes</string>
@@ -206,6 +205,7 @@
     <string name="cliente_modificado">Customer modified successfully</string>
     <string name="welcome">WELCOME!</string>
     <string name="usuario">User</string>
+    <string name="tus_reservas">Your reservations!</string>
 
 
     //Spinners

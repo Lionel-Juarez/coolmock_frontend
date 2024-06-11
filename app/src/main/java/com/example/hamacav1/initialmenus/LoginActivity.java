@@ -115,10 +115,12 @@ public class LoginActivity extends AppCompatActivity {
                     try {
                         JSONObject jsonObject = new JSONObject(responseData);
                         String rol = jsonObject.optString("rol", "CLIENTE");
+                        long idCliente = jsonObject.optLong("idCliente", -1);
 
                         SharedPreferences sharedPreferences = getSharedPreferences("MyAppPrefs", Context.MODE_PRIVATE);
                         SharedPreferences.Editor editor = sharedPreferences.edit();
                         editor.putString("rol", rol);
+                        editor.putLong("idCliente", idCliente);
                         editor.apply();
 
                         runOnUiThread(() -> {

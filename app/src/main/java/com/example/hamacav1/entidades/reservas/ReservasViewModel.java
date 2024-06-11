@@ -189,6 +189,7 @@ public class ReservasViewModel extends ViewModel {
         });
     }
 
+
     public void loadReservasByDateAndState(Date selectedDate, String estado) {
         loading.postValue(true);
         SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy", Locale.getDefault());
@@ -497,4 +498,42 @@ public class ReservasViewModel extends ViewModel {
             }
         });
     }
+
+    public void filterReservasByIdCliente(Long idCliente) {
+        OkHttpClient client = new OkHttpClient();
+        HttpUrl url = Objects.requireNonNull(HttpUrl.parse(context.getString(R.string.url_reservas)))
+                .newBuilder()
+                .addPathSegment("cliente")
+                .addPathSegment(String.valueOf(idCliente))
+                .build();
+
+        SharedPreferences sharedPreferences = context.getSharedPreferences("MyAppPrefs", Context.MODE_PRIVATE);
+        String idToken = sharedPreferences.getString("idToken", null);
+
+        Request request = new Request.Builder()
+                .url(url)
+                .addHeader("Authorization", "Bearer " + idToken)
+                .build();
+
+        client.newCall(request).enqueue(new Callback() {
+            @Override
+            public void onFailure(@NotNull Call call, @NotNull IOException e) {
+                Log.e("ReservasViewModel", "Error loading reservations by client ID", e);
+                errorMessages.postValue("Error al cargar las reservas por cliente: " + e.getMessage());
+            }
+
+            @Override
+            public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
+                if (response.isSuccessful() && response.body() != null) {
+                    String responseData = response.body().string();
+                    processResponseData(responseData);
+                } else {
+                    Log.e("ReservasViewModel", "Failed to fetch reservations by client ID");
+                    reservas.postValue(new ArrayList<>());
+                }
+            }
+        });
+    }
+
+
 }

@@ -16,6 +16,7 @@ import androidx.cardview.widget.CardView;
 import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.hamacav1.MainActivity;
 import com.example.hamacav1.R;
 import com.example.hamacav1.entidades.sombrillas.Sombrilla;
 
@@ -97,6 +98,12 @@ public class ReservaAdapter extends RecyclerView.Adapter<ReservaAdapter.ReservaV
         String numerosSombrillas = numerosSombrillasBuilder.toString();
         holder.sombrillasReservadas.setText(context.getString(R.string.sombrillas_reservadas, numerosSombrillas));
 
+        // Ocultar el LinearLayout si el rol es "CLIENTE"
+        if ("CLIENTE".equals(MainActivity.rol)) {
+            holder.btnPagar.setVisibility(View.GONE);
+            holder.btnCambiarEstado.setVisibility(View.GONE);
+        }
+
         boolean isExpanded = expandedState.get(position, false); // Obtiene el estado actual
         holder.expandableView.setVisibility(isExpanded ? View.VISIBLE : View.GONE);
         holder.expandIcon.setImageResource(isExpanded ? R.drawable.arriba24 : R.drawable.abajo24);
@@ -119,6 +126,7 @@ public class ReservaAdapter extends RecyclerView.Adapter<ReservaAdapter.ReservaV
             holder.cardView.setBackground(ContextCompat.getDrawable(context, R.drawable.card_border));
         }
     }
+
 
     public void expandItem(int position, ReservaViewHolder holder) {
         boolean isExpanded = expandedState.get(position);

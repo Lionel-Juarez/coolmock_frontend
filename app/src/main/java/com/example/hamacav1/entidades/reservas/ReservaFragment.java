@@ -3,6 +3,7 @@ package com.example.hamacav1.entidades.reservas;
 import android.annotation.SuppressLint;
 import android.app.DatePickerDialog;
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.text.InputType;
 import android.util.Log;
@@ -33,15 +34,25 @@ import com.example.hamacav1.entidades.pagos.Pago;
 import com.example.hamacav1.entidades.pagos.PagoViewModel;
 import com.example.hamacav1.entidades.reportes.NuevoReporte;
 import com.example.hamacav1.entidades.sombrillas.Sombrilla;
+import com.google.firebase.database.annotations.NotNull;
 
 import org.jetbrains.annotations.Nullable;
+import org.json.JSONException;
+import org.json.JSONObject;
 
+import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
+
+import okhttp3.Call;
+import okhttp3.Callback;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.Response;
 
 public class ReservaFragment extends Fragment implements ReservaAdapter.ReservasAdapterCallback {
     public static final String EXTRA_RESERVA_ID = "EXTRA_RESERVA_ID";
@@ -101,15 +112,59 @@ public class ReservaFragment extends Fragment implements ReservaAdapter.Reservas
             }
         }).get(PagoViewModel.class);
 
-
-
         TextView tvFechaReserva = view.findViewById(R.id.tvFechaReserva);
         @SuppressLint("SimpleDateFormat") String fechaActual = new SimpleDateFormat("dd/MM/yy").format(new Date());
         tvFechaReserva.setText(fechaActual);
         tvFechaReserva.setTextColor(ContextCompat.getColor(requireContext(), R.color.principalColor));
 
-        Date today = Calendar.getInstance().getTime();
-        viewModel.loadReservasByDateAndState(today, "Pendiente");
+        TextView tvTitleReservas = view.findViewById(R.id.tvTitleReservas);
+        ImageView btnFilter = view.findViewById(R.id.btnFilter);
+        if ("CLIENTE".equals(MainActivity.rol)) {
+            tvTitleReservas.setText(getString(R.string.tus_reservas));
+            btnFilter.setVisibility(View.GONE);
+
+            SharedPreferences sharedPreferences = requireActivity().getSharedPreferences("MyAppPrefs", Context.MODE_PRIVATE);
+            String userId = sharedPreferences.getString("userId", null);
+            if (userId != null) {
+                String url = getResources().getString(R.string.url_clientes) + "uid/" + userId;
+                OkHttpClient client = new OkHttpClient();
+                String idToken = sharedPreferences.getString("idToken", null);
+                Request request = new Request.Builder()
+                        .url(url)
+                        .addHeader("Authorization", "Bearer " + idToken)
+                        .build();
+
+                client.newCall(request).enqueue(new Callback() {
+                    @Override
+                    public void onFailure(@NotNull Call call, @NotNull IOException e) {
+                        Log.e("ReservaFragment", "Error al cargar datos del cliente: ", e);
+                    }
+
+                    @Override
+                    public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
+                        if (!response.isSuccessful()) {
+                            Log.e("ReservaFragment", "Respuesta no exitosa del servidor: " + response);
+                            throw new IOException("Código inesperado " + response);
+                        }
+
+                        assert response.body() != null;
+                        final String responseData = response.body().string();
+                        Log.d("ReservaFragment", "Datos del cliente cargados correctamente: " + responseData);
+
+                        try {
+                            JSONObject jsonObject = new JSONObject(responseData);
+                            long idCliente = jsonObject.getLong("idCliente");
+                            requireActivity().runOnUiThread(() -> viewModel.filterReservasByIdCliente(idCliente));
+                        } catch (JSONException e) {
+                            Log.e("ReservaFragment", "Error al parsear datos del cliente: ", e);
+                        }
+                    }
+                });
+            }
+        } else {
+            Date today = Calendar.getInstance().getTime();
+            viewModel.loadReservasByDateAndState(today, "Pendiente");
+        }
 
         viewModel.getLoading().observe(getViewLifecycleOwner(), isLoading -> {
             if (isLoading != null && isLoading) {
@@ -142,6 +197,8 @@ public class ReservaFragment extends Fragment implements ReservaAdapter.Reservas
         setupFilterMenu(view);
         return view;
     }
+
+
     private void irSombrillas() {
         if (getActivity() instanceof MainActivity) {
             ((MainActivity) getActivity()).selectSunbed();
@@ -317,7 +374,6 @@ public class ReservaFragment extends Fragment implements ReservaAdapter.Reservas
 
                 final EditText input = new EditText(requireContext());
                 input.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_FLAG_MULTI_LINE);
-                input.setHint("Razón de la cancelación");
 
                 cancelBuilder.setView(input);
 
@@ -347,4 +403,6 @@ public class ReservaFragment extends Fragment implements ReservaAdapter.Reservas
         AlertDialog dialog = builder.create();
         dialog.show();
     }
+
+
 }

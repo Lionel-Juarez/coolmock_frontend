@@ -2,6 +2,7 @@ package com.example.hamacav1.entidades.sombrillas;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -31,6 +32,7 @@ import org.json.JSONObject;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Objects;
+import java.util.function.Consumer;
 
 import okhttp3.Call;
 import okhttp3.Callback;
@@ -93,14 +95,22 @@ public class SombrillaDetalles  extends DialogFragment {
                     btnReservar.setVisibility(View.VISIBLE);
                 }
                 btnReservar.setOnClickListener(v -> {
-                    Intent intent = new Intent(getActivity(), NuevaReserva.class);
-                    ArrayList<Long> idsSombrillas = new ArrayList<>();
-                    idsSombrillas.add(sombrilla.getIdSombrilla());
-                    intent.putExtra("idsSombrillas", idsSombrillas);
-                    if (updateListener != null) {
-                        updateListener.getNuevaReservaLauncher().launch(intent);
+                    SharedPreferences sharedPreferences = requireActivity().getSharedPreferences("MyAppPrefs", Context.MODE_PRIVATE);
+                    long idCliente = sharedPreferences.getLong("idCliente", -1);
+                    if (idCliente != -1) {
+                        verificarLimiteReservasYContinuar(idCliente, url -> {
+                            Intent intent = new Intent(getActivity(), NuevaReserva.class);
+                            ArrayList<Long> idsSombrillas = new ArrayList<>();
+                            idsSombrillas.add(sombrilla.getIdSombrilla());
+                            intent.putExtra("idsSombrillas", idsSombrillas);
+                            if (updateListener != null) {
+                                updateListener.getNuevaReservaLauncher().launch(intent);
+                            }
+                            dismiss();
+                        });
+                    } else {
+                        Toast.makeText(getContext(), "Error al obtener el ID del cliente", Toast.LENGTH_SHORT).show();
                     }
-                    dismiss();
                 });
             } else {
                 if (sombrilla.isReservada()) {
@@ -182,6 +192,7 @@ public class SombrillaDetalles  extends DialogFragment {
 
         return view;
     }
+
 
     @SuppressLint("SetTextI18n")
     public static void actualizarEstado(Sombrilla sombrilla) {
@@ -275,6 +286,69 @@ public class SombrillaDetalles  extends DialogFragment {
             radioGroupHamacas.clearCheck();
         }
     }
+    private void verificarLimiteReservasYContinuar(long idCliente, Consumer<String> callback) {
+        if (isAdded() && getActivity() != null) {
+            String url = getResources().getString(R.string.url_reservas) + "countByClientePendientes/" + idCliente;
+            SharedPreferences sharedPreferences = getActivity().getSharedPreferences("MyAppPrefs", Context.MODE_PRIVATE);
+            String idToken = sharedPreferences.getString("idToken", null);
+
+            OkHttpClient client = new OkHttpClient();
+            Request request = new Request.Builder()
+                    .url(url)
+                    .addHeader("Authorization", "Bearer " + idToken)
+                    .build();
+
+            Log.d("verificarLimiteReservas", "URL: " + url);
+            Log.d("verificarLimiteReservas", "ID Token: " + idToken);
+
+            client.newCall(request).enqueue(new Callback() {
+                @Override
+                public void onFailure(@NotNull Call call, @NotNull IOException e) {
+                    Log.e("verificarLimiteReservas", "Error al contar reservas", e);
+                    if (isAdded() && getActivity() != null) {
+                        getActivity().runOnUiThread(() -> Toast.makeText(getActivity(), "Error al contar reservas", Toast.LENGTH_SHORT).show());
+                    }
+                }
+
+                @Override
+                public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
+                    if (response.isSuccessful() && response.body() != null) {
+                        String responseData = response.body().string();
+                        Log.d("verificarLimiteReservas", "Response data: " + responseData);
+
+                        try {
+                            long count = Long.parseLong(responseData);
+                            Log.d("verificarLimiteReservas", "Number of reservations: " + count);
+
+                            if (isAdded() && getActivity() != null) {
+                                getActivity().runOnUiThread(() -> {
+                                    if (count >= 5) {
+                                        Log.d("verificarLimiteReservas", "Limite de reservas alcanzado: " + count);
+                                        Toast.makeText(getActivity(), "No puedes realizar más de 5 reservas", Toast.LENGTH_SHORT).show();
+                                    } else {
+                                        Log.d("verificarLimiteReservas", "Aún puedes realizar reservas: " + count);
+                                        String url = getResources().getString(R.string.url_reservas) + "nuevaReserva";
+                                        callback.accept(url);
+                                    }
+                                });
+                            }
+                        } catch (NumberFormatException e) {
+                            Log.e("verificarLimiteReservas", "Error parsing response data", e);
+                            if (isAdded() && getActivity() != null) {
+                                getActivity().runOnUiThread(() -> Toast.makeText(getActivity(), "Error al contar reservas", Toast.LENGTH_SHORT).show());
+                            }
+                        }
+                    } else {
+                        Log.e("verificarLimiteReservas", "Error en la respuesta: " + response.code());
+                        if (isAdded() && getActivity() != null) {
+                            getActivity().runOnUiThread(() -> Toast.makeText(getActivity(), "Error al contar reservas", Toast.LENGTH_SHORT).show());
+                        }
+                    }
+                }
+            });
+        }
+    }
+
 }
 
 

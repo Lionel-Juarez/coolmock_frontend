@@ -63,7 +63,7 @@ public class NuevoCliente extends AppCompatActivity {
         String rol = sharedPreferences.getString("rol", "CLIENTE");
 
         if ("CLIENTE".equals(rol)) {
-            etEmail.setEnabled(false); // Email no editable para clientes
+            etEmail.setEnabled(false);
         }
     }
 
@@ -198,7 +198,6 @@ public class NuevoCliente extends AppCompatActivity {
             }
         });
     }
-
 
     public void cancel(View view) {
         Utils.closeActivity(this);

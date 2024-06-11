@@ -209,8 +209,7 @@
     <string name="cliente_modificado">Datos modificados correctamente</string>
     <string name="welcome">!BIENVENIDO!</string>
     <string name="usuario">Usuario</string>
-
-
+    <string name="tus_reservas">!Tus reservas!</string>
 
     //Spinners
     <string-array name="hour_array">

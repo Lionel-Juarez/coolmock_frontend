@@ -13,8 +13,10 @@ import android.util.Log;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
+import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.NumberPicker;
 import android.widget.RadioButton;
 import android.widget.Spinner;
@@ -25,12 +27,14 @@ import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.example.hamacav1.MainActivity;
 import com.example.hamacav1.entidades.clientes.Cliente;
 import com.example.hamacav1.R;
 import com.example.hamacav1.entidades.clientes.NuevoCliente;
 import com.example.hamacav1.entidades.reportes.NuevoReporte;
 import com.example.hamacav1.util.Internetop;
 import com.example.hamacav1.util.Utils;
+import com.google.android.material.divider.MaterialDivider;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
@@ -98,7 +102,6 @@ public class NuevaReserva extends AppCompatActivity {
     public void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
     }
-
     private void initializeUIComponents() {
         ImageView btnOpenCalendar = findViewById(R.id.btnOpenCalendar);
         spMetodoPago = findViewById(R.id.sp_metodo_pago);
@@ -107,6 +110,19 @@ public class NuevaReserva extends AppCompatActivity {
         radioOne = findViewById(R.id.radioOne);
         radioTwo = findViewById(R.id.radioTwo);
         numberPickerHoraLlegada = findViewById(R.id.numberPickerHoraLlegada);
+        Button btnAddCliente = findViewById(R.id.btn_add_cliente);
+        LinearLayout linearLayoutPagada = findViewById(R.id.linearLayoutPagada);
+        LinearLayout linearLayoutCliente = findViewById(R.id.linearLayoutCliente);
+        MaterialDivider materialDivider1 = findViewById(R.id.divider1);
+        MaterialDivider materialDivider2 = findViewById(R.id.divider2);
+
+        if ("CLIENTE".equals(MainActivity.rol)) {
+            btnAddCliente.setVisibility(View.GONE);
+            linearLayoutPagada.setVisibility(View.GONE);
+            linearLayoutCliente.setVisibility(View.GONE);
+            materialDivider1.setVisibility(View.GONE);
+            materialDivider2.setVisibility(View.GONE);
+        }
 
         // Configurar NumberPicker con el array de horas
         String[] hours = getResources().getStringArray(R.array.hour_array);
@@ -123,26 +139,6 @@ public class NuevaReserva extends AppCompatActivity {
 
         radioOne.setChecked(true);
     }
-
-
-    private void loadData() {
-        Intent intent = getIntent();
-        if (intent != null && intent.hasExtra("idsSombrillas")) {
-            Serializable serializable = intent.getSerializableExtra("idsSombrillas");
-            if (serializable instanceof ArrayList) {
-                idsSombrillas = new ArrayList<>();
-                for (Object obj : (ArrayList<?>) serializable) {
-                    if (obj instanceof Long) {
-                        idsSombrillas.add((Long) obj);
-                    }
-                }
-            }
-        }
-        Log.d("NuevaReserva", "ID de la sombrilla: " + idsSombrillas);
-
-        loadClientsFromBackend();
-    }
-
 
     public void addReserva(View view) {
         String fechaReserva = fechaReservaSeleccionada;
@@ -166,16 +162,23 @@ public class NuevaReserva extends AppCompatActivity {
         String[] hours = getResources().getStringArray(R.array.hour_array);
         String horaLlegada = hours[numberPickerHoraLlegada.getValue()];
 
-        Cliente cliente = getSelectedCliente();
-        if (cliente == null) {
-            Toast.makeText(this, "Por favor seleccione un cliente válido", Toast.LENGTH_SHORT).show();
-            return;
+        long idCliente;
+        if ("CLIENTE".equals(MainActivity.rol)) {
+            SharedPreferences sharedPreferences = getSharedPreferences("MyAppPrefs", Context.MODE_PRIVATE);
+            idCliente = sharedPreferences.getLong("idCliente", -1);
+        } else {
+            Cliente cliente = getSelectedCliente();
+            if (cliente == null) {
+                Toast.makeText(this, "Por favor seleccione un cliente válido", Toast.LENGTH_SHORT).show();
+                return;
+            }
+            idCliente = cliente.getIdCliente();
         }
 
-        if (validateInput(cliente, idsSombrillas, horaLlegada, cantidadHamacas)) {
+        if (validateInput(idCliente, idsSombrillas, horaLlegada, cantidadHamacas)) {
             if (Internetop.getInstance(getApplicationContext()).isNetworkAvailable()) {
                 String url = getResources().getString(R.string.url_reservas) + "nuevaReserva";
-                sendTask(url, fechaReserva, fechaReservaRealizada, estado, pagada, metodoPago, cliente.getIdCliente(), idsSombrillas, cantidadHamacas, horaLlegada);
+                sendTask(url, fechaReserva, fechaReservaRealizada, estado, pagada, metodoPago, idCliente, idsSombrillas, cantidadHamacas, horaLlegada);
             } else {
                 Utils.showError(getApplicationContext(), "No hay conexión a Internet.");
             }
@@ -376,6 +379,22 @@ public class NuevaReserva extends AppCompatActivity {
         nuevoClienteLauncher.launch(intent);
     }
 
+    private void loadData() {
+        Intent intent = getIntent();
+        if (intent != null && intent.hasExtra("idsSombrillas")) {
+            Serializable serializable = intent.getSerializableExtra("idsSombrillas");
+            if (serializable instanceof ArrayList) {
+                idsSombrillas = new ArrayList<>();
+                for (Object obj : (ArrayList<?>) serializable) {
+                    if (obj instanceof Long) {
+                        idsSombrillas.add((Long) obj);
+                    }
+                }
+            }
+        }
+        Log.d("NuevaReserva", "ID de la sombrilla: " + idsSombrillas);
+        loadClientsFromBackend();
+    }
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -403,9 +422,9 @@ public class NuevaReserva extends AppCompatActivity {
         }
     }
 
-    private boolean validateInput(Cliente cliente, List<Long> idsSombrillas, String horaLlegada, String cantidadHamacas) {
+    private boolean validateInput(long idCliente, List<Long> idsSombrillas, String horaLlegada, String cantidadHamacas) {
         boolean isValid = true;
-        if (cliente == null || cliente.getIdCliente() <= 0 || idsSombrillas == null || idsSombrillas.isEmpty()) {
+        if (idCliente <= 0 || idsSombrillas == null || idsSombrillas.isEmpty()) {
             Utils.showError(getApplicationContext(), "Información crítica de la reserva está incompleta o incorrecta.");
             isValid = false;
         }
@@ -431,7 +450,6 @@ public class NuevaReserva extends AppCompatActivity {
                 }, c.get(Calendar.YEAR), c.get(Calendar.MONTH), c.get(Calendar.DAY_OF_MONTH));
         datePickerDialog.show();
     }
-
     // Método cancel que cierra la actividad actual usando Utils
     public void cancel(View view) {
         Utils.closeActivity(this);
