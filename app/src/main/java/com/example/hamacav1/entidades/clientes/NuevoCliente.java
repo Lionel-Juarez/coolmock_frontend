@@ -51,6 +51,7 @@ public class NuevoCliente extends AppCompatActivity {
         etNombreCompleto = findViewById(R.id.et_new_nombreCompleto_cliente);
         etNumeroTelefono = findViewById(R.id.et_new_telefono_cliente);
         etEmail = findViewById(R.id.et_new_email_cliente);
+        etEmail.setEnabled(false);
 
         if (getIntent().hasExtra("cliente")) {
             isEditMode = true;
@@ -60,11 +61,7 @@ public class NuevoCliente extends AppCompatActivity {
         }
 
         SharedPreferences sharedPreferences = getSharedPreferences("MyAppPrefs", MODE_PRIVATE);
-        String rol = sharedPreferences.getString("rol", "CLIENTE");
-
-        if ("CLIENTE".equals(rol)) {
-            etEmail.setEnabled(false);
-        }
+        sharedPreferences.getString("rol", "CLIENTE");
     }
 
     private void fillClientData(Cliente cliente) {

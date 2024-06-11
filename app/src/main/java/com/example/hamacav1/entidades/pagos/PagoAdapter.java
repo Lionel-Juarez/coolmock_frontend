@@ -23,16 +23,12 @@ import java.util.Locale;
 public class PagoAdapter extends RecyclerView.Adapter<PagoAdapter.PagoViewHolder> {
     private final List<Pago> pagoList;
     private final Context context;
-    private double totalPagos = 0.0; // Variable para el total de pagos
-    private final TextView tvPendientesCount;
-    private final TextView tvPagadasCount;
+    private double totalPagos = 0.0;
     private final TextView tvTotalPagosHoyCount; // Agregado para el total de pagos
 
-    public PagoAdapter(List<Pago> pagoList, Context context, TextView tvPendientesCount, TextView tvPagadasCount, TextView tvTotalPagosHoyCount) {
+    public PagoAdapter(List<Pago> pagoList, Context context, TextView tvTotalPagosHoyCount) {
         this.pagoList = pagoList;
         this.context = context;
-        this.tvPendientesCount = tvPendientesCount;
-        this.tvPagadasCount = tvPagadasCount;
         this.tvTotalPagosHoyCount = tvTotalPagosHoyCount; // Agregado para el total de pagos
         updateCounts();
     }
@@ -77,7 +73,7 @@ public class PagoAdapter extends RecyclerView.Adapter<PagoAdapter.PagoViewHolder
             if (pago.getReserva() != null && pago.getReserva().getCliente() != null) {
                 nombreCliente.setText(pago.getReserva().getCliente().getNombreCompleto());
             } else {
-                nombreCliente.setText("Cliente desconocido");
+                nombreCliente.setText("Pago sin reserva");
             }
             cantidad.setText(""+pago.getCantidad());
 
@@ -112,24 +108,13 @@ public class PagoAdapter extends RecyclerView.Adapter<PagoAdapter.PagoViewHolder
 
     @SuppressLint("SetTextI18n")
     private void updateCounts() {
-        int countPendientes = 0;
-        int countPagadas = 0;
         totalPagos = 0.0;
 
         for (Pago pago : pagoList) {
-            if (pago.getReserva() != null) {
-                if (pago.getReserva().isPagada()) {
-                    countPagadas++;
-                } else {
-                    countPendientes++;
-                }
-            }
-            totalPagos += pago.getCantidad(); // Sumar al total de pagos
+            totalPagos += pago.getCantidad();
         }
 
-        tvPendientesCount.setText(String.valueOf(countPendientes));
-        tvPagadasCount.setText(String.valueOf(countPagadas));
-        tvTotalPagosHoyCount.setText("" + totalPagos); // Actualizar el total de pagos
+        tvTotalPagosHoyCount.setText("" + totalPagos);
     }
 
     @SuppressLint("SetTextI18n")

@@ -10,8 +10,6 @@ import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentManager;
-import androidx.fragment.app.FragmentTransaction;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -57,8 +55,6 @@ public class PagoFragment extends Fragment implements PagoAdapter.PagoAdapterCal
     private ImageView headerImageSavings;
     private ImageView headerImageQuestion;
     private PagoViewModel pagoViewModel;
-    private TextView tvPendientesCount;
-    private TextView tvPagadasCount;
     private Date startDate, endDate;
 
     @Override
@@ -74,13 +70,10 @@ public class PagoFragment extends Fragment implements PagoAdapter.PagoAdapterCal
         progressBar = view.findViewById(R.id.progressBar);
         headerImageSavings = view.findViewById(R.id.headerImageSavings);
         headerImageQuestion = view.findViewById(R.id.headerImageQuestion);
-
-        tvPendientesCount = view.findViewById(R.id.tvPendientesCount);
-        tvPagadasCount = view.findViewById(R.id.tvPagadasCount);
         TextView tvTotalPagosHoyCount = view.findViewById(R.id.tvTotalPagosHoyCount); // Agregado para el total de pagos
 
         pagoList = new ArrayList<>();
-        pagoAdapter = new PagoAdapter(pagoList, getContext(), tvPendientesCount, tvPagadasCount, tvTotalPagosHoyCount); // Agregado tvTotalPagosHoyCount
+        pagoAdapter = new PagoAdapter(pagoList, getContext(), tvTotalPagosHoyCount); // Agregado tvTotalPagosHoyCount
         pagoVistaRecyclerView.setAdapter(pagoAdapter);
 
         TextView tvFechaReserva = view.findViewById(R.id.tvFechaReserva);
@@ -223,14 +216,6 @@ public class PagoFragment extends Fragment implements PagoAdapter.PagoAdapterCal
         AlertDialog dialog = builder.create();
         dialog.show();
     }
-    private void navigateToNuevoFragment() {
-        FragmentManager fragmentManager = requireActivity().getSupportFragmentManager();
-        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-        fragmentTransaction.replace(R.id.frame_layout, new NuevoFragment());
-        fragmentTransaction.addToBackStack(null);
-        fragmentTransaction.commit();
-    }
-
     private void loadPagosFromBackend() {
         progressBar.setVisibility(View.VISIBLE);
 
@@ -299,22 +284,12 @@ public class PagoFragment extends Fragment implements PagoAdapter.PagoAdapterCal
                         try {
                             JSONArray jsonArray = new JSONArray(responseData);
                             List<Pago> nuevosPagos = new ArrayList<>();
-                            int countPendientes = 0;
-                            int countPagadas = 0;
                             for (int i = 0; i < jsonArray.length(); i++) {
                                 JSONObject jsonObject = jsonArray.getJSONObject(i);
                                 Pago pago = new Pago();
                                 pago.fromJSON(jsonObject);
                                 nuevosPagos.add(pago);
 
-                                // Contar reservas pendientes y pagadas
-                                if (pago.getReserva() != null) {
-                                    if (pago.isPagado()) {
-                                        countPagadas++;
-                                    } else {
-                                        countPendientes++;
-                                    }
-                                }
                             }
                             pagoList.clear();
                             pagoAdapter.setPagos(nuevosPagos);
@@ -330,15 +305,11 @@ public class PagoFragment extends Fragment implements PagoAdapter.PagoAdapterCal
                                 headerImageSavings.setVisibility(View.VISIBLE);
                                 headerImageQuestion.setVisibility(View.GONE);
                             }
-
-                            // Actualizar los contadores
-                            tvPendientesCount.setText(String.valueOf(countPendientes));
-                            tvPagadasCount.setText(String.valueOf(countPagadas));
                         } catch (JSONException e) {
                             Log.e("PagoFragment", "Error al parsear Pagos: ", e);
                             progressBar.setVisibility(View.GONE);
                         } finally {
-                            progressBar.setVisibility(View.GONE); // Ocultar ProgressBar al completar la carga
+                            progressBar.setVisibility(View.GONE);
                         }
                     });
                 }

@@ -1,5 +1,5 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
-    <string name="app_name" tools:ignore="Typos">HamacaV1</string>
+    <string name="app_name" tools:ignore="Typos">CoolMock</string>
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="singup">Sign up!</string>
     <string name="sunbed">Sunbed</string>
@@ -175,7 +175,7 @@
     <string name="nombre_completo">Full name</string>
 
     <string name="confirm_password">Confirm password</string>
-    <string name="sunbed_price">Sunbed price</string>
+    <string name="sunbed_price">Sunbed price </string>
     <string name="estado_actual">Actual state</string>
     <string name="selected_sunbeds">Number of selected sunbeds</string>
     <string name="only_admin_can_add_user">Only Admin can create new users</string>

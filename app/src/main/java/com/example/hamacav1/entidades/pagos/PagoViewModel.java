@@ -118,6 +118,69 @@ public class PagoViewModel extends AndroidViewModel {
         });
     }
 
+    public void createPagoSinReserva(Pago pago, Consumer<Boolean> callback) {
+        ExecutorService executor = Executors.newSingleThreadExecutor();
+        Handler handler = new Handler(Looper.getMainLooper());
+        Calendar calendarNow = Calendar.getInstance();
+        SimpleDateFormat sdfNow = new SimpleDateFormat("dd-MM-yyyy HH:mm", Locale.getDefault());
+        String fechaPago = sdfNow.format(calendarNow.getTime());
+
+        executor.execute(() -> {
+            OkHttpClient client = new OkHttpClient();
+            MediaType MEDIA_TYPE_JSON = MediaType.parse("application/json; charset=utf-8");
+            JSONObject json = new JSONObject();
+            try {
+                Log.d("PagoViewModel", "Iniciando creación de JSON");
+                json.put("cantidad", pago.getCantidad());
+                json.put("metodoPago", pago.getMetodoPago());
+                json.put("pagado", pago.isPagado());
+                json.put("fechaPago", Utils.convertToIso8601(fechaPago));
+                json.put("detallesPago", pago.getDetallesPago());
+                json.put("tipoHamaca", pago.getTipoHamaca());
+
+                SharedPreferences sharedPreferences = context.getSharedPreferences("MyAppPrefs", Context.MODE_PRIVATE);
+                String idToken = sharedPreferences.getString("idToken", null);
+
+                RequestBody body = RequestBody.create(json.toString(), MEDIA_TYPE_JSON);
+                Log.d("PagoViewModel", "JSON Body: " + json);
+
+                Request request = new Request.Builder()
+                        .url(context.getString(R.string.url_pagos) + "/nuevoPagoSinReserva")
+                        .addHeader("Authorization", "Bearer " + idToken)
+                        .post(body)
+                        .build();
+
+                Log.d("PagoViewModel", "Realizando solicitud HTTP a la URL: " + request.url());
+
+                try (Response response = client.newCall(request).execute()) {
+                    Log.d("PagoViewModel", "Response Code: " + response.code());  // Log para el código de respuesta
+                    if (response.isSuccessful()) {
+                        handler.post(() -> callback.accept(true));
+                    } else {
+                        String errorMessage = response.body() != null ? response.body().string() : "Respuesta vacía";
+                        Log.e("PagoViewModel", "Error Message: " + errorMessage);  // Log para el mensaje de error
+                        handler.post(() -> {
+                            Utils.showError(context, "Error al crear el pago: " + errorMessage);
+                            callback.accept(false);
+                        });
+                    }
+                } catch (Exception e) {
+                    Log.e("PagoViewModel", "Exception during request execution: " + e.getMessage(), e);  // Log para excepciones durante la ejecución de la solicitud
+                    handler.post(() -> {
+                        Utils.showError(context, "Error de conexión al servidor: " + e.getMessage());
+                        callback.accept(false);
+                    });
+                }
+            } catch (Exception e) {
+                Log.e("PagoViewModel", "Exception during JSON creation: " + e.getMessage(), e);  // Log para excepciones durante la creación del JSON
+                handler.post(() -> {
+                    Utils.showError(context, "Error al preparar datos: " + e.getMessage());
+                    callback.accept(false);
+                });
+            }
+        });
+    }
+
     public void loadAllPagos() {
         loading.postValue(true);
         OkHttpClient client = new OkHttpClient.Builder()

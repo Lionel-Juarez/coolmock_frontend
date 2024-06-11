@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Hamacas</string>
+    <string name="app_name">CoolMock</string>
     <string name="hello_blank_fragment">Hola fragmento en blanco</string>
     <string name="singup">¡Regístrate!</string>
     <string name="sunbed">Tumbona</string>

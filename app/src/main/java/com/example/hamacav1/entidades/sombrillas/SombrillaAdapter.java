@@ -48,6 +48,7 @@ public class SombrillaAdapter extends RecyclerView.Adapter<SombrillaAdapter.Somb
         updateViewImage(holder.ivEstadoSombrilla, sombrilla);
         holder.tvNumeroSombrilla.setText(String.valueOf(sombrilla.getNumeroSombrilla()));
 
+
         holder.itemView.setOnClickListener(view -> {
             int adapterPosition = holder.getAdapterPosition();
             if (adapterPosition != RecyclerView.NO_POSITION) {

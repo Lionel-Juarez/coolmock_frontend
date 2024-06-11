@@ -22,6 +22,7 @@ public class Sombrilla implements Parcelable {
     private long idSombrilla;
     private double precio;
     private boolean ocupada;
+    private boolean pagada;
     private String numeroSombrilla;
     private List<Long> reservaIds;
     private String cantidadHamacas;
@@ -31,6 +32,7 @@ public class Sombrilla implements Parcelable {
         idSombrilla = in.readLong();
         precio = in.readDouble();
         ocupada = in.readByte() != 0;
+        pagada = in.readByte() != 0;
         numeroSombrilla = in.readString();
         cantidadHamacas = in.readString();
         reservaIds = new ArrayList<>();
@@ -59,6 +61,7 @@ public class Sombrilla implements Parcelable {
         parcel.writeLong(idSombrilla);
         parcel.writeDouble(precio);
         parcel.writeByte((byte) (ocupada ? 1 : 0));
+        parcel.writeByte((byte) (pagada ? 1 : 0));
         parcel.writeString(numeroSombrilla);
         parcel.writeString(cantidadHamacas);
         parcel.writeList(reservaIds);
@@ -71,6 +74,7 @@ public class Sombrilla implements Parcelable {
         sombrilla.setCantidadHamacas(jsonObject.optString("cantidadHamacas"));
         sombrilla.setPrecio(jsonObject.optDouble("precio"));
         sombrilla.setOcupada(jsonObject.optBoolean("ocupada"));
+        sombrilla.setPagada(jsonObject.optBoolean("pagada"));
 
         JSONArray reservaArray = jsonObject.optJSONArray("reservaIds");
         if (reservaArray != null) {
@@ -90,14 +94,6 @@ public class Sombrilla implements Parcelable {
 
     public boolean isReservada() {
         return reservaIds != null && !reservaIds.isEmpty();
-    }
-
-    public Long getReservaId() {
-        if (!reservaIds.isEmpty()) {
-            return reservaIds.get(0);
-        } else {
-            return null;
-        }
     }
 
     public void setReservada(boolean reservada) {

@@ -2,6 +2,8 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
+    app:cardCornerRadius="10dp"
+    app:cardElevation="50dp"
     android:layout_height="match_parent">
 
     <androidx.cardview.widget.CardView
@@ -51,12 +53,34 @@
                 android:textColor="@color/black"
                 app:drawableLeftCompat="@drawable/etiqueta" />
 
+            <TextView
+                android:id="@+id/tvPagada"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:drawablePadding="10dp"
+                android:gravity="center_vertical"
+                android:text="@string/reserva_pagada"
+                android:textColor="@color/black"
+                app:drawableLeftCompat="@drawable/pagada24" />
+
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:gravity="center_vertical"
                 android:orientation="vertical"
                 android:paddingTop="10dp">
+
+                <Button
+                    android:id="@+id/btnPagarSombrilla"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:drawableLeft="@drawable/etiqueta_precio24"
+                    android:text="@string/pagar"
+                    android:textColor="#FFFFFF"
+                    android:textSize="18sp"
+                    app:cornerRadius="5dp"
+                    tools:ignore="RtlHardcoded" />
 
                 <Button
                     android:id="@+id/btnReservar"
@@ -97,9 +121,9 @@
                 android:id="@+id/tvCantidadHamacas"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginBottom="10dp"
                 android:gravity="center_horizontal"
                 android:text="@string/selected_sunbeds"
-                android:layout_marginBottom="10dp"
                 android:textColor="@color/black" />
 
             <LinearLayout

@@ -1,5 +1,6 @@
 package com.example.hamacav1.entidades.sombrillas;
 import android.annotation.SuppressLint;
+import android.app.AlertDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -16,11 +17,15 @@ import android.widget.TextView;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.annotation.NonNull;
 import androidx.fragment.app.DialogFragment;
+import androidx.lifecycle.ViewModel;
+import androidx.lifecycle.ViewModelProvider;
 
 import android.app.Dialog;
 import android.widget.Toast;
 
 import com.example.hamacav1.MainActivity;
+import com.example.hamacav1.entidades.pagos.Pago;
+import com.example.hamacav1.entidades.pagos.PagoViewModel;
 import com.example.hamacav1.entidades.reportes.NuevoReporte;
 import com.example.hamacav1.entidades.reservas.NuevaReserva;
 import com.example.hamacav1.R;
@@ -30,12 +35,14 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Objects;
 import java.util.function.Consumer;
 
 import okhttp3.Call;
 import okhttp3.Callback;
+import okhttp3.FormBody;
 import okhttp3.MediaType;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
@@ -47,6 +54,8 @@ public class SombrillaDetalles  extends DialogFragment {
     RadioButton radioOne, radioTwo;
     RadioGroup radioGroupHamacas;
     private SombrillaUpdateListener updateListener;
+    private PagoViewModel pagoViewModel;
+
     @SuppressLint("StaticFieldLeak")
     private static TextView tvDetalleEstado;
 
@@ -70,23 +79,52 @@ public class SombrillaDetalles  extends DialogFragment {
         Button btnReservar = view.findViewById(R.id.btnReservar);
         Button btnOcupar = view.findViewById(R.id.btnOcupar);
         Button btnLiberar = view.findViewById(R.id.btnLiberar);
-
+        Button btnPagar = view.findViewById(R.id.btnPagarSombrilla);
+        TextView tvPagada = view.findViewById(R.id.tvPagada);
         radioOne = view.findViewById(R.id.radioOne);
         radioTwo = view.findViewById(R.id.radioTwo);
         radioGroupHamacas = view.findViewById(R.id.radioGroupHamacas);
 
+        pagoViewModel = new ViewModelProvider(this, new ViewModelProvider.NewInstanceFactory() {
+            @NonNull
+            @Override
+            public <T extends ViewModel> T create(@NonNull Class<T> modelClass) {
+                if (modelClass.isAssignableFrom(PagoViewModel.class)) {
+                    return (T) new PagoViewModel(getActivity().getApplication());
+                }
+                throw new IllegalArgumentException("Unknown ViewModel class");
+            }
+        }).get(PagoViewModel.class);
+
         Sombrilla sombrilla = getArguments() != null ? getArguments().getParcelable(ARG_HAMACA) : null;
         if (sombrilla != null) {
+            tvPagada.setText(getString(R.string.reserva_pagada, sombrilla.isPagada() ? "Sí" : "No"));
+
+            if (sombrilla.isOcupada() && !sombrilla.isPagada() && !sombrilla.isReservada()) {
+                btnPagar.setVisibility(View.VISIBLE);
+                btnPagar.setOnClickListener(v -> {
+                    Log.d("SombrillaDetalles", "Botón Pagar clickeado");
+                    showPaymentMethodDialog(sombrilla, () -> {
+                        actualizarEstado(sombrilla);
+                        Toast.makeText(getContext(), "Pagada con éxito", Toast.LENGTH_SHORT).show();
+                    });
+                });
+            } else {
+                btnPagar.setVisibility(View.GONE);
+            }
+
             tvDetalleNumero.setText(sombrilla.getNumeroSombrilla());
-            tvDetallePrecio.setText(getString(R.string.sunbed_price) + sombrilla.getPrecio());
+            tvDetallePrecio.setText(getString(R.string.sunbed_price) + " " + sombrilla.getPrecio());
             actualizarEstado(sombrilla);
 
             // Verificar si el rol es CLIENTE
             if ("CLIENTE".equals(MainActivity.rol)) {
                 btnOcupar.setVisibility(View.GONE);
                 btnLiberar.setVisibility(View.GONE);
+                btnPagar.setVisibility(View.GONE);
                 radioOne.setVisibility(View.GONE);
                 radioTwo.setVisibility(View.GONE);
+                tvPagada.setVisibility(View.GONE);
                 tvCantidadHamacas.setVisibility(View.GONE);
 
                 if (sombrilla.isReservada() || sombrilla.isOcupada()) {
@@ -94,7 +132,9 @@ public class SombrillaDetalles  extends DialogFragment {
                 } else {
                     btnReservar.setVisibility(View.VISIBLE);
                 }
+
                 btnReservar.setOnClickListener(v -> {
+                    Log.d("SombrillaDetalles", "Botón Reservar clickeado");
                     SharedPreferences sharedPreferences = requireActivity().getSharedPreferences("MyAppPrefs", Context.MODE_PRIVATE);
                     long idCliente = sharedPreferences.getLong("idCliente", -1);
                     if (idCliente != -1) {
@@ -129,32 +169,31 @@ public class SombrillaDetalles  extends DialogFragment {
                     checkCantidadHamacas(sombrilla);
 
                     btnLiberar.setOnClickListener(v -> {
-                        sombrilla.setReservada(false);
-                        sombrilla.setOcupada(false);
-                        actualizarEstado(sombrilla);
-                        updateSombrillaOnServer(sombrilla, requireContext());
-                        radioOne.setVisibility(View.GONE);
-                        radioTwo.setVisibility(View.GONE);
-
-                        String titulo = getString(R.string.titulo_liberando_sombrilla);
-                        String descripcion = getString(R.string.descripcion_liberando_sombrilla, sombrilla.getIdSombrilla(), sombrilla.getCantidadHamacas());
-                        NuevoReporte.crearReporte(getContext(), titulo, descripcion);
-
-                        if (updateListener != null) {
-                            updateListener.onSombrillaUpdated(sombrilla);
+                        Log.d("SombrillaDetalles", "Botón Liberar clickeado");
+                        if (!sombrilla.isPagada()) {
+                            Log.d("SombrillaDetalles", "Mostrando diálogo de pago antes de liberar la sombrilla");
+                            showPaymentMethodDialog(sombrilla, () -> {
+                                Log.d("SombrillaDetalles", "Sombrilla pagada y liberada con éxito");
+                                Toast.makeText(getContext(), "Pagada y liberada con éxito", Toast.LENGTH_SHORT).show();
+                                liberarSombrilla(sombrilla);
+                            });
+                        } else {
+                            Log.d("SombrillaDetalles", "Liberando sombrilla sin pago necesario");
+                            liberarSombrilla(sombrilla);
                         }
-                        dismiss();
                     });
                 } else {
                     btnReservar.setVisibility(View.VISIBLE);
                     btnOcupar.setVisibility(View.VISIBLE);
-                    btnLiberar.setVisibility(View.VISIBLE);
+                    btnLiberar.setVisibility(View.GONE);
                     radioOne.setVisibility(View.VISIBLE);
                     radioTwo.setVisibility(View.VISIBLE);
                     radioOne.setEnabled(true);
                     radioTwo.setEnabled(true);
+                    tvPagada.setVisibility(View.GONE);
 
                     btnReservar.setOnClickListener(v -> {
+                        Log.d("SombrillaDetalles", "Botón Reservar clickeado");
                         Intent intent = new Intent(getActivity(), NuevaReserva.class);
                         ArrayList<Long> idsSombrillas = new ArrayList<>();
                         idsSombrillas.add(sombrilla.getIdSombrilla());
@@ -165,6 +204,7 @@ public class SombrillaDetalles  extends DialogFragment {
                         dismiss();
                     });
                     btnOcupar.setOnClickListener(v -> {
+                        Log.d("SombrillaDetalles", "Botón Ocupar clickeado");
                         if (radioGroupHamacas.getCheckedRadioButtonId() != -1) {
                             sombrilla.setOcupada(true);
                             sombrilla.setReservada(false);
@@ -193,12 +233,13 @@ public class SombrillaDetalles  extends DialogFragment {
         return view;
     }
 
-
     @SuppressLint("SetTextI18n")
     public static void actualizarEstado(Sombrilla sombrilla) {
         String estado = sombrilla.isReservada() ? "Reservada" : sombrilla.isOcupada() ? "Ocupada" : "Disponible";
         tvDetalleEstado.setText("Estado: " + estado);
+        Log.d("SombrillaDetalles", "Estado actualizado: " + estado + ", Pagada: " + sombrilla.isPagada());
     }
+
 
     @NonNull
     @Override
@@ -232,6 +273,7 @@ public class SombrillaDetalles  extends DialogFragment {
             jsonObject.put("reservada", sombrilla.isReservada());
             jsonObject.put("ocupada", sombrilla.isOcupada());
             jsonObject.put("cantidadHamacas", sombrilla.getCantidadHamacas());
+            jsonObject.put("pagada", sombrilla.isPagada());
 
             RequestBody body = RequestBody.create(jsonObject.toString(), JSON);
 
@@ -261,6 +303,7 @@ public class SombrillaDetalles  extends DialogFragment {
             Log.e("SombrillaUpdate", "Error al crear JSON para actualizar la sombrilla: " + e.getMessage(), e);
         }
     }
+
 
     private void checkCantidadHamacas(Sombrilla sombrilla) {
         String cantidadHamacas = sombrilla.getCantidadHamacas();
@@ -347,6 +390,117 @@ public class SombrillaDetalles  extends DialogFragment {
                 }
             });
         }
+    }
+
+    private void liberarSombrilla(Sombrilla sombrilla) {
+        Log.d("SombrillaDetalles", "Liberando sombrilla con ID: " + sombrilla.getIdSombrilla());
+        sombrilla.setReservada(false);
+        sombrilla.setOcupada(false);
+        sombrilla.setPagada(false);
+        actualizarEstado(sombrilla);
+        updateSombrillaOnServer(sombrilla, requireContext());
+        radioOne.setVisibility(View.GONE);
+        radioTwo.setVisibility(View.GONE);
+
+        String titulo = getString(R.string.titulo_liberando_sombrilla);
+        String descripcion = getString(R.string.descripcion_liberando_sombrilla, sombrilla.getIdSombrilla(), sombrilla.getCantidadHamacas());
+        NuevoReporte.crearReporte(getContext(), titulo, descripcion);
+
+        if (updateListener != null) {
+            updateListener.onSombrillaUpdated(sombrilla);
+        }
+        dismiss();
+    }
+
+
+
+    private void showPaymentMethodDialog(Sombrilla sombrilla, Runnable onPaymentSuccess) {
+        Log.d("SombrillaDetalles", "showPaymentMethodDialog llamado");
+        AlertDialog.Builder builder = new AlertDialog.Builder(requireContext());
+        builder.setTitle("Seleccionar Método de Pago");
+
+        String[] paymentMethods = {"Tarjeta", "Efectivo"};
+        builder.setItems(paymentMethods, (dialog, which) -> {
+            String selectedMethod = paymentMethods[which];
+            Log.d("SombrillaDetalles", "Método de pago seleccionado: " + selectedMethod);
+            processPayment(sombrilla, selectedMethod, onPaymentSuccess);
+        });
+
+        AlertDialog dialog = builder.create();
+        dialog.show();
+    }
+
+    private void processPayment(Sombrilla sombrilla, String metodoPago, Runnable onPaymentSuccess) {
+        Log.d("SombrillaDetalles", "processPayment llamado con método de pago: " + metodoPago);
+
+        int cantidadHamacas = 1;
+        try {
+            cantidadHamacas = Integer.parseInt(sombrilla.getCantidadHamacas());
+        } catch (NumberFormatException e) {
+            Log.e("SombrillaDetalles", "Error al convertir la cantidad de hamacas: " + e.getMessage());
+        }
+
+        double precioTotal = sombrilla.getPrecio() * cantidadHamacas;
+
+        sombrilla.setPagada(true);
+        updateSombrillaPagada(sombrilla);
+
+        Pago pago = new Pago();
+        pago.setCantidad(precioTotal);
+        pago.setMetodoPago(metodoPago);
+        pago.setPagado(true);
+        pago.setFechaPago(LocalDateTime.now());
+        pago.setDetallesPago("Pago realizado para la sombrilla con ID " + sombrilla.getIdSombrilla() + " con " + cantidadHamacas + " hamacas.");
+        pago.setTipoHamaca("Standard");
+
+        pagoViewModel = new ViewModelProvider(requireActivity()).get(PagoViewModel.class);
+        pagoViewModel.createPagoSinReserva(pago, (pagoSuccess) -> {
+            if (pagoSuccess) {
+                String titulo = "Pago de Sombrilla";
+                String descripcion = "La sombrilla con ID " + sombrilla.getIdSombrilla() + " ha sido pagada utilizando " + metodoPago + ".";
+                NuevoReporte.crearReporte(getContext(), titulo, descripcion);
+
+                onPaymentSuccess.run();
+            } else {
+                Toast.makeText(getContext(), "Error al crear el pago", Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+    private void updateSombrillaPagada(Sombrilla sombrilla) {
+        OkHttpClient client = new OkHttpClient();
+        String url = getResources().getString(R.string.url_sombrillas) + "updatePagoSombrilla/" + sombrilla.getIdSombrilla();
+        RequestBody requestBody = new FormBody.Builder()
+                .add("pagada", "true")
+                .build();
+        Request request = new Request.Builder()
+                .url(url)
+                .patch(requestBody)
+                .build();
+
+        Log.d("updateSombrillaPagada", "URL: " + url);
+        Log.d("updateSombrillaPagada", "Request Body: pagada=true");
+
+        client.newCall(request).enqueue(new Callback() {
+            @Override
+            public void onFailure(@NonNull Call call, @NonNull IOException e) {
+                Log.e("updateSombrillaPagada", "Error al actualizar el estado de pago de la sombrilla: ", e);
+            }
+
+            @Override
+            public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
+                if (!response.isSuccessful()) {
+                    Log.e("updateSombrillaPagada", "Respuesta no exitosa del servidor: " + response);
+                    Log.e("updateSombrillaPagada", "Código de error: " + response.code());
+                    Log.e("updateSombrillaPagada", "Mensaje de error: " + response.message());
+                    if (response.body() != null) {
+                        Log.e("updateSombrillaPagada", "Cuerpo de respuesta: " + response.body().string());
+                    }
+                } else {
+                    Log.d("updateSombrillaPagada", "Sombrilla actualizada correctamente: " + sombrilla.getIdSombrilla());
+                }
+            }
+        });
     }
 
 }

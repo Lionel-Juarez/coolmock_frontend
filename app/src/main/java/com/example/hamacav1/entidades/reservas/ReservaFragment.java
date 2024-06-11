@@ -50,8 +50,10 @@ import java.util.List;
 
 import okhttp3.Call;
 import okhttp3.Callback;
+import okhttp3.FormBody;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
+import okhttp3.RequestBody;
 import okhttp3.Response;
 
 public class ReservaFragment extends Fragment implements ReservaAdapter.ReservasAdapterCallback {
@@ -136,12 +138,12 @@ public class ReservaFragment extends Fragment implements ReservaAdapter.Reservas
 
                 client.newCall(request).enqueue(new Callback() {
                     @Override
-                    public void onFailure(@NotNull Call call, @NotNull IOException e) {
+                    public void onFailure(@NonNull @NotNull Call call, @NonNull @NotNull IOException e) {
                         Log.e("ReservaFragment", "Error al cargar datos del cliente: ", e);
                     }
 
                     @Override
-                    public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
+                    public void onResponse(@NonNull @NotNull Call call, @NonNull @NotNull Response response) throws IOException {
                         if (!response.isSuccessful()) {
                             Log.e("ReservaFragment", "Respuesta no exitosa del servidor: " + response);
                             throw new IOException("Código inesperado " + response);
@@ -154,7 +156,9 @@ public class ReservaFragment extends Fragment implements ReservaAdapter.Reservas
                         try {
                             JSONObject jsonObject = new JSONObject(responseData);
                             long idCliente = jsonObject.getLong("idCliente");
-                            requireActivity().runOnUiThread(() -> viewModel.filterReservasByIdCliente(idCliente));
+                            if (isAdded()) {
+                                getActivity().runOnUiThread(() -> viewModel.filterReservasByIdCliente(idCliente));
+                            }
                         } catch (JSONException e) {
                             Log.e("ReservaFragment", "Error al parsear datos del cliente: ", e);
                         }
@@ -197,7 +201,6 @@ public class ReservaFragment extends Fragment implements ReservaAdapter.Reservas
         setupFilterMenu(view);
         return view;
     }
-
 
     private void irSombrillas() {
         if (getActivity() instanceof MainActivity) {
@@ -329,6 +332,7 @@ public class ReservaFragment extends Fragment implements ReservaAdapter.Reservas
 
                 pagoViewModel.createPago(pago, (pagoSuccess) -> {
                     if (pagoSuccess) {
+                        updateSombrillasPagadas(reserva);
                         String titulo = "Pago de Reserva";
                         String descripcion = "La reserva con ID " + reserva.getIdReserva() + " ha sido pagada utilizando " + metodoPago + ".";
                         NuevoReporte.crearReporte(getContext(), titulo, descripcion);
@@ -341,6 +345,46 @@ public class ReservaFragment extends Fragment implements ReservaAdapter.Reservas
             }
         });
     }
+
+    private void updateSombrillasPagadas(Reserva reserva) {
+        OkHttpClient client = new OkHttpClient();
+        for (Sombrilla sombrilla : reserva.getSombrillas()) {
+            String url = getResources().getString(R.string.url_sombrillas) + "updatePagoSombrilla/" + sombrilla.getIdSombrilla();
+            RequestBody requestBody = new FormBody.Builder()
+                    .add("pagada", "true")
+                    .build();
+            Request request = new Request.Builder()
+                    .url(url)
+                    .patch(requestBody)
+                    .build();
+
+            Log.d("updateSombrillasPagadas", "URL: " + url);
+            Log.d("updateSombrillasPagadas", "Request Body: pagada=true");
+
+            client.newCall(request).enqueue(new Callback() {
+                @Override
+                public void onFailure(@NonNull Call call, @NonNull IOException e) {
+                    Log.e("updateSombrillasPagadas", "Error al actualizar el estado de pago de la sombrilla: ", e);
+                }
+
+                @Override
+                public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
+                    if (!response.isSuccessful()) {
+                        Log.e("updateSombrillasPagadas", "Respuesta no exitosa del servidor: " + response);
+                        Log.e("updateSombrillasPagadas", "Código de error: " + response.code());
+                        Log.e("updateSombrillasPagadas", "Mensaje de error: " + response.message());
+                        if (response.body() != null) {
+                            Log.e("updateSombrillasPagadas", "Cuerpo de respuesta: " + response.body().string());
+                        }
+                    } else {
+                        Log.d("updateSombrillasPagadas", "Sombrilla actualizada correctamente: " + sombrilla.getIdSombrilla());
+                    }
+                }
+            });
+        }
+    }
+
+
     @Override
     public void onCambiarEstadoClicked(Reserva reserva) {
         showChangeStateDialog(reserva);
@@ -387,6 +431,10 @@ public class ReservaFragment extends Fragment implements ReservaAdapter.Reservas
                     viewModel.updateCancelacionReserva(reserva, cancelacionDescripcion, success -> {
                         if (success) {
                             Toast.makeText(getContext(), "Reserva cancelada con éxito", Toast.LENGTH_SHORT).show();
+                            // Si la reserva estaba pagada, crear un pago negativo
+                            if (reserva.isPagada()) {
+                                createNegativePayment(reserva, cancelacionDescripcion);
+                            }
                         } else {
                             Toast.makeText(getContext(), "Error al cancelar la reserva", Toast.LENGTH_SHORT).show();
                         }
@@ -404,5 +452,34 @@ public class ReservaFragment extends Fragment implements ReservaAdapter.Reservas
         dialog.show();
     }
 
+    private void createNegativePayment(Reserva reserva, String descripcion) {
+        int cantidadHamacas = 1;
+        try {
+            cantidadHamacas = Integer.parseInt(reserva.getSombrillas().get(0).getCantidadHamacas());
+        } catch (NumberFormatException e) {
+            Log.e("Reserva", "Error al convertir la cantidad de hamacas: " + e.getMessage());
+        }
+
+        double precioTotalNegativo = -1 * (reserva.getSombrillas().get(0).getPrecio() * cantidadHamacas);
+
+        Pago pagoNegativo = new Pago();
+        pagoNegativo.setReserva(reserva);
+        pagoNegativo.setCantidad(precioTotalNegativo);
+        pagoNegativo.setMetodoPago(reserva.getMetodoPago());
+        pagoNegativo.setPagado(true);
+        pagoNegativo.setFechaPago(LocalDateTime.now());
+        pagoNegativo.setDetallesPago("Reembolso por cancelación de reserva con ID " + reserva.getIdReserva() + ". " + descripcion);
+        pagoNegativo.setTipoHamaca("Standard");
+
+        pagoViewModel.createPago(pagoNegativo, (pagoSuccess) -> {
+            if (pagoSuccess) {
+                String titulo = "Reembolso de Reserva";
+                String descripcionPago = "La reserva con ID " + reserva.getIdReserva() + " ha sido reembolsada.";
+                NuevoReporte.crearReporte(getContext(), titulo, descripcionPago);
+            } else {
+                Toast.makeText(getContext(), "Error al crear el reembolso", Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
 
 }
