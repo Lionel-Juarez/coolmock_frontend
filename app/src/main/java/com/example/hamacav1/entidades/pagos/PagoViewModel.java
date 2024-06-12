@@ -348,7 +348,6 @@ public class PagoViewModel extends AndroidViewModel {
         if (idToken == null) {
             Log.e("PagosViewModel", "Token de autorización no disponible");
             loading.postValue(false);
-            errorMessages.postValue("Error de autenticación. Por favor, inicie sesión de nuevo.");
             return;
         }
 

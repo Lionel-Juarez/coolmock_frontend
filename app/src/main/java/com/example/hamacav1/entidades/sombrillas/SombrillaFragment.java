@@ -118,7 +118,6 @@ public class SombrillaFragment extends Fragment implements SombrillaDetalles.Som
         if (idToken == null) {
             Log.e("SombrillaLoad", "Token de autorización no disponible");
             progressBar.setVisibility(View.GONE);
-            Toast.makeText(getContext(), "Error de autenticación. Por favor, inicie sesión de nuevo.", Toast.LENGTH_SHORT).show();
             return;
         }
 

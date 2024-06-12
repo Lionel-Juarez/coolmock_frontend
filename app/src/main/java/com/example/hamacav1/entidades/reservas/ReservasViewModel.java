@@ -213,7 +213,6 @@ public class ReservasViewModel extends ViewModel {
         if (idToken == null) {
             Log.e("ReservasViewModel", "Token de autorización no disponible");
             loading.postValue(false);
-            errorMessages.postValue("Error de autenticación. Por favor, inicie sesión de nuevo.");
             return;
         }
 

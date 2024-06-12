@@ -23,7 +23,6 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
-import java.util.Objects;
 
 import okhttp3.Call;
 import okhttp3.Callback;
@@ -57,21 +56,12 @@ public class LoginActivity extends AppCompatActivity {
                             .addOnSuccessListener(authResult -> {
                                 FirebaseUser user = auth.getCurrentUser();
                                 if (user != null) {
-                                    user.getIdToken(true).addOnCompleteListener(task -> {
-                                        if (task.isSuccessful()) {
-                                            String idToken = task.getResult().getToken();
-                                            SharedPreferences sharedPreferences = getSharedPreferences("MyAppPrefs", Context.MODE_PRIVATE);
-                                            SharedPreferences.Editor editor = sharedPreferences.edit();
-                                            editor.putString("idToken", idToken);
-                                            editor.putString("userId", user.getUid());
-                                            editor.apply();
+                                    SharedPreferences sharedPreferences = getSharedPreferences("MyAppPrefs", Context.MODE_PRIVATE);
+                                    SharedPreferences.Editor editor = sharedPreferences.edit();
+                                    editor.putString("userId", user.getUid());
+                                    editor.apply();
 
-                                            verificarRolCliente(user.getUid(), idToken);
-                                        } else {
-                                            Log.e("TokenError", "Failed to get token", task.getException());
-                                            Toast.makeText(LoginActivity.this, "Failed to get token: " + Objects.requireNonNull(task.getException()).getMessage(), Toast.LENGTH_SHORT).show();
-                                        }
-                                    });
+                                    verificarRolCliente(user.getUid());
                                 }
                             }).addOnFailureListener(e -> {
                                 Log.e("LoginError", "Login Failed", e);
@@ -90,13 +80,12 @@ public class LoginActivity extends AppCompatActivity {
         signupRedirectText.setOnClickListener(v -> startActivity(new Intent(LoginActivity.this, SignUpActivity.class)));
     }
 
-    private void verificarRolCliente(String uid, String idToken) {
+    private void verificarRolCliente(String uid) {
         String url = getResources().getString(R.string.url_clientes) + "uid/" + uid;
 
         OkHttpClient client = new OkHttpClient();
         Request request = new Request.Builder()
                 .url(url)
-                .addHeader("Authorization", "Bearer " + idToken)
                 .build();
 
         client.newCall(request).enqueue(new Callback() {

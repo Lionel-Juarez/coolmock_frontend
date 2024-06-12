@@ -231,7 +231,6 @@ public class PagoFragment extends Fragment implements PagoAdapter.PagoAdapterCal
         if (idToken == null) {
             Log.e("PagoFragment", "Token de autorización no disponible");
             progressBar.setVisibility(View.GONE);
-            Toast.makeText(getContext(), "Error de autenticación. Por favor, inicie sesión de nuevo.", Toast.LENGTH_SHORT).show();
             return;
         }
 
