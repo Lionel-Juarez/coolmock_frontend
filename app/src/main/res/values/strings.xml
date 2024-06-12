@@ -37,12 +37,12 @@
 
     <!-- URLs para acceso desde el emulador de Android -->
 
-    <!-- <string name="url_reportes">http://10.0.2.2:8080/api/reportes/</string> -->
-    <!-- <string name="url_sombrillas">http://10.0.2.2:8080/api/sombrillas/</string> -->
-    <!-- <string name="url_clientes">http://10.0.2.2:8080/api/clientes/</string> -->
-    <!-- <string name="url_reservas">http://10.0.2.2:8080/api/reservas/</string> -->
-    <!-- <string name="url_usuarios">http://10.0.2.2:8080/api/usuarios/</string> -->
-    <!-- <string name="url_pagos">http://10.0.2.2:8080/api/pagos</string> -->
+<!--     <string name="url_reportes">http://10.0.2.2:8080/api/reportes/</string>-->
+<!--     <string name="url_sombrillas">http://10.0.2.2:8080/api/sombrillas/</string>-->
+<!--     <string name="url_clientes">http://10.0.2.2:8080/api/clientes/</string>-->
+<!--     <string name="url_reservas">http://10.0.2.2:8080/api/reservas/</string>-->
+<!--     <string name="url_usuarios">http://10.0.2.2:8080/api/usuarios/</string>-->
+<!--     <string name="url_pagos">http://10.0.2.2:8080/api/pagos</string>-->
 
     <!-- URLs para acceso a un backend remoto -->
     <string name="url_reportes">http://18.100.80.112/api/reportes/</string>

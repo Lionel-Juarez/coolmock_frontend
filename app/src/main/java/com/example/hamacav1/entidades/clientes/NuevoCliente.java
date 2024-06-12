@@ -1,6 +1,8 @@
 package com.example.hamacav1.entidades.clientes;
 
 
+import static com.example.hamacav1.MainActivity.rol;
+
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
@@ -10,6 +12,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 
+import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.Toast;
@@ -51,7 +54,7 @@ public class NuevoCliente extends AppCompatActivity {
         etNombreCompleto = findViewById(R.id.et_new_nombreCompleto_cliente);
         etNumeroTelefono = findViewById(R.id.et_new_telefono_cliente);
         etEmail = findViewById(R.id.et_new_email_cliente);
-        etEmail.setEnabled(false);
+        etEmail.setEnabled(true);
 
         if (getIntent().hasExtra("cliente")) {
             isEditMode = true;
@@ -62,6 +65,12 @@ public class NuevoCliente extends AppCompatActivity {
 
         SharedPreferences sharedPreferences = getSharedPreferences("MyAppPrefs", MODE_PRIVATE);
         sharedPreferences.getString("rol", "CLIENTE");
+
+        if ("CLIENTE".equals(rol)) {
+            etEmail.setEnabled(false);
+        } else {
+            etEmail.setEnabled(true);
+        }
     }
 
     private void fillClientData(Cliente cliente) {
@@ -135,11 +144,15 @@ public class NuevoCliente extends AppCompatActivity {
                 json.put("numeroTelefono", numeroTelefono);
                 json.put("email", email);
                 json.put("rol", "CLIENTE");
+                json.put("uid", "");
+
+                Log.d("NuevoCliente", "JSON enviado: " + json.toString());
 
                 // Añadir el uid solo si está disponible
                 String uid = null;
-                if (MainActivity.rol.equals("CLIENTE")) {
+                if (cliente != null && "CLIENTE".equals(cliente.getRol())) {
                     uid = cliente.getUid(); // Usar el uid del cliente actual si el rol es CLIENTE
+                    json.put("uid", uid);
                 }
 
                 SharedPreferences sharedPreferences = getSharedPreferences("MyAppPrefs", Context.MODE_PRIVATE);
@@ -157,12 +170,16 @@ public class NuevoCliente extends AppCompatActivity {
                 }
 
                 Request request = requestBuilder.build();
+                Log.d("NuevoCliente", "Request URL: " + url);
+                Log.d("NuevoCliente", "Request Headers: " + request.headers().toString());
 
                 try (Response response = client.newCall(request).execute()) {
                     if (response.isSuccessful()) {
                         ResponseBody responseBody = response.body();
                         if (responseBody != null) {
                             String responseData = responseBody.string();
+                            Log.d("NuevoCliente", "Respuesta del servidor: " + responseData);
+
                             JSONObject responseObject = new JSONObject(responseData);
                             long idCliente = responseObject.getLong("idCliente");
                             Cliente newClient = new Cliente(idCliente, nombreCompleto, numeroTelefono, email, "CLIENTE", uid);
@@ -185,16 +202,20 @@ public class NuevoCliente extends AppCompatActivity {
                         }
                     } else {
                         String errorMessage = response.body() != null ? response.body().string() : "Respuesta vacía";
+                        Log.e("NuevoCliente", "Error en la respuesta del servidor: " + errorMessage);
                         handler.post(() -> Utils.showError(getApplicationContext(), "Error al crear cliente: " + errorMessage));
                     }
                 } catch (Exception e) {
+                    Log.e("NuevoCliente", "Error de conexión al servidor", e);
                     handler.post(() -> Utils.showError(getApplicationContext(), "Error de conexión al servidor: " + e.getMessage()));
                 }
             } catch (Exception e) {
+                Log.e("NuevoCliente", "Error al crear JSON para el cliente", e);
                 handler.post(() -> Utils.showError(getApplicationContext(), "Error de conexión al servidor: " + e.getMessage()));
             }
         });
     }
+
 
     public void cancel(View view) {
         Utils.closeActivity(this);

@@ -45,9 +45,11 @@ import org.json.JSONObject;
 
 import java.io.IOException;
 import java.io.Serializable;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 import java.util.Objects;
@@ -143,11 +145,28 @@ public class NuevaReserva extends AppCompatActivity {
     public void addReserva(View view) {
         String fechaReserva = fechaReservaSeleccionada;
 
+        Calendar calendarNow = Calendar.getInstance();
+        SimpleDateFormat sdfNow = new SimpleDateFormat("dd-MM-yyyy HH:mm", Locale.getDefault());
+        String fechaActual = sdfNow.format(calendarNow.getTime());
+
         // Si la fecha de reserva no está seleccionada o es null, se asigna la fecha actual
         if (fechaReserva == null || fechaReserva.isEmpty()) {
-            Calendar calendarNow = Calendar.getInstance();
-            SimpleDateFormat sdfNow = new SimpleDateFormat("dd-MM-yyyy HH:mm", Locale.getDefault());
-            fechaReserva = sdfNow.format(calendarNow.getTime());
+            fechaReserva = fechaActual;
+        }
+
+        // Validar que la fecha de reserva no es anterior a la fecha actual
+        try {
+            Date fechaReservaDate = sdfNow.parse(fechaReserva);
+            Date fechaActualDate = sdfNow.parse(fechaActual);
+
+            if (fechaReservaDate.before(fechaActualDate)) {
+                Toast.makeText(this, "La fecha de reserva no puede ser anterior a la fecha actual.", Toast.LENGTH_SHORT).show();
+                return;
+            }
+        } catch (ParseException e) {
+            e.printStackTrace();
+            Toast.makeText(this, "Error al analizar la fecha de reserva.", Toast.LENGTH_SHORT).show();
+            return;
         }
 
         String estado = "Pendiente";
@@ -155,9 +174,7 @@ public class NuevaReserva extends AppCompatActivity {
         boolean pagada = cbPagada.isChecked();
         String cantidadHamacas = getSelectedSide();
 
-        Calendar calendarNow = Calendar.getInstance();
-        SimpleDateFormat sdfNow = new SimpleDateFormat("dd-MM-yyyy HH:mm", Locale.getDefault());
-        String fechaReservaRealizada = sdfNow.format(calendarNow.getTime());
+        String fechaReservaRealizada = fechaActual;
 
         String[] hours = getResources().getStringArray(R.array.hour_array);
         String horaLlegada = hours[numberPickerHoraLlegada.getValue()];
@@ -184,6 +201,7 @@ public class NuevaReserva extends AppCompatActivity {
             }
         }
     }
+
 
 
     private void sendTask(String url, String fechaReserva, String fechaReservaRealizada, String estado, boolean pagada, String metodoPago, long idCliente, List<Long> idsSombrillas, String cantidadHamacas, String horaLlegada) {

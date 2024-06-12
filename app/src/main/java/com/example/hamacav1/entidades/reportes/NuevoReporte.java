@@ -45,7 +45,6 @@ public class NuevoReporte extends AppCompatActivity {
     private EditText etTitulo;
     //private EditText descriptionEditText;
     private EditText etComentarioCompleto;
-    private Spinner spinnerEstado;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -67,7 +66,7 @@ public class NuevoReporte extends AppCompatActivity {
     public void addReporte(View view) {
         String titulo = etTitulo.getText().toString();
         String comentarioCompleto = etComentarioCompleto.getText().toString();
-        String estado = String.valueOf(spinnerEstado.getSelectedItemPosition() + 1);
+        String estado = "Información";
 
         if (validateInput(titulo, comentarioCompleto)) {
             if (Internetop.getInstance(getApplicationContext()).isNetworkAvailable()) {
