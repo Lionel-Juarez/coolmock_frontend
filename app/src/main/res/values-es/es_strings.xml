@@ -18,40 +18,53 @@
     <string name="delete_comment">Eliminar reporte</string>
 
 
-<!--        <string name="url_reportes">http://18.100.144.127/api/reportes/</string>-->
-<!--        <string name="url_sombrillas">http://18.100.144.127/api/sombrillas/</string>-->
-<!--        <string name="url_clientes">http://18.100.144.127/api/clientes/</string>-->
-<!--        <string name="url_reservas">http://18.100.144.127/api/reservas/</string>-->
-<!--        <string name="url_usuarios">http://18.100.144.127/api/usuarios/</string>-->
-<!--        <string name="url_pagos">http://18.100.144.127/api/pagos</string>-->
+    <!-- URLs para acceso desde un dispositivo móvil físico en la red local -->
+    <string name="url_reportes">http://192.168.1.139:8080/api/reportes/</string>
+    <string name="url_sombrillas">http://192.168.1.139:8080/api/sombrillas/</string>
+    <string name="url_clientes">http://192.168.1.139:8080/api/clientes/</string>
+    <string name="url_reservas">http://192.168.1.139:8080/api/reservas/</string>
+    <string name="url_usuarios">http://192.168.1.139:8080/api/usuarios/</string>
+    <string name="url_pagos">http://192.168.1.139:8080/api/pagos</string>
 
-<!--        <string name="url_reportes">http://10.0.2.2:8080/api/reportes/</string>-->
-<!--        <string name="url_sombrillas">http://10.0.2.2:8080/api/sombrillas/</string>-->
-<!--        <string name="url_clientes">http://10.0.2.2:8080/api/clientes/</string>-->
-<!--        <string name="url_reservas">http://10.0.2.2:8080/api/reservas/</string>-->
-<!--        <string name="url_usuarios">http://10.0.2.2:8080/api/usuarios/</string>-->
-<!--        <string name="url_pagos">http://10.0.2.2:8080/api/pagos</string>-->
+    <!-- URLs para acceso desde el backend local en el mismo dispositivo -->
+    <!-- <string name="url_reportes">http://localhost:8080/api/reportes/</string> -->
+    <!-- <string name="url_sombrillas">http://localhost:8080/api/sombrillas/</string> -->
+    <!-- <string name="url_clientes">http://localhost:8080/api/clientes/</string> -->
+    <!-- <string name="url_reservas">http://localhost:8080/api/reservas/</string> -->
+    <!-- <string name="url_usuarios">http://localhost:8080/api/usuarios/</string> -->
+    <!-- <string name="url_pagos">http://localhost:8080/api/pagos</string> -->
 
-<!--        <string name="url_reportes">http://192.168.1.155:8080/api/reportes/</string>-->
-<!--        <string name="url_sombrillas">http://192.168.1.155:8080/api/sombrillas/</string>-->
-<!--        <string name="url_clientes">http://192.168.1.155:8080/api/clientes/</string>-->
-<!--        <string name="url_reservas">http://192.168.1.155:8080/api/reservas/</string>-->
-<!--        <string name="url_usuarios">http://192.168.1.155:8080/api/usuarios/</string>-->
-<!--        <string name="url_pagos">http://192.168.1.155:8080/api/pagos</string>-->
+    <!-- URLs para acceso desde el emulador de Android -->
+    <!-- <string name="url_reportes">http://10.0.2.2:8080/api/reportes/</string> -->
+    <!-- <string name="url_sombrillas">http://10.0.2.2:8080/api/sombrillas/</string> -->
+    <!-- <string name="url_clientes">http://10.0.2.2:8080/api/clientes/</string> -->
+    <!-- <string name="url_reservas">http://10.0.2.2:8080/api/reservas/</string> -->
+    <!-- <string name="url_usuarios">http://10.0.2.2:8080/api/usuarios/</string> -->
+    <!-- <string name="url_pagos">http://10.0.2.2:8080/api/pagos</string> -->
 
-<!--    <string name="url_reportes">http://192.168.0.103:8080/api/reportes/</string>-->
-<!--    <string name="url_sombrillas">http://192.168.0.103:8080/api/sombrillas/</string>-->
-<!--    <string name="url_clientes">http://192.168.0.103:8080/api/clientes/</string>-->
-<!--    <string name="url_reservas">http://192.168.0.103:8080/api/reservas/</string>-->
-<!--    <string name="url_usuarios">http://192.168.0.103:8080/api/usuarios/</string>-->
-<!--    <string name="url_pagos">http://192.168.0.103:8080/api/pagos</string>-->
+    <!-- URLs alternativas para acceso desde un dispositivo móvil físico en otra red local -->
+    <!-- <string name="url_reportes">http://192.168.1.155:8080/api/reportes/</string> -->
+    <!-- <string name="url_sombrillas">http://192.168.1.155:8080/api/sombrillas/</string> -->
+    <!-- <string name="url_clientes">http://192.168.1.155:8080/api/clientes/</string> -->
+    <!-- <string name="url_reservas">http://192.168.1.155:8080/api/reservas/</string> -->
+    <!-- <string name="url_usuarios">http://192.168.1.155:8080/api/usuarios/</string> -->
+    <!-- <string name="url_pagos">http://192.168.1.155:8080/api/pagos</string> -->
 
-    <string name="url_reportes">http://18.100.80.112/api/reportes/</string>
-    <string name="url_sombrillas">http://18.100.80.112/api/sombrillas/</string>
-    <string name="url_clientes">http://18.100.80.112/api/clientes/</string>
-    <string name="url_reservas">http://18.100.80.112/api/reservas/</string>
-    <string name="url_usuarios">http://18.100.80.112/api/usuarios/</string>
-    <string name="url_pagos">http://18.100.80.112/api/pagos</string>
+    <!-- URLs alternativas para acceso desde un dispositivo móvil físico en otra red local -->
+    <!-- <string name="url_reportes">http://192.168.0.103:8080/api/reportes/</string> -->
+    <!-- <string name="url_sombrillas">http://192.168.0.103:8080/api/sombrillas/</string> -->
+    <!-- <string name="url_clientes">http://192.168.0.103:8080/api/clientes/</string> -->
+    <!-- <string name="url_reservas">http://192.168.0.103:8080/api/reservas/</string> -->
+    <!-- <string name="url_usuarios">http://192.168.0.103:8080/api/usuarios/</string> -->
+    <!-- <string name="url_pagos">http://192.168.0.103:8080/api/pagos</string> -->
+
+    <!-- URLs para acceso a un backend remoto -->
+    <!-- <string name="url_reportes">http://18.100.80.112/api/reportes/</string> -->
+    <!-- <string name="url_sombrillas">http://18.100.80.112/api/sombrillas/</string> -->
+    <!-- <string name="url_clientes">http://18.100.80.112/api/clientes/</string> -->
+    <!-- <string name="url_reservas">http://18.100.80.112/api/reservas/</string> -->
+    <!-- <string name="url_usuarios">http://18.100.80.112/api/usuarios/</string> -->
+    <!-- <string name="url_pagos">http://18.100.80.112/api/pagos</string> -->
 
 
     <string name="eliminar_reporte">Eliminar reporte</string>
